@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">Chit Chat</string>
+
+    <!-- Sign In -->
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="welcome_to">Welcome to Chit Chat App!</string>
+    <string name="sign_in_to_continue">Sign in to Continue</string>
+    <string name="sign_in_hint">If you want to access this app,\nfirst you need to sign in.</string>
+
+    <string name="delete_account">Delete your account</string>
+    <string name="delete_account_warning">Are you sure you want to delete your account?</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="auth_route">Auth</string>
+    <string name="home_route">Home</string>
+    <string name="contacts_route">Contacts</string>
+    <string name="explore_route">Explore</string>
+    <string name="diary_route">Diary</string>
+    <string name="settings_route">Settings</string>
+
+    <string name="search_placeholder">Search...</string>
+    <string name="people">People</string>
+    <string name="group">Group</string>
+    <string name="OA">OA</string>
+
+    <string name="friend_request">Friend Requests</string>
+    <string name="directory">Directory</string>
+    <string name="birthday_calendar">Birthday Calendar</string>
+
+    <string name="view_profile">View Profile</string>
+</resources>
