@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 kotlin {
@@ -63,6 +64,8 @@ kotlin {
 
             // Json
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.play.services.auth)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

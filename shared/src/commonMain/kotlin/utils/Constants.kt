@@ -11,7 +11,7 @@ const val HOST = "192.168.100.51"
 const val PREFERENCES_NAME = "app_preferences"
 const val PREFERENCES_SIGNED_IN_KEY = "signed_in_key"
 
-const val CLIENT_ID = "CLIENT_ID"
+const val CLIENT_ID = "434998890095-cbb4a01kktai18t8knd0orj3hk3f0dcp.apps.googleusercontent.com"
 
 const val MAX_LENGTH = 20
 

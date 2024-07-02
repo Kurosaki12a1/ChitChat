@@ -11,6 +11,7 @@ googleApiClient = "1.34.0"
 hikaricp = "5.0.1"
 jdbcDriver = "2.0.2"
 junit = "4.13.2"
+kmongoAsync = "5.1.0"
 kmpauthGoogle = "2.0.0"
 kotlin = "2.0.0"
 ktor = "2.3.12"
@@ -37,23 +38,25 @@ androidxRoom = "2.7.0-alpha04"
 postgresql = "42.7.3"
 sqlite = "2.5.0-SNAPSHOT"
 sqlDelight = "2.0.2"
+playServicesAuth = "21.2.0"
+google-services = "4.4.2"
 [libraries]
 
 google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "googleApiClient" }
-kmpauth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "kmpauthGoogle" }
+
+# Kotlin Mongo
+kmongo-async = { module = "org.litote.kmongo:kmongo-async", version.ref = "kmongoAsync" }
+kmongo-coroutine-serialization = { module = "org.litote.kmongo:kmongo-coroutine-serialization", version.ref = "kmongoAsync" }
+
+# Kotlin
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 
-# Expose
-exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposedCore" }
-exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposedCore" }
-exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposedCore" }
-exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposedCore" }
-jdbc-driver = { module = "app.cash.sqldelight:jdbc-driver", version.ref = "jdbcDriver" }
-hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+# Auth Google
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 
 # Datastore
 datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
@@ -62,7 +65,6 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences-cor
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
 
-postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -126,4 +128,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
-sqldelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
+google-services = {id = "com.google.gms.google-services" , version.ref = "google-services"}

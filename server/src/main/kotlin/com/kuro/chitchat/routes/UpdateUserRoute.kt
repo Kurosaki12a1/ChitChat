@@ -2,9 +2,9 @@ package com.kuro.chitchat.routes
 
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
+import com.kuro.chitchat.domain.model.UserUpdate
 import com.kuro.chitchat.domain.repository.UserDataSource
 import domain.model.ApiResponse
-import domain.model.UserUpdate
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall

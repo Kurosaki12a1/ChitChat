@@ -1,16 +1,17 @@
 package com.kuro.chitchat.di
 
-import com.kuro.chitchat.ChitChatDatabase
-import com.kuro.chitchat.ChitChatDatabase.Companion.Schema
-import com.kuro.chitchat.data.database.DatabaseDriverFactory
 import com.kuro.chitchat.data.repository.UserDataSourceImpl
 import com.kuro.chitchat.domain.repository.UserDataSource
+import com.kuro.chitchat.util.Constants.DATABASE_NAME
 import org.koin.dsl.module
+import org.litote.kmongo.coroutine.coroutine
+import org.litote.kmongo.reactivestreams.KMongo
 
 val koinModule = module {
-    single { DatabaseDriverFactory() }
-    single { get<DatabaseDriverFactory>().createDriver() }
-    single { ChitChatDatabase(get()).apply { Schema.create(get()) } }
-    single { get<ChitChatDatabase>().serverDatabaseQueries }
+    single {
+        KMongo.createClient()
+            .coroutine
+            .getDatabase(DATABASE_NAME)
+    }
     single<UserDataSource> { UserDataSourceImpl(get()) }
 }

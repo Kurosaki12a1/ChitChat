@@ -1,52 +1,32 @@
 package com.kuro.chitchat.data.repository
 
-import com.kuro.chitchat.ServerDatabaseQueries
 import com.kuro.chitchat.domain.model.User
 import com.kuro.chitchat.domain.repository.UserDataSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import org.litote.kmongo.coroutine.CoroutineDatabase
+import org.litote.kmongo.eq
+import org.litote.kmongo.setValue
 
 class UserDataSourceImpl(
-    private val serverDatabaseQueries: ServerDatabaseQueries
+    database: CoroutineDatabase
 ) : UserDataSource {
+
+    private val users = database.getCollection<User>()
+
     override suspend fun getUserInfo(userId: String): User? {
-        return withContext(Dispatchers.IO) {
-            serverDatabaseQueries.getUserInfo(userId).executeAsOneOrNull()?.let {
-                User(
-                    id = it.id,
-                    name = it.name,
-                    emailAddress = it.emailAddress,
-                    profilePhoto = it.profilePhoto ?: ""
-                )
-            }
-        }
+        return users.findOne(filter = User::id eq userId)
     }
 
     override suspend fun saveUserInfo(user: User): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val existingUser = serverDatabaseQueries.getUserInfo(user.id).executeAsOneOrNull()
-                if (existingUser == null) {
-                    serverDatabaseQueries.insertUser(
-                        id = user.id,
-                        name = user.name,
-                        emailAddress = user.emailAddress,
-                        profilePhoto = user.profilePhoto
-                    )
-                }
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
+        val existingUser = users.findOne(filter = User::id eq user.id)
+        return if (existingUser == null) {
+            users.insertOne(document = user).wasAcknowledged()
+        } else {
+            true
         }
     }
 
     override suspend fun deleteUser(userId: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            serverDatabaseQueries.deleteUser(userId)
-            true
-        }
+        return users.deleteOne(filter = User::id eq userId).wasAcknowledged()
     }
 
     override suspend fun updateUserName(
@@ -54,17 +34,12 @@ class UserDataSourceImpl(
         firstName: String,
         lastName: String
     ): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                serverDatabaseQueries.updateUserName(
-                    id = userId,
-                    name = "$firstName $lastName",
-                )
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
-        }
+        return users.updateOne(
+            filter = User::id eq userId,
+            update = setValue(
+                property = User::name,
+                value = "$firstName $lastName"
+            )
+        ).wasAcknowledged()
     }
 }
