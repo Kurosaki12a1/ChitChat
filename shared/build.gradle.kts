@@ -63,22 +63,18 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.datastore.preferences)
-
-            // Google sign in
-            // https://github.com/mirzemehdi/KMPAuth?tab=readme-ov-file
-            //   implementation(libs.kmpauth.google)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.okhttp.urlconnection)
             implementation(libs.lifecycle.compose)
+
+            implementation(libs.kmpauth.google)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.ios)
-        }
-        jvmMain.dependencies {
-            implementation(libs.ktor.client.java)
+            implementation(libs.kmpauth.google)
         }
     }
 }

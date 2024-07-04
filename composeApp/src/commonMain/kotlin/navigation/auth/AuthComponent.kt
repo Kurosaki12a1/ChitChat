@@ -1,12 +1,19 @@
 package navigation.auth
 
 import com.arkivanov.decompose.ComponentContext
+import domain.model.User
 
 class AuthComponent(
     componentContext: ComponentContext,
-    private val onNavigateToHomeScreen : () -> Unit
+    private val onNavigateToSetUpScreen : (User) -> Unit,
+    private val onNavigateToHomeScreen : () -> Unit,
 ) : ComponentContext by componentContext {
-    fun navigateToHomeScreen() {
-        onNavigateToHomeScreen.invoke()
+
+    fun navigateToNextScreen(isConfirmed: Boolean, user: User) {
+        if (isConfirmed) {
+            onNavigateToHomeScreen.invoke()
+        } else {
+            onNavigateToSetUpScreen(user)
+        }
     }
 }

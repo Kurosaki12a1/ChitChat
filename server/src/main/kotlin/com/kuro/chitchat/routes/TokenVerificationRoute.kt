@@ -10,7 +10,8 @@ import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.User
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.repository.UserDataSource
-import com.kuro.chitchat.util.Constants.AUDIENCE
+import com.kuro.chitchat.util.Constants.AUDIENCE_1
+import com.kuro.chitchat.util.Constants.AUDIENCE_2
 import com.kuro.chitchat.util.Constants.ISSUER
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -23,6 +24,9 @@ import io.ktor.server.routing.post
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.set
 import io.ktor.util.pipeline.PipelineContext
+import utils.CLIENT_ID
+import java.util.Arrays
+import java.util.Collections
 
 
 fun Route.tokenVerificationRoute(
@@ -80,11 +84,13 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
 fun verifyGoogleTokenId(tokenId: String): GoogleIdToken? {
     return try {
         val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
-            .setAudience(listOf(AUDIENCE))
+            .setAudience(Collections.singleton(CLIENT_ID))
+        //    .setAudience(listOf(AUDIENCE_1, AUDIENCE_2))
             .setIssuer(ISSUER)
             .build()
         verifier.verify(tokenId)
     } catch (e: Exception) {
+        e.printStackTrace()
         null
     }
 }

@@ -1,16 +1,18 @@
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import coil3.annotation.ExperimentalCoilApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import navigation.NavigationChild
 import navigation.RootComponent
-import navigation.auth.AuthComponent
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import presenter.auth.AuthScreen
+import presenter.auth.set_up.SetUpScreen
+import presenter.auth.sign_in.AuthScreen
 
+@ExperimentalCoilApi
 @Composable
 @Preview
 fun App(root: RootComponent) {
@@ -21,7 +23,13 @@ fun App(root: RootComponent) {
             animation = stackAnimation(slide())
         ) { child ->
             when (val instance = child.instance) {
-                is NavigationChild.AuthScreen -> { AuthScreen(instance.component) }
+                is NavigationChild.AuthScreen -> {
+                    AuthScreen(instance.component)
+                }
+
+                is NavigationChild.SetUpScreen -> {
+                    SetUpScreen(instance.component)
+                }
 
                 is NavigationChild.HomeScreen -> {
 

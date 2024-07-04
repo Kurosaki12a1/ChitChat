@@ -50,7 +50,7 @@ fun commonModule() = module {
 
     single { ChitChatApi(get()) }
     single<DataStoreOperations> { DataStoreOperationsImpl(get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
 
 fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrint = true }

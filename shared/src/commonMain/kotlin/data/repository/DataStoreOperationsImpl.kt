@@ -41,4 +41,24 @@ class DataStoreOperationsImpl(
             }
     }
 
+    override suspend fun saveConfirmedState(isConfirmed: Boolean, id: String) {
+        dataStore.edit { preferences ->
+            preferences[booleanPreferencesKey(name = id)] = isConfirmed
+        }
+    }
+
+    override fun readConfirmedState(id: String): Flow<Boolean> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[booleanPreferencesKey(name = id)] ?: false
+            }
+    }
+
 }

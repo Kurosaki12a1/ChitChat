@@ -16,6 +16,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
+    <string name="confirm">Confirm</string>
+
     <string name="auth_route">Auth</string>
     <string name="home_route">Home</string>
     <string name="contacts_route">Contacts</string>

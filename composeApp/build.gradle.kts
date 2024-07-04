@@ -9,32 +9,28 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class) compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
-    jvm("desktop")
-    
+
+    //jvm("desktop")
+
     listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
+        iosX64(), iosArm64(), iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ChitChatIOS"
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        val desktopMain by getting
+//        val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -44,14 +40,18 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
         }
+        iosMain.dependencies {
+
+        }
         commonMain.dependencies {
+            implementation(projects.shared)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(projects.shared)
 
             // Decompose
             implementation(libs.decompose)
@@ -65,13 +65,18 @@ kotlin {
             // Json
             implementation(libs.kotlinx.serialization.json)
 
-            implementation(libs.play.services.auth)
+            // Coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+            // KMPAuth
+            implementation(libs.kmpauth.google)
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
+        /*     desktopMain.dependencies {
+                 implementation(compose.desktop.currentOs)
+             }*/
     }
 }
+
 
 android {
     namespace = "com.kuro.chitchat"
@@ -109,11 +114,12 @@ android {
         debugImplementation(compose.uiTooling)
     }
 }
+
 dependencies {
-  //  implementation(libs.androidx.lifecycle.viewmodel.compose.android)
-    //implementation(libs.androidx.lifecycle.viewmodel.compose.desktop)
+
 }
 
+/*
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -125,3 +131,5 @@ compose.desktop {
         }
     }
 }
+
+*/

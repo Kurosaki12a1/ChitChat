@@ -34,6 +34,7 @@ class ChitChatApi(
             val responseBody: String = response.bodyAsText()
             Json.decodeFromString(responseBody)
         } catch (e: Exception) {
+            e.printStackTrace()
             ApiResponse(success = false, error = e)
         }
     }

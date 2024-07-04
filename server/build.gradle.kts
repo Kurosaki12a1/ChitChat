@@ -7,15 +7,15 @@ plugins {
 
 group = "com.kuro.chitchat"
 version = "1.0.0"
+
 application {
     mainClass.set("com.kuro.chitchat.ApplicationKt")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=${extra["io.ktor.development"] ?: "false"}")
+    applicationDefaultJvmArgs =
+        listOf("-Dio.ktor.development=${extra["io.ktor.development"] ?: "false"}")
 }
 
 dependencies {
     implementation(projects.shared)
-
-
     implementation(libs.logback)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

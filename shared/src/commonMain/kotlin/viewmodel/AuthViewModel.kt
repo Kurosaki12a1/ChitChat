@@ -9,6 +9,7 @@ import domain.model.ApiRequest
 import domain.model.ApiResponse
 import domain.model.MessageBarState
 import domain.repository.AuthRepository
+import domain.repository.DataStoreOperations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -17,8 +18,12 @@ import utils.GoogleAccountNotFoundException
 import utils.RequestState
 
 open class AuthViewModel(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val dataStoreOperations: DataStoreOperations
 ) : ViewModel(), KoinComponent {
+
+    private val _confirmedState: MutableState<Boolean?> = mutableStateOf(null)
+    val confirmedState: State<Boolean?> = _confirmedState
 
     private val _signedInState: MutableState<Boolean> = mutableStateOf(false)
     val signedInState: State<Boolean> = _signedInState
@@ -32,15 +37,23 @@ open class AuthViewModel(
 
     init {
         viewModelScope.launch {
-            repository.readSignedInState().collect { completed ->
+            dataStoreOperations.readSignedInState().collect { completed ->
                 _signedInState.value = completed
+            }
+        }
+    }
+
+    fun readConfirmedState(userId: String) {
+        viewModelScope.launch {
+            dataStoreOperations.readConfirmedState(userId).collect { confirmed ->
+                _signedInState.value = confirmed
             }
         }
     }
 
     fun saveSignedInState(signedIn: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.saveSignedInState(signedIn = signedIn)
+            dataStoreOperations.saveSignedInState(signedIn = signedIn)
         }
     }
 
