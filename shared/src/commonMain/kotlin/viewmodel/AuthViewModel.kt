@@ -36,7 +36,7 @@ open class AuthViewModel(
     val apiResponse: State<RequestState<ApiResponse>> = _apiResponse
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             dataStoreOperations.readSignedInState().collect { completed ->
                 _signedInState.value = completed
             }
@@ -46,7 +46,7 @@ open class AuthViewModel(
     fun readConfirmedState(userId: String) {
         viewModelScope.launch {
             dataStoreOperations.readConfirmedState(userId).collect { confirmed ->
-                _signedInState.value = confirmed
+                _confirmedState.value = confirmed
             }
         }
     }
@@ -68,11 +68,19 @@ open class AuthViewModel(
         try {
             viewModelScope.launch(Dispatchers.IO) {
                 val response = repository.verifyTokenOnBackend(request = request)
-                _apiResponse.value = RequestState.Success(response)
-                _messageBarState.value = MessageBarState(
-                    message = response.message,
-                    error = response.error
-                )
+                if (response.success) {
+                    _apiResponse.value = RequestState.Success(response)
+                    _messageBarState.value = MessageBarState(
+                        message = response.message,
+                    )
+                } else {
+                    _apiResponse.value = RequestState.Error(Exception(response.message ?: ""))
+                    _messageBarState.value = MessageBarState(
+                        message = response.message,
+                        error = response.error ?: Exception(response.message?: "")
+                    )
+                }
+
             }
         } catch (e: Exception) {
             _apiResponse.value = RequestState.Error(e)

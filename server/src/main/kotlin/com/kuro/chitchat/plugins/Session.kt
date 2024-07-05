@@ -8,6 +8,7 @@ import io.ktor.server.sessions.Sessions
 import io.ktor.server.sessions.cookie
 import io.ktor.server.sessions.directorySessionStorage
 import io.ktor.util.hex
+import utils.USER_SESSION
 import java.io.File
 
 fun Application.configureSession() {
@@ -15,7 +16,7 @@ fun Application.configureSession() {
         val secretEncryptKey = hex("d6e8cc160c9b7f5e2f1f1aa4b33cb8d7")
         val secretAuthKey = hex("a7f99cb90000b710b5cb305d085096e9")
         cookie<UserSession>(
-            name = "USER_SESSION",
+            name = USER_SESSION,
             storage = directorySessionStorage(File(".sessions"))
         ) {
             transform(SessionTransportTransformerEncrypt(secretEncryptKey, secretAuthKey))

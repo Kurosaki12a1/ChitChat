@@ -3,9 +3,10 @@ package di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import data.network.ChitChatApi
+import data.repository.ApiRepositoryImpl
 import data.repository.AuthRepositoryImpl
 import data.repository.DataStoreOperationsImpl
+import domain.repository.ApiRepository
 import domain.repository.AuthRepository
 import domain.repository.DataStoreOperations
 import io.ktor.client.HttpClient
@@ -48,7 +49,7 @@ fun commonModule() = module {
     single { createJson() }
     single { createHttpClient(get(), get()) }
 
-    single { ChitChatApi(get()) }
+    single<ApiRepository> { ApiRepositoryImpl(get()) }
     single<DataStoreOperations> { DataStoreOperationsImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
@@ -57,6 +58,8 @@ fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrin
 
 fun createHttpClient(httpClientEngine: HttpClientEngine, json: Json) =
     HttpClient(httpClientEngine) {
+        followRedirects = false
+        expectSuccess = false
         install(HttpCookies) {
             storage = AcceptAllCookiesStorage()
         }

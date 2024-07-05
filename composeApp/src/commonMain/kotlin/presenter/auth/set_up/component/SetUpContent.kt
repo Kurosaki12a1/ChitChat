@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -141,11 +142,9 @@ private fun ColumnScope.CentralContent(
     )
     Spacer(modifier = Modifier.weight(1f))
     Button(
-        modifier = Modifier.background(LoadingBlue),
+        modifier = Modifier.background(Color.Transparent).padding(16.dp),
         shape = RoundedCornerShape(16.dp),
-        onClick = {
-            onConfirm.invoke()
-        }) {
+        onClick = { onConfirm.invoke() }) {
         Text(text = stringResource(Res.string.confirm))
     }
     Spacer(modifier = Modifier.weight(1f))

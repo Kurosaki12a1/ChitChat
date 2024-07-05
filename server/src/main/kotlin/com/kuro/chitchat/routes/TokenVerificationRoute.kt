@@ -6,26 +6,25 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.kuro.chitchat.domain.model.ApiRequest
+import com.kuro.chitchat.domain.model.ApiResponse
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.User
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.repository.UserDataSource
-import com.kuro.chitchat.util.Constants.AUDIENCE_1
-import com.kuro.chitchat.util.Constants.AUDIENCE_2
 import com.kuro.chitchat.util.Constants.ISSUER
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.application.log
 import io.ktor.server.request.receive
-import io.ktor.server.response.respondRedirect
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.set
 import io.ktor.util.pipeline.PipelineContext
 import utils.CLIENT_ID
-import java.util.Arrays
 import java.util.Collections
 
 
@@ -45,11 +44,13 @@ fun Route.tokenVerificationRoute(
                 )
             } else {
                 app.log.info("TOKEN VERIFICATION FAILED")
-                call.respondRedirect(Endpoint.Unauthorized.path)
+                call.response.status(HttpStatusCode.BadRequest)
+                call.respond(ApiResponse(success = false, message = "Bad Request."))
             }
         } else {
             app.log.info("EMPTY TOKEN ID")
-            call.respondRedirect(Endpoint.Unauthorized.path)
+            call.response.status(HttpStatusCode.Unauthorized)
+            call.respond(ApiResponse(success = false, message = "Not Authorized."))
         }
     }
 }
@@ -74,10 +75,12 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     if (response) {
         app.log.info("USER SUCCESSFULLY SAVED/RETRIEVED")
         call.sessions.set(UserSession(id = sub, name = name))
-        call.respondRedirect(Endpoint.Authorized.path)
+        call.response.status(HttpStatusCode.OK)
+        call.respond(ApiResponse(success = true, user = user, message = "User login successfully!"))
     } else {
         app.log.info("ERROR SAVING THE USER")
-        call.respondRedirect(Endpoint.Unauthorized.path)
+        call.response.status(HttpStatusCode.Conflict)
+        call.respond(ApiResponse(success = false, message = HttpStatusCode.Conflict.description))
     }
 }
 
@@ -85,7 +88,6 @@ fun verifyGoogleTokenId(tokenId: String): GoogleIdToken? {
     return try {
         val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
             .setAudience(Collections.singleton(CLIENT_ID))
-        //    .setAudience(listOf(AUDIENCE_1, AUDIENCE_2))
             .setIssuer(ISSUER)
             .build()
         verifier.verify(tokenId)

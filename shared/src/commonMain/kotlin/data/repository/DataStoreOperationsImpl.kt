@@ -7,8 +7,11 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import domain.repository.DataStoreOperations
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import utils.PREFERENCES_SIGNED_IN_KEY
@@ -38,7 +41,7 @@ class DataStoreOperationsImpl(
             .map { preferences ->
                 val signedInState = preferences[PreferencesKey.signedInKey] ?: false
                 signedInState
-            }
+            }.flowOn(Dispatchers.IO)
     }
 
     override suspend fun saveConfirmedState(isConfirmed: Boolean, id: String) {
@@ -58,7 +61,7 @@ class DataStoreOperationsImpl(
             }
             .map { preferences ->
                 preferences[booleanPreferencesKey(name = id)] ?: false
-            }
+            }.flowOn(Dispatchers.IO)
     }
 
 }

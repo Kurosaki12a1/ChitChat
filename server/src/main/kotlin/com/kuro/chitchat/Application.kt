@@ -18,10 +18,10 @@ fun main() {
 }
 
 fun Application.module() {
+    configureSerialization()
     configureKoin()
     configureAuth()
     configureRouting()
-    configureSerialization()
     configureMonitoring()
     configureSession()
 }
