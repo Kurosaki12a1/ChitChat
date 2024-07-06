@@ -1,4 +1,4 @@
-package presenter.auth.sign_in
+package presenter.login
 
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -8,8 +8,8 @@ import domain.model.ApiRequest
 import domain.model.ApiResponse
 import navigation.auth.AuthComponent
 import org.koin.compose.koinInject
-import presenter.auth.sign_in.component.AuthContent
-import presenter.auth.sign_in.component.AuthTopBar
+import presenter.login.component.AuthContent
+import presenter.login.component.AuthTopBar
 import utils.RequestState
 import viewmodel.AuthViewModel
 
@@ -21,36 +21,30 @@ fun AuthScreen(
     val signedInState by viewModel.signedInState
     val messageBarState by viewModel.messageBarState
     val apiResponse by viewModel.apiResponse
-    val confirmedState by viewModel.confirmedState
 
     LaunchedEffect(apiResponse) {
         when (apiResponse) {
             is RequestState.Success -> {
                 val response = (apiResponse as RequestState.Success<ApiResponse>).data
                 if (response.success) {
-                    viewModel.readConfirmedState(response.user?.id ?: "")
+                    component.navigateToNextScreen()
                 } else {
                     viewModel.saveSignedInState(signedIn = false)
                 }
             }
 
-            else -> {}
-        }
-    }
+            is RequestState.Error -> {
+                viewModel.saveSignedInState(signedIn = false)
+            }
 
-    LaunchedEffect(confirmedState) {
-        if (confirmedState != null && apiResponse is RequestState.Success) {
-            component.navigateToNextScreen(
-                isConfirmed = confirmedState!!,
-                user = (apiResponse as RequestState.Success<ApiResponse>).data.user!!
-            )
+            else -> {
+
+            }
         }
     }
 
     Scaffold(
-        topBar = {
-            AuthTopBar()
-        },
+        topBar = { AuthTopBar() },
         content = {
             AuthContent(
                 signedInState = signedInState,

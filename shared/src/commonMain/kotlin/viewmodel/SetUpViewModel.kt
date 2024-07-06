@@ -73,7 +73,8 @@ open class SetUpViewModel(
         }
     }
 
-    fun setConfirmedState(userId: String, isConfirmed: Boolean) {
+    fun setConfirmedState(userId: String?, isConfirmed: Boolean) {
+        if (userId == null) return
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreOperations.saveConfirmedState(
                 isConfirmed = isConfirmed,

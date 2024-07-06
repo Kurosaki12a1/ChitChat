@@ -63,6 +63,9 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.datastore.preferences)
+
+            implementation(libs.decompose)
+            implementation(libs.decompose.jetbrains)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.android)

@@ -1,4 +1,4 @@
-package presenter.auth.sign_in.component
+package presenter.login.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

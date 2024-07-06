@@ -21,6 +21,8 @@
     <string name="auth_route">Auth</string>
     <string name="home_route">Home</string>
     <string name="contacts_route">Contacts</string>
+    <string name="chat_route">Chat</string>
+    <string name="more_route">More</string>
     <string name="explore_route">Explore</string>
     <string name="diary_route">Diary</string>
     <string name="settings_route">Settings</string>
@@ -35,4 +37,7 @@
     <string name="birthday_calendar">Birthday Calendar</string>
 
     <string name="view_profile">View Profile</string>
+
+
+    <!-- Top Bar -->
 </resources>

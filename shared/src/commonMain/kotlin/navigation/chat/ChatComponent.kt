@@ -1,8 +1,8 @@
-package navigation.home
+package navigation.chat
 
 import com.arkivanov.decompose.ComponentContext
 
-class HomeComponent(
+class ChatComponent(
     componentContext: ComponentContext,
     private val onNavigateTo: (String) -> Unit
 ) : ComponentContext by componentContext {

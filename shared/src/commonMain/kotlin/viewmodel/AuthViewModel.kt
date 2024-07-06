@@ -22,9 +22,6 @@ open class AuthViewModel(
     private val dataStoreOperations: DataStoreOperations
 ) : ViewModel(), KoinComponent {
 
-    private val _confirmedState: MutableState<Boolean?> = mutableStateOf(null)
-    val confirmedState: State<Boolean?> = _confirmedState
-
     private val _signedInState: MutableState<Boolean> = mutableStateOf(false)
     val signedInState: State<Boolean> = _signedInState
 
@@ -39,14 +36,6 @@ open class AuthViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreOperations.readSignedInState().collect { completed ->
                 _signedInState.value = completed
-            }
-        }
-    }
-
-    fun readConfirmedState(userId: String) {
-        viewModelScope.launch {
-            dataStoreOperations.readConfirmedState(userId).collect { confirmed ->
-                _confirmedState.value = confirmed
             }
         }
     }

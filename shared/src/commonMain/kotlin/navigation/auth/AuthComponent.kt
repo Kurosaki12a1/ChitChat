@@ -3,9 +3,11 @@ package navigation.auth
 import com.arkivanov.decompose.ComponentContext
 import domain.model.User
 
-class SetUpComponent(
+class AuthComponent(
     componentContext: ComponentContext,
-    val user: User
+    private val onNavigateToHomeScreen : () -> Unit,
 ) : ComponentContext by componentContext {
-
+    fun navigateToNextScreen() {
+        onNavigateToHomeScreen.invoke()
+    }
 }
