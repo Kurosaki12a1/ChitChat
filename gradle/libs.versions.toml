@@ -19,6 +19,7 @@ junit = "4.13.2"
 kmongoAsync = "5.1.0"
 kmpauthGoogle = "2.0.0"
 kotlin = "2.0.0"
+kotlinxDatetime = "0.6.0"
 ktor = "2.3.12"
 ksp = "2.0.0-1.0.21"
 ktorClientAndroid = "1.3.2-1.4-M2"
@@ -68,6 +69,7 @@ androidx-lifecycle-viewmodel-compose-android = { group = "androidx.lifecycle", n
 androidx-lifecycle-viewmodel-compose-desktop = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose-desktop", version.ref = "lifecycleViewmodelComposeDesktop" }
 
 # Auth Google
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 
 # Datastore

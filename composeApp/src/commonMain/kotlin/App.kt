@@ -1,7 +1,5 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +12,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -40,6 +38,7 @@ import presenter.chat.ChatScreen
 import presenter.contacts.ContactsScreen
 import presenter.login.AuthScreen
 import presenter.more.MoreScreen
+import ui.theme.BackgroundColorEmphasis
 
 @ExperimentalCoilApi
 @Composable
@@ -48,11 +47,6 @@ fun App(root: RootComponent) {
     MaterialTheme {
         val childStack by root.childStack.subscribeAsState()
         Scaffold(
-            topBar = {
-                if (shouldTopBarAndBottomBarVisible(childStack.active.configuration)) {
-                    AppTopBar(navigation = childStack)
-                }
-            },
             bottomBar = {
                 if (shouldTopBarAndBottomBarVisible(childStack.active.configuration)) {
                     AppBottomNavigation(navigation = childStack) { navigationItem ->
@@ -73,15 +67,15 @@ fun App(root: RootComponent) {
                     }
 
                     is NavigationChild.ChatScreen -> {
-                        ChatScreen()
+                        ChatScreen(instance.component)
                     }
 
                     is NavigationChild.ContactsScreen -> {
-                        ContactsScreen()
+                        ContactsScreen(instance.component)
                     }
 
                     is NavigationChild.MoreScreen -> {
-                        MoreScreen()
+                        MoreScreen(instance.component)
                     }
                 }
             }
@@ -93,75 +87,73 @@ fun App(root: RootComponent) {
 private fun shouldTopBarAndBottomBarVisible(child: NavigationItem): Boolean =
     child == NavigationItem.MoreScreen || child == NavigationItem.ChatScreen || child == NavigationItem.ContactsScreen
 
+/*
 @Composable
 private fun AppTopBar(navigation: ChildStack<NavigationItem, NavigationChild>) {
     val currentRoute = navigation.active.configuration
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .background(Color.White)
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            when (currentRoute) {
-                is NavigationItem.ContactsScreen -> {
-                    ContactsBar(
-                        onSearchClick = {
+    TopAppBar(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = BackgroundColorEmphasis,
+        elevation = 0.dp,
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        when (currentRoute) {
+            is NavigationItem.ContactsScreen -> {
+                ContactsBar(
+                    onSearchClick = {
 
-                        },
-                        onAddContacts = {
+                    },
+                    onAddContacts = {
 
-                        },
-                        onStartNewChat = {
+                    },
+                    onStartNewChat = {
 
-                        },
-                        onMoreClick = {
+                    },
+                    onMoreClick = {
 
-                        }
-                    )
-                }
+                    }
+                )
+            }
 
-                is NavigationItem.ChatScreen -> {
-                    ChatBar(
-                        onSearchClick = {
+            is NavigationItem.ChatScreen -> {
+                ChatBar(
+                    onSearchClick = {
 
-                        },
-                        onStartNewChat = {
+                    },
+                    onStartNewChat = {
 
-                        },
-                        onBookmarkClick = {
+                    },
+                    onBookmarkClick = {
 
-                        }
-                    )
-                }
+                    }
+                )
+            }
 
-                is NavigationItem.MoreScreen -> {
-                    MoreBar(
-                        onSettingsClick = {
+            is NavigationItem.MoreScreen -> {
+                MoreBar(
+                    onSettingsClick = {
 
-                        }
-                    )
-                }
+                    }
+                )
+            }
 
-                else -> {
-                    // Do nothing
-                }
+            else -> {
+                // Do nothing
             }
         }
-        Divider(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.LightGray.copy(0.2f)))
     }
-
 }
+*/
 
 @Composable
 private fun AppBottomNavigation(
     navigation: ChildStack<NavigationItem, NavigationChild>,
     onClick: (NavigationItem) -> Unit
 ) {
+    Divider(modifier = Modifier.fillMaxWidth().height(1.dp).background(BackgroundColorEmphasis))
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Color.LightGray.copy(0.2f),
+        backgroundColor = BackgroundColorEmphasis,
         elevation = 0.dp
     ) {
         bottomNavigationItems.forEach { item ->

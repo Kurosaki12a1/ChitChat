@@ -66,6 +66,8 @@ kotlin {
 
             implementation(libs.decompose)
             implementation(libs.decompose.jetbrains)
+
+            api(libs.kotlinx.datetime)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.android)

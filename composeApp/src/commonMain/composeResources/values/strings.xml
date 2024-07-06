@@ -39,5 +39,11 @@
     <string name="view_profile">View Profile</string>
 
 
-    <!-- Top Bar -->
+    <string name="all">All</string>
+    <string name="unread">Unread</string>
+    <string name="favorites">Favorites</string>
+
+    <string name="my_feed">My Feed</string>
+    <string name="view_all">View All</string>
+    <string name="chat_room">Chat rooms</string>
 </resources>

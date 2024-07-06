@@ -1,15 +1,12 @@
-package presenter.more
+package presenter.chat.tabs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import navigation.more.MoreComponent
 
 @Composable
-fun MoreScreen(
-    component: MoreComponent
-) {
+fun TabUnreadScreen() {
     Column {
-        Text("This is moreeeeeeee screen")
+        Text("This is tab unread")
     }
 }
