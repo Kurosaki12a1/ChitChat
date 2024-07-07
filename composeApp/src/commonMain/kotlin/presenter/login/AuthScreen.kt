@@ -48,6 +48,7 @@ fun AuthScreen(
         content = {
             AuthContent(
                 signedInState = signedInState,
+                loadingState = apiResponse is RequestState.Loading,
                 messageBarState = messageBarState,
                 onButtonClicked = {
                     viewModel.saveSignedInState(signedIn = true)

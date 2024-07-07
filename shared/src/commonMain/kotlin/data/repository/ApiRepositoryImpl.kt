@@ -16,7 +16,10 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.path
+import utils.DELETE_USER
+import utils.GET_USER
 import utils.TOKEN_VERIFICATION
+import utils.UPDATE_USER
 
 class ApiRepositoryImpl(
     private val client: HttpClient
@@ -41,7 +44,7 @@ class ApiRepositoryImpl(
     override suspend fun getUserInfo(): ApiResponse {
         return try {
             val response = client.get {
-                url { path("/get_user") }
+                url { path(GET_USER) }
             }
             response.body<ApiResponse>()
         } catch (e: Exception) {
@@ -53,7 +56,7 @@ class ApiRepositoryImpl(
         return try {
             val response = client.put {
                 url {
-                    path("/update_user")
+                    path(UPDATE_USER)
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
@@ -67,7 +70,7 @@ class ApiRepositoryImpl(
     override suspend fun deleteUser(): ApiResponse {
         return try {
             val response: HttpResponse = client.delete {
-                url("/delete_user")
+                url(DELETE_USER)
             }
             response.body<ApiResponse>()
         } catch (e: Exception) {

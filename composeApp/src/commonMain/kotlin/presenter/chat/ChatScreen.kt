@@ -2,26 +2,24 @@
 
 package presenter.chat
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import component.AnimatedBox
-import navigation.ChatBar
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import navigation.chat.ChatComponent
+import navigation.chat.TabChild
+import presenter.chat.component.ChatBar
 import presenter.chat.component.StickyTabRow
 import presenter.chat.tabs.TabAllScreen
 import presenter.chat.tabs.TabFavoritesScreen
@@ -32,9 +30,7 @@ fun ChatScreen(
     component: ChatComponent
 ) {
     val state = rememberLazyListState()
-    var selectedTabIndex by remember { mutableStateOf(0) }
-    var oldSelectedTabIndex by remember { mutableStateOf(0) }
-    val offsetX = remember { Animatable(0f) }
+    val childStack by component.childStack.subscribeAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(state = state) {
@@ -53,49 +49,33 @@ fun ChatScreen(
             }
             stickyHeader {
                 StickyTabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    onTabSelected = { index ->
-                        if (oldSelectedTabIndex != selectedTabIndex) {
-                            oldSelectedTabIndex = selectedTabIndex
-                        }
-                        selectedTabIndex = index
-                    }
+                    navigation = childStack,
+                    onTabSelected = { item -> component.onTabSelect(item) }
                 )
             }
             item {
-                AnimatedBox(
-                    currentState = oldSelectedTabIndex,
-                    targetState = selectedTabIndex,
-                    orderedContent = listOf("0", "1", "2")
-                ) {
-                    when (selectedTabIndex) {
-                        0 -> {
-                            TabAllScreen { }
+                Children(
+                    modifier = Modifier.fillMaxWidth(),
+                    stack = childStack,
+                    animation = stackAnimation(slide() + fade())
+                ) { child ->
+                    when (val instance = child.instance) {
+                        is TabChild.AllScreen -> {
+                            TabAllScreen(component = instance.component) {
+
+                            }
                         }
 
-                        1 -> {
-                            TabUnreadScreen()
+                        is TabChild.UnreadScreen -> {
+                            TabUnreadScreen(component = instance.component)
                         }
 
-                        2 -> {
-                            TabFavoritesScreen()
+                        is TabChild.FavoritesScreen -> {
+                            TabFavoritesScreen(component = instance.component)
                         }
                     }
                 }
             }
-            /* items(50) {
-                 DummyItem()
-             }*/
         }
-
-    }
-}
-
-@Composable
-private fun DummyItem() {
-    Row(
-        modifier = Modifier.fillMaxWidth().height(50.dp)
-    ) {
-        Text("TESTTTTTTTTTTTTTTT")
     }
 }

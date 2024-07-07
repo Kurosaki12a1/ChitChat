@@ -12,7 +12,7 @@ import utils.AUTH_SESSION
 fun Application.configureAuth() {
     install(Authentication) {
         session<UserSession>(name = AUTH_SESSION) {
-            validate { session -> session }
+            validate { session -> if (session.id.isNotEmpty()) session else null }
             challenge { call.respondRedirect(Endpoint.Unauthorized.path) }
         }
     }

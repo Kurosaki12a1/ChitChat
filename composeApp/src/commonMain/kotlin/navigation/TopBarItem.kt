@@ -63,37 +63,6 @@ fun RowScope.ContactsBar(
     )
 }
 
-@Composable
-fun ChatBar(
-    onSearchClick: () -> Unit,
-    onStartNewChat: () -> Unit,
-    onBookmarkClick: () -> Unit
-) {
-    Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        Text(
-            text = stringResource(Res.string.chat_route),
-            style = MaterialTheme.typography.h6
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            modifier = Modifier.noRippleClickAble { onSearchClick.invoke() },
-            painter = painterResource(Res.drawable.search),
-            contentDescription = "Search"
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Icon(
-            modifier = Modifier.noRippleClickAble { onStartNewChat.invoke() },
-            painter = painterResource(Res.drawable.add_chat),
-            contentDescription = "Add Chat"
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Icon(
-            modifier = Modifier.noRippleClickAble { onBookmarkClick.invoke() },
-            painter = painterResource(Res.drawable.bookmark),
-            contentDescription = "More"
-        )
-    }
-}
 
 @Composable
 fun RowScope.MoreBar(

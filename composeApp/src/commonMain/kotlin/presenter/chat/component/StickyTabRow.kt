@@ -28,12 +28,15 @@ import chitchatmultiplatform.composeapp.generated.resources.Res
 import chitchatmultiplatform.composeapp.generated.resources.all
 import chitchatmultiplatform.composeapp.generated.resources.favorites
 import chitchatmultiplatform.composeapp.generated.resources.unread
+import com.arkivanov.decompose.router.stack.ChildStack
+import navigation.chat.TabChild
+import navigation.chat.TabItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun StickyTabRow(
-    selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    navigation: ChildStack<TabItem, TabChild>,
+    onTabSelected: (TabItem) -> Unit
 ) {
     // List of tab titles from string resources
     val tabs = listOf(
@@ -41,6 +44,8 @@ fun StickyTabRow(
         stringResource(Res.string.unread),
         stringResource(Res.string.favorites)
     )
+
+    val selectedTabIndex = getTabIndex(navigation.active.configuration)
 
     Box {
         ScrollableTabRow(
@@ -87,7 +92,7 @@ fun StickyTabRow(
                 Tab(
                     modifier = Modifier.wrapContentWidth(),
                     selected = isSelected,
-                    onClick = { onTabSelected(index) },
+                    onClick = { onTabSelected(getTabItem(index)) },
                     text = {
                         Text(
                             text = title,
@@ -106,5 +111,21 @@ fun StickyTabRow(
                 .background(LocalContentColor.current.copy(alpha = DividerOpacity))
                 .align(Alignment.BottomStart)
         )
+    }
+}
+
+private fun getTabIndex(item: TabItem): Int {
+    return when (item) {
+        TabItem.All -> 0
+        TabItem.Unread -> 1
+        else -> 2
+    }
+}
+
+private fun getTabItem(index: Int): TabItem {
+    return when (index) {
+        0 -> TabItem.All
+        1 -> TabItem.Unread
+        else -> TabItem.Favorites
     }
 }

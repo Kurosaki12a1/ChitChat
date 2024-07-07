@@ -8,8 +8,10 @@ import io.ktor.server.sessions.Sessions
 import io.ktor.server.sessions.cookie
 import io.ktor.server.sessions.directorySessionStorage
 import io.ktor.util.hex
+import utils.DOMAIN
 import utils.USER_SESSION
 import java.io.File
+import java.time.Duration
 
 fun Application.configureSession() {
     install(Sessions) {
@@ -19,6 +21,9 @@ fun Application.configureSession() {
             name = USER_SESSION,
             storage = directorySessionStorage(File(".sessions"))
         ) {
+            cookie.maxAgeInSeconds = Duration.ofDays(1).seconds
+            cookie.httpOnly = true
+            cookie.domain = DOMAIN
             transform(SessionTransportTransformerEncrypt(secretEncryptKey, secretAuthKey))
         }
     }

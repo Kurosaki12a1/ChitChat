@@ -22,6 +22,6 @@ fun dataStore(): DataStore<Preferences> = createDataStore(
             create = false,
             error = null,
         )
-        requireNotNull(documentDirectory).path + "/fpl.preferences_pb"
+        requireNotNull(documentDirectory).path + "/chitchat.preferences_pb"
     }
 )

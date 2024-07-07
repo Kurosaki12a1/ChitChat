@@ -1,5 +1,4 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +11,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,9 +22,6 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slid
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
-import navigation.ChatBar
-import navigation.ContactsBar
-import navigation.MoreBar
 import navigation.NavigationChild
 import navigation.NavigationItem
 import navigation.RootComponent
@@ -86,64 +81,6 @@ fun App(root: RootComponent) {
 
 private fun shouldTopBarAndBottomBarVisible(child: NavigationItem): Boolean =
     child == NavigationItem.MoreScreen || child == NavigationItem.ChatScreen || child == NavigationItem.ContactsScreen
-
-/*
-@Composable
-private fun AppTopBar(navigation: ChildStack<NavigationItem, NavigationChild>) {
-    val currentRoute = navigation.active.configuration
-    TopAppBar(
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = BackgroundColorEmphasis,
-        elevation = 0.dp,
-        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-    ) {
-        when (currentRoute) {
-            is NavigationItem.ContactsScreen -> {
-                ContactsBar(
-                    onSearchClick = {
-
-                    },
-                    onAddContacts = {
-
-                    },
-                    onStartNewChat = {
-
-                    },
-                    onMoreClick = {
-
-                    }
-                )
-            }
-
-            is NavigationItem.ChatScreen -> {
-                ChatBar(
-                    onSearchClick = {
-
-                    },
-                    onStartNewChat = {
-
-                    },
-                    onBookmarkClick = {
-
-                    }
-                )
-            }
-
-            is NavigationItem.MoreScreen -> {
-                MoreBar(
-                    onSettingsClick = {
-
-                    }
-                )
-            }
-
-            else -> {
-                // Do nothing
-            }
-        }
-    }
-}
-*/
 
 @Composable
 private fun AppBottomNavigation(

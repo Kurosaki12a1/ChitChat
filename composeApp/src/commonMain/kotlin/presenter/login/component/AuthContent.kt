@@ -32,6 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AuthContent(
     signedInState: Boolean,
+    loadingState: Boolean,
     messageBarState: MessageBarState,
     onButtonClicked: () -> Unit,
     onResult: (GoogleUser?) -> Unit
@@ -52,6 +53,7 @@ fun AuthContent(
         ) {
             CentralContent(
                 signedInState = signedInState,
+                loadingState = loadingState,
                 onButtonClicked = onButtonClicked,
                 onResult = onResult
             )
@@ -62,6 +64,7 @@ fun AuthContent(
 @Composable
 fun CentralContent(
     signedInState: Boolean,
+    loadingState: Boolean,
     onButtonClicked: () -> Unit,
     onResult: (GoogleUser?) -> Unit
 ) {
@@ -89,7 +92,7 @@ fun CentralContent(
         onResult(it)
     }) {
         GoogleButton(
-            loadingState = signedInState,
+            loadingState = signedInState || loadingState,
             onClick = { onButtonClicked.invoke() }
         )
 
@@ -99,4 +102,5 @@ fun CentralContent(
             }
         }
     }
+
 }

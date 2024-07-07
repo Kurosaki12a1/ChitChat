@@ -3,6 +3,7 @@ package di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import data.local.cookie.CookieStorageManager
 import data.repository.ApiRepositoryImpl
 import data.repository.AuthRepositoryImpl
 import data.repository.DataStoreOperationsImpl
@@ -13,7 +14,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
@@ -31,6 +31,7 @@ import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 import platformModule
 import utils.CONNECTION_TIME_OUT
+import utils.DOMAIN
 import utils.HOST
 import utils.REQUEST_TIME_OUT
 import utils.SERVER_PORT
@@ -47,7 +48,7 @@ fun initKoin() = initKoin {}
 
 fun commonModule() = module {
     single { createJson() }
-    single { createHttpClient(get(), get()) }
+    single { createHttpClient(get(), get(), get()) }
 
     single<ApiRepository> { ApiRepositoryImpl(get()) }
     single<DataStoreOperations> { DataStoreOperationsImpl(get()) }
@@ -56,12 +57,14 @@ fun commonModule() = module {
 
 fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrint = true }
 
-fun createHttpClient(httpClientEngine: HttpClientEngine, json: Json) =
-    HttpClient(httpClientEngine) {
-        followRedirects = false
-        expectSuccess = false
+fun createHttpClient(
+    httpClientEngine: HttpClientEngine,
+    json: Json,
+    dataStore: DataStore<Preferences>
+): HttpClient {
+    return HttpClient(httpClientEngine) {
         install(HttpCookies) {
-            storage = AcceptAllCookiesStorage()
+            storage = CookieStorageManager(dataStore, DOMAIN)
         }
         install(ContentNegotiation) {
             json(json)
@@ -84,6 +87,8 @@ fun createHttpClient(httpClientEngine: HttpClientEngine, json: Json) =
             contentType(ContentType.Application.Json)
         }
     }
+}
+
 
 fun createDataStore(
     producePath: () -> String,
@@ -92,4 +97,3 @@ fun createDataStore(
     migrations = emptyList(),
     produceFile = { producePath().toPath() },
 )
-
