@@ -2,6 +2,6 @@ package navigation.chat.tabs
 
 import com.arkivanov.decompose.ComponentContext
 
-class TabUnreadComponent(
+class ChatAllComponent(
     componentContext: ComponentContext,
 ) : ComponentContext by componentContext

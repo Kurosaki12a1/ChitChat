@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -41,7 +40,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
 import kotlinx.datetime.LocalDate
-import navigation.chat.tabs.TabAllComponent
+import navigation.chat.tabs.ChatAllComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.theme.ForegroundEmphasisDefaultDefault
@@ -51,8 +50,8 @@ import ui.theme.HighlightEmphasisDefaultDefault
 import utils.extension.noRippleClickAble
 
 @Composable
-fun LazyItemScope.TabAllScreen(
-    component: TabAllComponent,
+fun LazyItemScope.TabChatAllScreen(
+    component: ChatAllComponent,
     onViewAllClick: () -> Unit
 ) {
     Column(

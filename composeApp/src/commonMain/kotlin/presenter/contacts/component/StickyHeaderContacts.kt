@@ -1,4 +1,4 @@
-package presenter.chat.component
+package presenter.contacts.component
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -26,23 +26,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import chitchatmultiplatform.composeapp.generated.resources.Res
 import chitchatmultiplatform.composeapp.generated.resources.all
+import chitchatmultiplatform.composeapp.generated.resources.bots
 import chitchatmultiplatform.composeapp.generated.resources.favorites
-import chitchatmultiplatform.composeapp.generated.resources.unread
 import com.arkivanov.decompose.router.stack.ChildStack
-import navigation.chat.TabChild
-import navigation.chat.TabItem
+import navigation.contacts.TabContactsChild
+import navigation.contacts.TabContactsItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun StickyTabRow(
-    navigation: ChildStack<TabItem, TabChild>,
-    onTabSelected: (TabItem) -> Unit
+fun StickyHeaderContacts(
+    navigation: ChildStack<TabContactsItem, TabContactsChild>,
+    onTabSelected: (TabContactsItem) -> Unit
 ) {
     // List of tab titles from string resources
     val tabs = listOf(
         stringResource(Res.string.all),
-        stringResource(Res.string.unread),
-        stringResource(Res.string.favorites)
+        stringResource(Res.string.favorites),
+        stringResource(Res.string.bots)
     )
 
     val selectedTabIndex = getTabIndex(navigation.active.configuration)
@@ -114,18 +114,18 @@ fun StickyTabRow(
     }
 }
 
-private fun getTabIndex(item: TabItem): Int {
+private fun getTabIndex(item: TabContactsItem): Int {
     return when (item) {
-        TabItem.All -> 0
-        TabItem.Unread -> 1
+        TabContactsItem.All -> 0
+        TabContactsItem.Favorites -> 1
         else -> 2
     }
 }
 
-private fun getTabItem(index: Int): TabItem {
+private fun getTabItem(index: Int): TabContactsItem {
     return when (index) {
-        0 -> TabItem.All
-        1 -> TabItem.Unread
-        else -> TabItem.Favorites
+        0 -> TabContactsItem.All
+        1 -> TabContactsItem.Favorites
+        else -> TabContactsItem.Bots
     }
 }

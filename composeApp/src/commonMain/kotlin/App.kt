@@ -1,3 +1,5 @@
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,7 +56,7 @@ fun App(root: RootComponent) {
             Children(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 stack = childStack,
-                animation = stackAnimation(slide())
+                animation = stackAnimation(slide(animationSpec = tween(easing = LinearEasing)))
             ) { child ->
                 when (val instance = child.instance) {
                     is NavigationChild.AuthScreen -> {

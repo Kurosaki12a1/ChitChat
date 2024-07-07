@@ -2,7 +2,7 @@ package navigation.chat.tabs
 
 import com.arkivanov.decompose.ComponentContext
 
-class TabFavoritesComponent(
+class ChatFavoritesComponent(
     componentContext: ComponentContext,
 ) : ComponentContext by componentContext {
 

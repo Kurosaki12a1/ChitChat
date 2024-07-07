@@ -1,7 +1,7 @@
-package navigation.chat.tabs
+package navigation.contacts.tab
 
 import com.arkivanov.decompose.ComponentContext
 
-class TabAllComponent(
+class ContactsAllComponent(
     componentContext: ComponentContext,
 ) : ComponentContext by componentContext

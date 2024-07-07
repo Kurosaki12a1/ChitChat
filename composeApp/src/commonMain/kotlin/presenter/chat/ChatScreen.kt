@@ -18,12 +18,12 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slid
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import navigation.chat.ChatComponent
-import navigation.chat.TabChild
+import navigation.chat.TabChatChild
 import presenter.chat.component.ChatBar
-import presenter.chat.component.StickyTabRow
-import presenter.chat.tabs.TabAllScreen
-import presenter.chat.tabs.TabFavoritesScreen
-import presenter.chat.tabs.TabUnreadScreen
+import presenter.chat.component.StickyHeaderChat
+import presenter.chat.tabs.TabChatAllScreen
+import presenter.chat.tabs.TabChatFavoritesScreen
+import presenter.chat.tabs.TabChatUnreadScreen
 
 @Composable
 fun ChatScreen(
@@ -48,7 +48,7 @@ fun ChatScreen(
                 )
             }
             stickyHeader {
-                StickyTabRow(
+                StickyHeaderChat(
                     navigation = childStack,
                     onTabSelected = { item -> component.onTabSelect(item) }
                 )
@@ -60,18 +60,18 @@ fun ChatScreen(
                     animation = stackAnimation(slide() + fade())
                 ) { child ->
                     when (val instance = child.instance) {
-                        is TabChild.AllScreen -> {
-                            TabAllScreen(component = instance.component) {
+                        is TabChatChild.AllScreen -> {
+                            TabChatAllScreen(component = instance.component) {
 
                             }
                         }
 
-                        is TabChild.UnreadScreen -> {
-                            TabUnreadScreen(component = instance.component)
+                        is TabChatChild.UnreadScreen -> {
+                            TabChatUnreadScreen(component = instance.component)
                         }
 
-                        is TabChild.FavoritesScreen -> {
-                            TabFavoritesScreen(component = instance.component)
+                        is TabChatChild.FavoritesScreen -> {
+                            TabChatFavoritesScreen(component = instance.component)
                         }
                     }
                 }

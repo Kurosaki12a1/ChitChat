@@ -8,9 +8,9 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pushNew
 import kotlinx.serialization.Serializable
-import navigation.chat.tabs.TabAllComponent
-import navigation.chat.tabs.TabFavoritesComponent
-import navigation.chat.tabs.TabUnreadComponent
+import navigation.chat.tabs.ChatAllComponent
+import navigation.chat.tabs.ChatFavoritesComponent
+import navigation.chat.tabs.ChatUnreadComponent
 
 class ChatComponent(
     componentContext: ComponentContext,
@@ -18,18 +18,18 @@ class ChatComponent(
 ) : ComponentContext by componentContext {
 
     // StackNavigation for managing navigation items
-    private val navigation = StackNavigation<TabItem>()
+    private val navigation = StackNavigation<TabChatItem>()
 
     // Child stack for managing the current stack of child components
     val childStack = childStack(
         source = navigation,
-        serializer = TabItem.serializer(),
-        initialConfiguration = TabItem.All,
+        serializer = TabChatItem.serializer(),
+        initialConfiguration = TabChatItem.All,
         handleBackButton = true,
         childFactory = ::createChild
     )
 
-    fun onTabSelect(item: TabItem) {
+    fun onTabSelect(item: TabChatItem) {
         if (childStack.value.active.configuration == item) return
         if (shouldPopBackStack(item)) {
             navigation.bringToFront(item)
@@ -39,37 +39,37 @@ class ChatComponent(
     }
 
     private fun createChild(
-        tabItem: TabItem,
+        tabChatItem: TabChatItem,
         context: ComponentContext
-    ): TabChild {
-        return when (tabItem) {
-            is TabItem.All -> {
-                TabChild.AllScreen(
-                    component = TabAllComponent(context)
+    ): TabChatChild {
+        return when (tabChatItem) {
+            is TabChatItem.All -> {
+                TabChatChild.AllScreen(
+                    component = ChatAllComponent(context)
                 )
             }
 
-            is TabItem.Unread -> {
-                TabChild.UnreadScreen(
-                    component = TabUnreadComponent(context)
+            is TabChatItem.Unread -> {
+                TabChatChild.UnreadScreen(
+                    component = ChatUnreadComponent(context)
                 )
             }
 
-            is TabItem.Favorites -> {
-                TabChild.FavoritesScreen(
-                    component = TabFavoritesComponent(context)
+            is TabChatItem.Favorites -> {
+                TabChatChild.FavoritesScreen(
+                    component = ChatFavoritesComponent(context)
                 )
             }
         }
     }
 
     // Check if the tab item should pop back stack
-    private fun shouldPopBackStack(tabItem: TabItem): Boolean {
-        return isPresentedInBackStack(tabItem) && childStack.active.configuration != tabItem
+    private fun shouldPopBackStack(tabChatItem: TabChatItem): Boolean {
+        return isPresentedInBackStack(tabChatItem) && childStack.active.configuration != tabChatItem
     }
 
     // Check if the tab item is already presented in the back stack
-    private fun isPresentedInBackStack(item: TabItem): Boolean {
+    private fun isPresentedInBackStack(item: TabChatItem): Boolean {
         childStack.backStack.forEach {
             if (it.configuration == item) return true
         }
@@ -78,20 +78,20 @@ class ChatComponent(
 }
 
 @Serializable
-sealed class TabItem {
+sealed class TabChatItem {
     @Serializable
-    data object All : TabItem()
+    data object All : TabChatItem()
 
     @Serializable
-    data object Unread : TabItem()
+    data object Unread : TabChatItem()
 
     @Serializable
-    data object Favorites : TabItem()
+    data object Favorites : TabChatItem()
 }
 
 @Serializable
-sealed class TabChild {
-    data class AllScreen(val component: TabAllComponent) : TabChild()
-    data class UnreadScreen(val component: TabUnreadComponent) : TabChild()
-    data class FavoritesScreen(val component: TabFavoritesComponent) : TabChild()
+sealed class TabChatChild {
+    data class AllScreen(val component: ChatAllComponent) : TabChatChild()
+    data class UnreadScreen(val component: ChatUnreadComponent) : TabChatChild()
+    data class FavoritesScreen(val component: ChatFavoritesComponent) : TabChatChild()
 }
