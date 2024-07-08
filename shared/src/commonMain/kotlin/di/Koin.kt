@@ -3,13 +3,23 @@ package di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import data.local.cookie.CookieStorageManager
-import data.repository.ApiRepositoryImpl
-import data.repository.AuthRepositoryImpl
+import data.data_source.local.AppDatabase
+import data.data_source.local.cookie.CookieStorageManager
+import data.data_source.local.dao.ChatRoomDao
+import data.data_source.local.dao.MessageDao
+import data.data_source.local.dao.UserDao
 import data.repository.DataStoreOperationsImpl
-import domain.repository.ApiRepository
-import domain.repository.AuthRepository
+import data.repository.local.ChatRoomRepositoryImpl
+import data.repository.local.MessageRepositoryImpl
+import data.repository.local.UserRepositoryImpl
+import data.repository.remote.ApiRepositoryImpl
+import data.repository.remote.AuthRepositoryImpl
 import domain.repository.DataStoreOperations
+import domain.repository.local.ChatRoomRepository
+import domain.repository.local.MessageRepository
+import domain.repository.local.UserRepository
+import domain.repository.remote.ApiRepository
+import domain.repository.remote.AuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -53,6 +63,14 @@ fun commonModule() = module {
     single<ApiRepository> { ApiRepositoryImpl(get()) }
     single<DataStoreOperations> { DataStoreOperationsImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
+
+    single<UserDao> { createUserDao(get()) }
+    single<ChatRoomDao> { createChatRoomDao(get()) }
+    single<MessageDao> { createMessageDao(get()) }
+
+    single<UserRepository> { UserRepositoryImpl(get()) }
+    single<ChatRoomRepository> { ChatRoomRepositoryImpl(get()) }
+    single<MessageRepository> { MessageRepositoryImpl(get()) }
 }
 
 fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrint = true }
@@ -97,3 +115,7 @@ fun createDataStore(
     migrations = emptyList(),
     produceFile = { producePath().toPath() },
 )
+
+fun createChatRoomDao(appDatabase: AppDatabase): ChatRoomDao = appDatabase.chatRoomDao()
+fun createMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.messageDao()
+fun createUserDao(appDatabase: AppDatabase): UserDao = appDatabase.userDao()

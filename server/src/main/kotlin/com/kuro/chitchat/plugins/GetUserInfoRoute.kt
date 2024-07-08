@@ -1,6 +1,7 @@
 package com.kuro.chitchat.plugins
 
-import com.kuro.chitchat.domain.model.ApiResponse
+import com.kuro.chitchat.data.model.dto.ApiResponse
+import com.kuro.chitchat.data.model.toDTO
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.repository.UserDataSource
@@ -31,7 +32,7 @@ fun Route.getUserInfoRoute(
                     call.respond(
                         message = ApiResponse(
                             success = true,
-                            user = userDataSource.getUserInfo(userId = userSession.id)
+                            userDto = userDataSource.getUserInfo(userId = userSession.id)?.toDTO()
                         ),
                         status = HttpStatusCode.OK
                     )

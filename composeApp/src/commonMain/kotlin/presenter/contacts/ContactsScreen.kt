@@ -25,6 +25,7 @@ import presenter.contacts.tabs.TabContactsAllScreen
 import presenter.contacts.tabs.TabContactsBotsScreen
 import presenter.contacts.tabs.TabContactsFavoritesScreen
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContactsScreen(
     component: ContactsComponent

@@ -1,6 +1,6 @@
 package com.kuro.chitchat.routes
 
-import com.kuro.chitchat.domain.model.ApiResponse
+import com.kuro.chitchat.data.model.dto.ApiResponse
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.repository.UserDataSource

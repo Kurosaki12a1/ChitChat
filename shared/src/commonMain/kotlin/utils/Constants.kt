@@ -23,8 +23,11 @@ const val DELETE_USER = "/delete_user"
 const val SIGN_OUT = "/sign_out"
 const val UNAUTHORIZED = "/unauthorized"
 const val AUTHORIZED = "/authorized"
+const val SEARCH_USER = "/search_user"
 const val USER_SESSION = "user_session"
 
 const val AUTH_SESSION = "auth-session"
 
 const val DOMAIN = "Chit-Chat-Domain"
+
+const val PARAMETER_SEARCH = "name"

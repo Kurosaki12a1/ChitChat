@@ -3,6 +3,7 @@ package com.kuro.chitchat.domain.model
 import utils.AUTHORIZED
 import utils.DELETE_USER
 import utils.GET_USER
+import utils.SEARCH_USER
 import utils.SIGN_OUT
 import utils.TOKEN_VERIFICATION
 import utils.UNAUTHORIZED
@@ -14,6 +15,7 @@ sealed class Endpoint(val path: String) {
     data object GetUserInfo: Endpoint(path = GET_USER)
     data object UpdateUserInfo: Endpoint(path = UPDATE_USER)
     data object DeleteUser: Endpoint(path = DELETE_USER)
+    data object SearchUser : Endpoint(path = SEARCH_USER)
     data object SignOut: Endpoint(path = SIGN_OUT)
     data object Unauthorized: Endpoint(path = UNAUTHORIZED)
     data object Authorized: Endpoint(path = AUTHORIZED)

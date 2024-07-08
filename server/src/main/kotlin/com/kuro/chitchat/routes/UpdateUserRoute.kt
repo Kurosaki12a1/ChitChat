@@ -4,7 +4,7 @@ import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.model.UserUpdate
 import com.kuro.chitchat.domain.repository.UserDataSource
-import domain.model.ApiResponse
+import data.model.dto.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall

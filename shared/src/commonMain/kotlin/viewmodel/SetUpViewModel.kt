@@ -1,3 +1,4 @@
+/*
 package viewmodel
 
 import androidx.compose.runtime.MutableState
@@ -6,11 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import domain.model.ApiRequest
-import domain.model.ApiResponse
+import data.dto.ApiResponse
 import domain.model.MessageBarState
 import domain.model.User
 import domain.model.UserUpdate
-import domain.repository.AuthRepository
+import domain.repository.remote.AuthRepository
 import domain.repository.DataStoreOperations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -221,4 +222,4 @@ class EmptyFieldException(
 
 class NothingToUpdateException(
     override val message: String = "Nothing to Update."
-) : Exception()
+) : Exception()*/

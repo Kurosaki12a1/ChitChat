@@ -4,6 +4,7 @@ import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.routes.authorizedRoute
 import com.kuro.chitchat.routes.deleteUserRoute
 import com.kuro.chitchat.routes.rootRoute
+import com.kuro.chitchat.routes.searchRoute
 import com.kuro.chitchat.routes.signOutRoute
 import com.kuro.chitchat.routes.tokenVerificationRoute
 import com.kuro.chitchat.routes.unauthorizedRoute
@@ -20,6 +21,7 @@ fun Application.configureRouting() {
         getUserInfoRoute(application, userDataSource)
         updateUserRoute(application, userDataSource)
         deleteUserRoute(application, userDataSource)
+        searchRoute(application, userDataSource)
         signOutRoute()
         authorizedRoute()
         unauthorizedRoute()

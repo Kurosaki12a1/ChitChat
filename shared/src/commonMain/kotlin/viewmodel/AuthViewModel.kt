@@ -5,11 +5,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import data.model.dto.ApiResponse
+import data.model.dto.UserDto
+import data.model.toModel
 import domain.model.ApiRequest
-import domain.model.ApiResponse
 import domain.model.MessageBarState
-import domain.repository.AuthRepository
 import domain.repository.DataStoreOperations
+import domain.repository.local.UserRepository
+import domain.repository.remote.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -27,7 +30,8 @@ import utils.RequestState
  */
 open class AuthViewModel(
     private val repository: AuthRepository,
-    private val dataStoreOperations: DataStoreOperations
+    private val dataStoreOperations: DataStoreOperations,
+    private val userRepository: UserRepository
 ) : ViewModel(), KoinComponent {
 
     // State to keep track of whether the user is signed in or not.
@@ -70,6 +74,7 @@ open class AuthViewModel(
                     repository.getUserInfo()
                 }
                 if (response.success) {
+                    saveUserToLocalStorage(response.user)
                     _apiResponse.value = RequestState.Success(response)
                     _messageBarState.value = MessageBarState(
                         message = response.message,
@@ -82,6 +87,17 @@ open class AuthViewModel(
                 _apiResponse.value = RequestState.Error(e)
                 _messageBarState.value = MessageBarState(error = e)
             }
+        }
+    }
+
+    /**
+     * Saves user to local storage
+     *
+     * @param userDto API response userDTO
+     */
+    fun saveUserToLocalStorage(userDto: UserDto?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userDto?.let { userRepository.insertUser(it.toModel()) }
         }
     }
 
@@ -118,6 +134,7 @@ open class AuthViewModel(
             viewModelScope.launch(Dispatchers.IO) {
                 val response = repository.verifyTokenOnBackend(request = request)
                 if (response.success) {
+                    saveUserToLocalStorage(response.user)
                     _apiResponse.value = RequestState.Success(response)
                     _messageBarState.value = MessageBarState(
                         message = response.message,

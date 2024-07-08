@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import domain.model.ApiRequest
-import domain.model.ApiResponse
+import data.model.dto.ApiResponse
 import navigation.auth.AuthComponent
 import org.koin.compose.koinInject
 import presenter.login.component.AuthContent
@@ -27,6 +27,7 @@ fun AuthScreen(
             is RequestState.Success -> {
                 val response = (apiResponse as RequestState.Success<ApiResponse>).data
                 if (response.success) {
+                    viewModel.saveUserToLocalStorage()
                     component.navigateToNextScreen()
                 } else {
                     viewModel.saveSignedInState(signedIn = false)
