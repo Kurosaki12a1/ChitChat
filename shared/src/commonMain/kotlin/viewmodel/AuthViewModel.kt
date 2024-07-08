@@ -52,7 +52,7 @@ open class AuthViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreOperations.readSignedInState().collect { completed ->
                 if (completed) {
-                    getUserInfo { _signedInState.value = completed }
+                    signIn { _signedInState.value = completed }
                 } else {
                     _signedInState.value = completed
                 }
@@ -61,17 +61,17 @@ open class AuthViewModel(
     }
 
     /**
-     * Retrieves user information from the repository.
+     * SignIn Account.
      * If the session is expired, the provided callback is invoked.
      *
      * @param onSessionExpired The callback to be invoked when the session is expired.
      */
-    private fun getUserInfo(onSessionExpired: () -> Unit) {
+    private fun signIn(onSessionExpired: () -> Unit) {
         _apiResponse.value = RequestState.Loading
         viewModelScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
-                    repository.getUserInfo()
+                    repository.signIn()
                 }
                 if (response.success) {
                     saveUserToLocalStorage(response.user)
@@ -95,7 +95,7 @@ open class AuthViewModel(
      *
      * @param userDto API response userDTO
      */
-    fun saveUserToLocalStorage(userDto: UserDto?) {
+    private fun saveUserToLocalStorage(userDto: UserDto?) {
         viewModelScope.launch(Dispatchers.IO) {
             userDto?.let { userRepository.insertUser(it.toModel()) }
         }

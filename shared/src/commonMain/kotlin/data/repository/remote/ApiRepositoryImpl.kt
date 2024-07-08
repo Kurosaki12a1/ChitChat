@@ -18,6 +18,7 @@ import io.ktor.http.contentType
 import io.ktor.http.path
 import utils.DELETE_USER
 import utils.GET_USER
+import utils.SIGN_IN
 import utils.TOKEN_VERIFICATION
 import utils.UPDATE_USER
 
@@ -45,6 +46,17 @@ class ApiRepositoryImpl(
         return try {
             val response = client.get {
                 url { path(GET_USER) }
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            ApiResponse(success = false, error = e)
+        }
+    }
+
+    override suspend fun signIn(): ApiResponse {
+        return try {
+            val response = client.get {
+                url { path(SIGN_IN) }
             }
             response.body<ApiResponse>()
         } catch (e: Exception) {

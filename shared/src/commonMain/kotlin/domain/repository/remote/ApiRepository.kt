@@ -9,6 +9,8 @@ interface ApiRepository {
 
     suspend fun getUserInfo(): ApiResponse
 
+    suspend fun signIn() : ApiResponse
+
     suspend fun updateUser(request: UserUpdate): ApiResponse
 
     suspend fun deleteUser(): ApiResponse

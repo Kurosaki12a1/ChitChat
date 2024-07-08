@@ -27,7 +27,6 @@ fun AuthScreen(
             is RequestState.Success -> {
                 val response = (apiResponse as RequestState.Success<ApiResponse>).data
                 if (response.success) {
-                    viewModel.saveUserToLocalStorage()
                     component.navigateToNextScreen()
                 } else {
                     viewModel.saveSignedInState(signedIn = false)

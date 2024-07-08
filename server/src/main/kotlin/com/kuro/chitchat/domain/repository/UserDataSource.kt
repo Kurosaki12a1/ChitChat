@@ -12,4 +12,6 @@ interface UserDataSource {
         firstName: String,
         lastName: String
     ): Boolean
+
+    suspend fun updateUserLastActive(userId: String): User?
 }

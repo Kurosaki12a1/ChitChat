@@ -4,6 +4,7 @@ import utils.AUTHORIZED
 import utils.DELETE_USER
 import utils.GET_USER
 import utils.SEARCH_USER
+import utils.SIGN_IN
 import utils.SIGN_OUT
 import utils.TOKEN_VERIFICATION
 import utils.UNAUTHORIZED
@@ -11,6 +12,7 @@ import utils.UPDATE_USER
 
 sealed class Endpoint(val path: String) {
     data object Root: Endpoint(path = "/")
+    data object SignIn : Endpoint(path = SIGN_IN)
     data object TokenVerification: Endpoint(path = TOKEN_VERIFICATION)
     data object GetUserInfo: Endpoint(path = GET_USER)
     data object UpdateUserInfo: Endpoint(path = UPDATE_USER)

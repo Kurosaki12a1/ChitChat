@@ -1,7 +1,7 @@
 package data.repository.remote
 
-import domain.model.ApiRequest
 import data.model.dto.ApiResponse
+import domain.model.ApiRequest
 import domain.model.UserUpdate
 import domain.repository.remote.ApiRepository
 import domain.repository.remote.AuthRepository
@@ -12,6 +12,10 @@ class AuthRepositoryImpl(
 ) : AuthRepository, KoinComponent {
     override suspend fun verifyTokenOnBackend(request: ApiRequest): ApiResponse {
         return repository.verifyTokenOnBackend(request)
+    }
+
+    override suspend fun signIn(): ApiResponse {
+        return repository.signIn()
     }
 
     override suspend fun getUserInfo(): ApiResponse {

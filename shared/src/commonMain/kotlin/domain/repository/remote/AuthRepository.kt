@@ -7,6 +7,8 @@ import domain.model.UserUpdate
 interface AuthRepository {
     suspend fun verifyTokenOnBackend(request: ApiRequest): ApiResponse
 
+    suspend fun signIn() : ApiResponse
+
     suspend fun getUserInfo(): ApiResponse
 
     suspend fun updateUser(request: UserUpdate): ApiResponse
