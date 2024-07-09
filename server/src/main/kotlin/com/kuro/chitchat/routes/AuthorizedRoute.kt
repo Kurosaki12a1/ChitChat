@@ -1,7 +1,7 @@
 package com.kuro.chitchat.routes
 
-import com.kuro.chitchat.data.model.dto.ApiResponse
 import com.kuro.chitchat.domain.model.Endpoint
+import data.model.dto.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate

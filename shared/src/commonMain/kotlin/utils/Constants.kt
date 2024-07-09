@@ -9,6 +9,7 @@ const val SOCKET_TIME_OUT = 15000L
 const val HOST = "192.168.100.51"
 
 const val PREFERENCES_SIGNED_IN_KEY = "signed_in_key"
+const val PREFERENCES_SIGNED_IN_ID_KEY = "signed_in_id_key"
 
 const val CLIENT_ID = "351539534874-muhi5qn3rpqkeguc8sf1rnur7goq33a1.apps.googleusercontent.com"
 const val MAX_LENGTH = 20

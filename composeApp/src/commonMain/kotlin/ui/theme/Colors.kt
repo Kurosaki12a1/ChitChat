@@ -46,7 +46,7 @@ val ForegroundAccentSubtle = Color(0x992067FF)
 val HighlightAccentDefault = Color(0x1A000000)
 
 // Emphasis
-val BackgroundColorEmphasis = Color(0xF7F7F7)
+val BackgroundColorEmphasis = Color(0xFFF7F7F7)
 val ForegroundEmphasisDefaultDefault = Color(0xE6000000)
 val ForegroundEmphasisDefaultSubtle = Color(0x99000000)
 val HighlightEmphasisDefaultDefault = Color(0x1A000000)

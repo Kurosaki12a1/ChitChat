@@ -10,7 +10,6 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class User(
-    @BsonId
     @Contextual
     @SerialName("_id")
     val id: ObjectId = ObjectId(),

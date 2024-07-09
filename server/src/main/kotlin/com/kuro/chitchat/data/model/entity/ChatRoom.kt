@@ -9,7 +9,6 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class ChatRoom(
-    @BsonId
     @Contextual
     @SerialName("_id")
     val id: ObjectId = ObjectId(),

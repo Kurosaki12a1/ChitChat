@@ -11,7 +11,6 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class Message(
-    @BsonId
     @Contextual
     @SerialName("_id")
     val id: ObjectId = ObjectId(),

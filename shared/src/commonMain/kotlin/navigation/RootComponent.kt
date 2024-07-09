@@ -9,11 +9,13 @@ import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.backStack
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import navigation.auth.AuthComponent
 import navigation.chat.ChatComponent
 import navigation.contacts.ContactsComponent
 import navigation.more.MoreComponent
+import navigation.settings.SettingsComponent
 
 /**
  * RootComponent class for handling navigation in a Kotlin Multiplatform project
@@ -31,6 +33,7 @@ class RootComponent(
         source = navigation,
         serializer = NavigationItem.serializer(),
         initialConfiguration = NavigationItem.AuthScreen,
+        //   initialConfiguration = NavigationItem.AuthScreen,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -80,7 +83,14 @@ class RootComponent(
             is NavigationItem.MoreScreen -> {
                 NavigationChild.MoreScreen(
                     MoreComponent(
-                        componentContext = context
+                        componentContext = context,
+                        onNavigateTo = { item ->
+                            if (shouldPopBackStack(item)) {
+                                navigation.bringToFront(item)
+                            } else {
+                                navigation.pushNew(item)
+                            }
+                        }
                     )
                 )
             }
@@ -92,6 +102,16 @@ class RootComponent(
                     )
                 )
             }
+
+            is NavigationItem.SettingsScreen -> {
+                NavigationChild.SettingsScreen(
+                    SettingsComponent(
+                        componentContext = context,
+                        onPop = { navigation.pop () }
+                    )
+                )
+            }
+
         }
     }
 

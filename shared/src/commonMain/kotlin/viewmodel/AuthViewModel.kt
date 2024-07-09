@@ -15,6 +15,7 @@ import domain.repository.local.UserRepository
 import domain.repository.remote.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -74,7 +75,11 @@ open class AuthViewModel(
                     repository.signIn()
                 }
                 if (response.success) {
-                    saveUserToLocalStorage(response.user)
+                    println("User: ${response.user}")
+                    val job = async {
+                        saveUserToLocalStorage(response.user)
+                    }
+                    job.await()
                     _apiResponse.value = RequestState.Success(response)
                     _messageBarState.value = MessageBarState(
                         message = response.message,
@@ -91,13 +96,17 @@ open class AuthViewModel(
     }
 
     /**
-     * Saves user to local storage
+     * Saves user to local storage and dataStore
      *
      * @param userDto API response userDTO
      */
     private fun saveUserToLocalStorage(userDto: UserDto?) {
         viewModelScope.launch(Dispatchers.IO) {
-            userDto?.let { userRepository.insertUser(it.toModel()) }
+            userDto?.let {
+                userRepository.insertUser(it.toModel())
+                println("userid: ${it.userId}")
+                dataStoreOperations.saveSignedInId(it.userId!!)
+            }
         }
     }
 
@@ -134,7 +143,10 @@ open class AuthViewModel(
             viewModelScope.launch(Dispatchers.IO) {
                 val response = repository.verifyTokenOnBackend(request = request)
                 if (response.success) {
-                    saveUserToLocalStorage(response.user)
+                    val job = async {
+                        saveUserToLocalStorage(response.user)
+                    }
+                    job.await()
                     _apiResponse.value = RequestState.Success(response)
                     _messageBarState.value = MessageBarState(
                         message = response.message,

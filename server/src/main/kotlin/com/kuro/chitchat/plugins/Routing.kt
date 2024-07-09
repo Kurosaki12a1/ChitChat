@@ -2,12 +2,10 @@ package com.kuro.chitchat.plugins
 
 import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.routes.authorizedRoute
-import com.kuro.chitchat.routes.deleteUserRoute
 import com.kuro.chitchat.routes.rootRoute
 import com.kuro.chitchat.routes.searchRoute
 import com.kuro.chitchat.routes.tokenVerificationRoute
 import com.kuro.chitchat.routes.unauthorizedRoute
-import com.kuro.chitchat.routes.updateUserRoute
 import com.kuro.chitchat.routes.userRoute
 import io.ktor.server.application.Application
 import io.ktor.server.routing.routing
@@ -19,7 +17,6 @@ fun Application.configureRouting() {
         rootRoute()
         tokenVerificationRoute(application, userDataSource)
         userRoute(application, userDataSource)
-        updateUserRoute(application, userDataSource)
         searchRoute(application, userDataSource)
         authorizedRoute()
         unauthorizedRoute()

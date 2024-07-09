@@ -1,26 +1,62 @@
 package com.kuro.chitchat.data.conveter
 
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.bson.BsonDateTime
+import org.bson.BsonString
+import org.bson.BsonType
+import org.bson.codecs.kotlinx.BsonDecoder
+import org.bson.codecs.kotlinx.BsonEncoder
 
-class KotlinLocalDateTimeSerializer : KSerializer<LocalDateTime> {
+object KotlinLocalDateTimeSerializer : KSerializer<LocalDateTime> {
     private val formatter = LocalDateTime.Formats.ISO
 
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("KotlinLocalDateTimeAsBsonDateTime", PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor("KotlinLocalDateTimeSerializer", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): LocalDateTime {
-        return LocalDateTime.parse(decoder.decodeString(), formatter)
+        return when (decoder) {
+            is BsonDecoder -> {
+                val bsonValue = decoder.decodeBsonValue()
+                if (bsonValue.bsonType == BsonType.DATE_TIME) {
+                    val dateTime = (bsonValue as BsonDateTime).value
+                    Instant.fromEpochMilliseconds(dateTime).toLocalDateTime(TimeZone.UTC)
+                } else if (bsonValue.bsonType == BsonType.STRING) {
+                    val value = (bsonValue as BsonString).value
+                    LocalDateTime.parse(value, formatter)
+                } else {
+                    throw SerializationException("Expected DATE_TIME but found ${bsonValue.bsonType}")
+                }
+            }
+
+            else -> {
+                LocalDateTime.parse(decoder.decodeString(), formatter)
+            }
+        }
     }
 
     override fun serialize(encoder: Encoder, value: LocalDateTime) {
-        return encoder.encodeString(value.format(formatter))
-    }
+        when (encoder) {
+            is BsonEncoder -> {
+                val instant = value.toInstant(TimeZone.currentSystemDefault())
+                val bsonDateTime = BsonDateTime(instant.toEpochMilliseconds())
+                encoder.encodeBsonValue(bsonDateTime)
+            }
 
+            else -> {
+                val instant = value.toInstant(TimeZone.currentSystemDefault())
+                encoder.encodeString(instant.toEpochMilliseconds().toString())
+            }
+        }
+    }
 }

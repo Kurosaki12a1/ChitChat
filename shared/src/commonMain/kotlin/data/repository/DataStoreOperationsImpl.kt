@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import domain.repository.DataStoreOperations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
+import utils.PREFERENCES_SIGNED_IN_ID_KEY
 import utils.PREFERENCES_SIGNED_IN_KEY
 
 class DataStoreOperationsImpl(
@@ -21,6 +23,7 @@ class DataStoreOperationsImpl(
 ) : DataStoreOperations, KoinComponent {
     private object PreferencesKey {
         val signedInKey = booleanPreferencesKey(name = PREFERENCES_SIGNED_IN_KEY)
+        val signedInIdKey = stringPreferencesKey(name = PREFERENCES_SIGNED_IN_ID_KEY)
     }
 
     override suspend fun saveSignedInState(signedIn: Boolean) {
@@ -44,13 +47,13 @@ class DataStoreOperationsImpl(
             }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun saveConfirmedState(isConfirmed: Boolean, id: String) {
+    override suspend fun saveSignedInId(id: String) {
         dataStore.edit { preferences ->
-            preferences[booleanPreferencesKey(name = id)] = isConfirmed
+            preferences[PreferencesKey.signedInIdKey] = id
         }
     }
 
-    override fun readConfirmedState(id: String): Flow<Boolean> {
+    override fun getCurrentSignedIn(): Flow<String> {
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
@@ -60,8 +63,7 @@ class DataStoreOperationsImpl(
                 }
             }
             .map { preferences ->
-                preferences[booleanPreferencesKey(name = id)] ?: false
+                preferences[PreferencesKey.signedInIdKey] ?: ""
             }.flowOn(Dispatchers.IO)
     }
-
 }

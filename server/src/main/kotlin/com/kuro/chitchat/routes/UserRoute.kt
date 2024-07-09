@@ -1,11 +1,11 @@
 package com.kuro.chitchat.routes
 
-import com.kuro.chitchat.data.model.dto.ApiResponse
 import com.kuro.chitchat.data.model.toDTO
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.model.UserUpdate
 import com.kuro.chitchat.domain.repository.UserDataSource
+import data.model.dto.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -29,7 +29,6 @@ fun Route.userRoute(
     app: Application,
     userDataSource: UserDataSource
 ) {
-
     authenticate(AUTH_SESSION) {
         /**
          * This endpoint is for  current user with own session only. Not allow for other user not
@@ -47,7 +46,7 @@ fun Route.userRoute(
                     call.respond(
                         message = ApiResponse(
                             success = true,
-                            userDto = userDataSource.updateUserLastActive(userId = userSession.id)
+                            user = userDataSource.updateUserLastActive(userId = userSession.id)
                                 ?.toDTO()
                         ),
                         status = HttpStatusCode.OK
@@ -68,7 +67,7 @@ fun Route.userRoute(
                     call.respond(
                         message = ApiResponse(
                             success = true,
-                            userDto = userDataSource.getUserInfo(userId = userSession.id)
+                            user = userDataSource.getUserInfo(userId = userSession.id)
                                 ?.toDTO()
                         ),
                         status = HttpStatusCode.OK
@@ -164,7 +163,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateUserInfo(
     if (response) {
         app.log.info("USER SUCCESSFULLY UPDATED")
         call.respond(
-            message = data.model.dto.ApiResponse(
+            message = ApiResponse(
                 success = true,
                 message = "Successfully Updated!"
             ),
@@ -173,7 +172,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateUserInfo(
     } else {
         app.log.info("ERROR UPDATING THE USER")
         call.respond(
-            message = data.model.dto.ApiResponse(success = false),
+            message = ApiResponse(success = false),
             status = HttpStatusCode.BadRequest
         )
     }

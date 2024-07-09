@@ -47,4 +47,15 @@
     <string name="view_all">View All</string>
     <string name="chat_room">Chat rooms</string>
     <string name="bots">Bots/Apps</string>
+    <string name="last_sync">Last synced</string>
+    <string name="default_services">Default Services</string>
+
+    <string name="memo">Memo</string>
+    <string name="task">Task</string>
+    <string name="apps">Apps</string>
+    <string name="notice">Notice</string>
+    <string name="support">Support</string>
+
+    <string name="privacy">Privacy Policy</string>
+    <string name="sign_out">Log Out</string>
 </resources>

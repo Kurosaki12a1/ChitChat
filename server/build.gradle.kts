@@ -38,6 +38,8 @@ dependencies {
     // KMongo
     implementation(libs.kmongo.async)
     implementation(libs.kmongo.coroutine.serialization)
+    implementation(libs.bson.kotlinx)
+    implementation(libs.kotlinx.serialization.core)
 
     // Koin core features
     implementation(libs.koin.core)

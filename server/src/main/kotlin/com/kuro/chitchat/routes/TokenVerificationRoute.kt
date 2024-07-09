@@ -8,11 +8,11 @@ import com.google.api.client.json.gson.GsonFactory
 import com.kuro.chitchat.data.model.entity.User
 import com.kuro.chitchat.data.model.toDTO
 import com.kuro.chitchat.domain.model.ApiRequest
-import com.kuro.chitchat.data.model.dto.ApiResponse
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.util.Constants.ISSUER
+import data.model.dto.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -25,10 +25,6 @@ import io.ktor.server.routing.post
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.set
 import io.ktor.util.pipeline.PipelineContext
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import utils.CLIENT_ID
 import utils.now
 import java.util.Collections
@@ -86,7 +82,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
         call.respond(
             ApiResponse(
                 success = true,
-                userDto = user.toDTO(),
+                user = user.toDTO(),
                 message = "User login successfully!"
             )
         )

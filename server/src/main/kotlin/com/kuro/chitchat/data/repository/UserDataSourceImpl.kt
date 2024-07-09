@@ -77,7 +77,7 @@ class UserDataSourceImpl(
                         property = User::lastActive,
                         value = now()
                     )
-                ).upsertedId
+                ).wasAcknowledged()
             }
             id.await()
             users.findOne(filter = User::userId eq userId)

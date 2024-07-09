@@ -1,6 +1,7 @@
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.annotation.ExperimentalCoilApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
@@ -35,6 +38,7 @@ import presenter.chat.ChatScreen
 import presenter.contacts.ContactsScreen
 import presenter.login.AuthScreen
 import presenter.more.MoreScreen
+import presenter.settings.SettingsScreen
 import ui.theme.BackgroundColorEmphasis
 
 @ExperimentalCoilApi
@@ -56,7 +60,16 @@ fun App(root: RootComponent) {
             Children(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 stack = childStack,
-                animation = stackAnimation(slide(animationSpec = tween(easing = LinearEasing)))
+                animation = stackAnimation { _, otherChild, _ ->
+                    if (otherChild.instance is NavigationChild.SettingsScreen) {
+                        slide(
+                            animationSpec = tween(easing = LinearEasing),
+                            orientation = Orientation.Vertical
+                        ) + fade()
+                    } else {
+                        slide(animationSpec = tween(easing = LinearEasing)) + fade()
+                    }
+                }
             ) { child ->
                 when (val instance = child.instance) {
                     is NavigationChild.AuthScreen -> {
@@ -73,6 +86,10 @@ fun App(root: RootComponent) {
 
                     is NavigationChild.MoreScreen -> {
                         MoreScreen(instance.component)
+                    }
+
+                    is NavigationChild.SettingsScreen -> {
+                        SettingsScreen(instance.component)
                     }
                 }
             }

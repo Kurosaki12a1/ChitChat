@@ -1,5 +1,6 @@
 package presenter.more.component
 
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,7 @@ import org.jetbrains.compose.resources.stringResource
 import utils.extension.noRippleClickAble
 
 @Composable
-fun LazyItemScope.MoreBar(
+fun ColumnScope.MoreBar(
     onSettingsClick: () -> Unit
 ) {
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
