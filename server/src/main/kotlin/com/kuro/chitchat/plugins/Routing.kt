@@ -2,6 +2,7 @@ package com.kuro.chitchat.plugins
 
 import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.routes.authorizedRoute
+import com.kuro.chitchat.routes.chatRoute
 import com.kuro.chitchat.routes.rootRoute
 import com.kuro.chitchat.routes.searchRoute
 import com.kuro.chitchat.routes.tokenVerificationRoute
@@ -18,6 +19,7 @@ fun Application.configureRouting() {
         tokenVerificationRoute(application, userDataSource)
         userRoute(application, userDataSource)
         searchRoute(application, userDataSource)
+        chatRoute()
         authorizedRoute()
         unauthorizedRoute()
     }

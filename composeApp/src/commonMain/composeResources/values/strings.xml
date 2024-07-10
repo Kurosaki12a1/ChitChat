@@ -58,4 +58,15 @@
 
     <string name="privacy">Privacy Policy</string>
     <string name="sign_out">Log Out</string>
+
+    <!-- Settings Options -->
+    <string name="notifications">Notifications</string>
+    <string name="chat">Chat</string>
+    <string name="contacts">Contacts</string>
+    <string name="others">Others</string>
+    <string name="display">Display</string>
+    <string name="sync">Sync</string>
+    <string name="password_and_lock">Password and Lock</string>
+    <string name="service_information">Service Information</string>
+    <string name="release_note">Release Note</string>
 </resources>

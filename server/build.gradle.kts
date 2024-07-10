@@ -49,6 +49,11 @@ dependencies {
     // Google Client API Library
     implementation(libs.google.api.client)
 
+    // Websocket
+    implementation(libs.ktor.server.websockets)
+    implementation(libs.ktor.server.status.pages)
+
+
     testImplementation(libs.ktor.server.tests)
     testImplementation(libs.kotlin.test.junit)
 }

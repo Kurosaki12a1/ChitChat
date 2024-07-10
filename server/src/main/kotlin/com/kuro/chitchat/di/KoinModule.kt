@@ -1,7 +1,10 @@
 package com.kuro.chitchat.di
 
+import com.kuro.chitchat.data.repository.ChatRepositoryImpl
 import com.kuro.chitchat.data.repository.UserDataSourceImpl
+import com.kuro.chitchat.domain.repository.ChatRepository
 import com.kuro.chitchat.domain.repository.UserDataSource
+import com.kuro.chitchat.domain.usecase.WebSocketUseCase
 import com.kuro.chitchat.util.Constants.DATABASE_NAME
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
@@ -13,5 +16,7 @@ val koinModule = module {
             .coroutine
             .getDatabase(DATABASE_NAME)
     }
+    single<ChatRepository> { ChatRepositoryImpl(get()) }
     single<UserDataSource> { UserDataSourceImpl(get()) }
+    single { WebSocketUseCase(get()) }
 }

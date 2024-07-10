@@ -20,14 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import chitchatmultiplatform.composeapp.generated.resources.Res
 import chitchatmultiplatform.composeapp.generated.resources.settings_route
+import navigation.settings.SettingsOptions
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import ui.theme.BackgroundColorEmphasis
 import utils.extension.noRippleClickAble
 
 @Composable
 fun SettingsBar(
+    options: SettingsOptions,
     onBackClick: () -> Unit
 ) {
+    val name = listSettingsOptions.find { it.option == options }?.name
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -42,7 +46,7 @@ fun SettingsBar(
                 contentDescription = "Back"
             )
             Text(
-                text = stringResource(Res.string.settings_route),
+                text = stringResource(name!!),
                 style = MaterialTheme.typography.h6
             )
         }

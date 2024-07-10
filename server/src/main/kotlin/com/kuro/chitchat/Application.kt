@@ -6,11 +6,13 @@ import com.kuro.chitchat.plugins.configureMonitoring
 import com.kuro.chitchat.plugins.configureRouting
 import com.kuro.chitchat.plugins.configureSerialization
 import com.kuro.chitchat.plugins.configureSession
-import utils.SERVER_PORT
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import com.kuro.chitchat.plugins.configureSockets
+import com.kuro.chitchat.plugins.configureStatusPage
+import io.ktor.server.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import utils.HOST
+import utils.SERVER_PORT
 
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = HOST, module = Application::module)
@@ -18,10 +20,12 @@ fun main() {
 }
 
 fun Application.module() {
-    configureSerialization()
     configureKoin()
     configureAuth()
     configureRouting()
     configureMonitoring()
     configureSession()
+    configureSockets()
+    configureStatusPage()
+    configureSerialization()
 }
