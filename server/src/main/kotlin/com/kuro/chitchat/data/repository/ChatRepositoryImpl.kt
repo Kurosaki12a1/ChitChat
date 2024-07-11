@@ -4,14 +4,88 @@ import com.kuro.chitchat.data.model.entity.ChatRoom
 import com.kuro.chitchat.data.model.entity.Message
 import com.kuro.chitchat.domain.model.Member
 import com.kuro.chitchat.domain.repository.ChatRepository
-import domain.model.RoomType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.bson.types.ObjectId
+import io.ktor.websocket.Frame
+import io.ktor.websocket.WebSocketSession
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
-import org.litote.kmongo.setValue
+import utils.now
 
+class ChatRepositoryImpl(database: CoroutineDatabase) : ChatRepository {
+    private val chatRooms = database.getCollection<ChatRoom>()
+    private val messages = database.getCollection<Message>()
+    private val members = mutableMapOf<String, Member>()
+
+    override suspend fun createChatRoom(room: ChatRoom): ChatRoom {
+        chatRooms.insertOne(room)
+        return room
+    }
+
+    override suspend fun findChatRoomById(roomId: String): ChatRoom? {
+        return chatRooms.findOne(ChatRoom::id eq roomId)
+    }
+
+    override suspend fun getMessageForRoom(roomId: String): List<Message> {
+        return messages.find(Message::chatRoomId eq roomId).toList()
+    }
+
+    override suspend fun sendMessage(message: Message) {
+        messages.insertOne(message)
+        val room = chatRooms.findOne(ChatRoom::id eq message.chatRoomId)
+        if (room != null) {
+            val updatedRoom = room.copy(lastMessage = message, updatedTime = now())
+            chatRooms.updateOneById(updatedRoom.id, updatedRoom)
+        }
+    }
+
+    override suspend fun addWebSocketSession(userId: String, webSocketSession: WebSocketSession) {
+        val member = Member(sender = userId, webSocket = webSocketSession)
+        members[userId] = member
+    }
+
+    override suspend fun removeWebSocketSession(userId: String) {
+        members.remove(userId)
+    }
+
+    override suspend fun getWebSocketSession(userId: String): WebSocketSession? {
+        return members[userId]?.webSocket
+    }
+
+    override suspend fun broadcastMessageToRoom(roomId: String, message: Message) {
+        val participants = chatRooms.findOne(ChatRoom::id eq roomId)?.participants ?: return
+        for (participant in participants) {
+            members[participant]?.webSocket?.send(Frame.Text(message.content))
+        }
+    }
+
+    override suspend fun addRoomToMember(userId: String, roomId: String) {
+        members[userId]?.chatRooms?.add(roomId)
+    }
+
+    override suspend fun addRoomToMembers(roomId: String, memberIds: List<String>) {
+        memberIds.forEach { userId ->
+            members[userId]?.chatRooms?.add(roomId)
+        }
+    }
+
+    override suspend fun removeRoomFromMember(userId: String, roomId: String) {
+        members[userId]?.chatRooms?.remove(roomId)
+    }
+
+    override suspend fun addParticipantToRoom(roomId: String, userId: String): ChatRoom? {
+        val room = chatRooms.findOne(ChatRoom::id eq roomId)
+        return if (room != null) {
+            val updatedRoom = room.copy(participants = room.participants + userId)
+            chatRooms.updateOneById(updatedRoom.id, updatedRoom)
+            addRoomToMember(userId, roomId)
+            updatedRoom
+        } else {
+            null
+        }
+    }
+}
+
+
+/*
 class ChatRepositoryImpl(
     database: CoroutineDatabase
 ) : ChatRepository {
@@ -19,25 +93,14 @@ class ChatRepositoryImpl(
     private val messageCollection = database.getCollection<Message>()
     private val memberSessions = mutableListOf<Member>()
 
-    override suspend fun createChatRoom(
-        roomName: String,
-        roomType: RoomType,
-        participants: List<String>
-    ): ChatRoom {
-        val chatRoom = ChatRoom(
-            roomName = roomName,
-            participants = participants,
-            roomType = roomType
-        )
+    override suspend fun createChatRoom(room: ChatRoom): ChatRoom {
         return withContext(Dispatchers.IO) {
-            if (chatRoomCollection.findOne(ChatRoom::roomName eq roomName) != null) {
-                println("Cannot create chat room same name")
-                chatRoomCollection.insertOne(document = chatRoom.copy(roomName = chatRoom.roomName + "-copy"))
-                chatRoom.copy(roomName = chatRoom.roomName + "-copy")
-            } else {
-                chatRoomCollection.insertOne(document = chatRoom)
-                chatRoom
+            chatRoomCollection.insertOne(document = room).wasAcknowledged()
+            room.participants.forEach { id ->
+                val member = memberSessions.find { it.sender == id }
+                member?.chatRooms?.add(room.id.toHexString())
             }
+            room
         }
     }
 
@@ -51,7 +114,26 @@ class ChatRepositoryImpl(
 
     override suspend fun sendMessage(message: Message) {
         messageCollection.insertOne(message)
+
+        memberSessions.filter { message.chatRoomId in it.chatRooms }.forEach { member ->
+            // Encoding message into json string.
+            val broadcastMessage = Json.encodeToString(message)
+            // Sending message to other socket subscribers.
+            member.webSocket.send(Frame.Text(broadcastMessage))
+        }
     }
+
+    override suspend fun getMessageForRoom(roomId: String): Flow<List<Message>> = flow {
+        try {
+            val result =
+                messageCollection.find().descendingSort(Message::timeStamp).toList()
+                    .filter { it.chatRoomId == roomId }
+            emit(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(emptyList())
+        }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun updateLastMessage(roomId: String, message: Message) {
         chatRoomCollection.updateOne(
@@ -60,15 +142,29 @@ class ChatRepositoryImpl(
         )
     }
 
+    override suspend fun updateMemberRoom(senderId: String, roomId: String): ChatRoom? {
+        val room = chatRoomCollection.findOne(ChatRoom::id eq ObjectId(roomId))
+        if (room != null) {
+            val updatedParticipants = mutableListOf<String>()
+            updatedParticipants.addAll(room.participants)
+            updatedParticipants.add(senderId)
+            // Update DB
+            chatRoomCollection.updateOne(
+                filter = ChatRoom::id eq ObjectId(roomId),
+                update = setValue(ChatRoom::participants, updatedParticipants)
+            )
+
+            // Update Session
+            val member = memberSessions.find { it.sender == senderId }
+            member?.chatRooms?.add(roomId)
+        }
+        return room
+    }
+
     override fun connectToSocket(member: Member) {
         if (!memberSessions.contains(member)) {
             memberSessions.add(member)
         }
-    }
-
-    override fun updateMemberRoom(senderId: String, roomId: String) {
-        val member = memberSessions.find { it.sender == senderId }
-        member?.chatRooms?.add(roomId)
     }
 
     override fun disconnectFromSocket(senderId: String, roomId: String) {
@@ -87,4 +183,4 @@ class ChatRepositoryImpl(
         return memberSessions.find { it.sender == userId }?.chatRooms?.toList() ?: emptyList()
     }
 
-}
+}*/

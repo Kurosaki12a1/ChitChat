@@ -19,4 +19,7 @@ val koinModule = module {
     single<ChatRepository> { ChatRepositoryImpl(get()) }
     single<UserDataSource> { UserDataSourceImpl(get()) }
     single { WebSocketUseCase(get()) }
+    single { CheckAndGetChatRoomUseCase(get()) }
+    single { CreateChatRoomUseCase(get()) }
+    single { GetChatHistoryUseCase(get()) }
 }
