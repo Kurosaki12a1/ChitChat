@@ -10,5 +10,7 @@ data class MessageDto(
     val content: String? = null,
     val timeStamp: LocalDateTime? = null,
     val chatRoomId: String? = null,
-    val isRead: Boolean? = false
+    val isRead: Boolean? = false,
+    val edited: Boolean? = false,
+    val reactions: Map<String, Int>? = emptyMap()
 )

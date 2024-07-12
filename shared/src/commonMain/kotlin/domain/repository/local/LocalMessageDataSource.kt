@@ -3,7 +3,7 @@ package domain.repository.local
 import domain.model.MessageModel
 import kotlinx.coroutines.flow.Flow
 
-interface MessageRepository {
+interface LocalMessageDataSource {
     suspend fun sendMessage(message: MessageModel)
 
     suspend fun updateMessage(message: MessageModel)

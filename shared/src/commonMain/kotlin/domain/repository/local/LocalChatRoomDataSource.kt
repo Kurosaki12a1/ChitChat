@@ -3,7 +3,7 @@ package domain.repository.local
 import domain.model.ChatRoomModel
 import kotlinx.coroutines.flow.Flow
 
-interface ChatRoomRepository {
+interface LocalChatRoomDataSource {
     suspend fun createChatRoom(chatRoom: ChatRoomModel)
 
     suspend fun updateChatRoom(chatRoom: ChatRoomModel)

@@ -14,5 +14,7 @@ data class MessageEntity(
     val content: String,
     val timeStamp: LocalDateTime,
     val chatRoomId: String,
-    val isRead: Boolean
+    val isRead: Boolean,
+    val edited: Boolean,
+    val reactions: Map<String, Int>
 )

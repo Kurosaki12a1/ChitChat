@@ -9,17 +9,22 @@ import data.data_source.local.dao.ChatRoomDao
 import data.data_source.local.dao.MessageDao
 import data.data_source.local.dao.UserDao
 import data.repository.DataStoreOperationsImpl
-import data.repository.local.ChatRoomRepositoryImpl
-import data.repository.local.MessageRepositoryImpl
-import data.repository.local.UserRepositoryImpl
-import data.repository.remote.ApiRepositoryImpl
+import data.repository.local.LocalChatRoomDataSourceImpl
+import data.repository.local.LocalMessageDataSourceImpl
+import data.repository.local.LocalUserDataSourceImpl
 import data.repository.remote.AuthRepositoryImpl
+import data.repository.remote.ChatRoomRemoteRepositoryImpl
+import data.repository.remote.SessionChatRepositoryImpl
+import data.repository.remote.SocketRepositoryImpl
 import domain.repository.DataStoreOperations
-import domain.repository.local.ChatRoomRepository
-import domain.repository.local.MessageRepository
-import domain.repository.local.UserRepository
-import domain.repository.remote.ApiRepository
+import domain.repository.local.LocalChatRoomDataSource
+import domain.repository.local.LocalMessageDataSource
+import domain.repository.local.LocalUserDataSource
 import domain.repository.remote.AuthRepository
+import domain.repository.remote.ChatRoomRemoteRepository
+import domain.repository.remote.SessionChatRepository
+import domain.repository.remote.SocketRepository
+import domain.usecase.chat.SessionChatUseCase
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -60,17 +65,20 @@ fun commonModule() = module {
     single { createJson() }
     single { createHttpClient(get(), get(), get()) }
 
-    single<ApiRepository> { ApiRepositoryImpl(get()) }
     single<DataStoreOperations> { DataStoreOperationsImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<ChatRoomRemoteRepository> { ChatRoomRemoteRepositoryImpl(get()) }
+    single<SocketRepository> { SocketRepositoryImpl(get()) }
+    single<SessionChatRepository> { SessionChatRepositoryImpl(get(), get()) }
+    single { SessionChatUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
 
     single<UserDao> { createUserDao(get()) }
     single<ChatRoomDao> { createChatRoomDao(get()) }
     single<MessageDao> { createMessageDao(get()) }
 
-    single<UserRepository> { UserRepositoryImpl(get()) }
-    single<ChatRoomRepository> { ChatRoomRepositoryImpl(get()) }
-    single<MessageRepository> { MessageRepositoryImpl(get()) }
+    single<LocalUserDataSource> { LocalUserDataSourceImpl(get()) }
+    single<LocalChatRoomDataSource> { LocalChatRoomDataSourceImpl(get()) }
+    single<LocalMessageDataSource> { LocalMessageDataSourceImpl(get()) }
 }
 
 fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrint = true }

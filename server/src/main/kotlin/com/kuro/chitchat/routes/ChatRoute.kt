@@ -1,17 +1,22 @@
 package com.kuro.chitchat.routes
 
-import com.kuro.chitchat.domain.model.PrivateChatRequest
+import com.kuro.chitchat.data.model.toDTO
 import com.kuro.chitchat.domain.usecase.CreateOrGetChatRoomUseCase
 import com.kuro.chitchat.domain.usecase.CreatePublicChatRoomUseCase
+import com.kuro.chitchat.domain.usecase.GetChatHistoryUseCase
+import com.kuro.chitchat.domain.usecase.GetChatRoomUserUseCase
 import com.kuro.chitchat.domain.usecase.JoinPublicChatRoomUseCase
 import com.kuro.chitchat.domain.usecase.WebSocketUseCase
+import data.model.dto.HistoryChatRoomDto
 import domain.model.ChatRoomModel
+import domain.model.PrivateChatRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.CloseReason
@@ -21,6 +26,7 @@ import utils.AUTH_SESSION
 
 fun Route.chatRoute() {
     authenticate(AUTH_SESSION) {
+
         webSocket("/connect") {
             val userId = call.parameters["userId"] ?: return@webSocket close(
                 CloseReason(
@@ -31,6 +37,7 @@ fun Route.chatRoute() {
             val useCase by inject<WebSocketUseCase>(WebSocketUseCase::class.java)
             useCase.handleIncomingMessages(userId, this)
         }
+
         post("/chat/private/start") {
             val request = call.receive<PrivateChatRequest>()
             if (request.sender.userId.isBlank() || request.receiver.userId.isBlank()) {
@@ -40,7 +47,7 @@ fun Route.chatRoute() {
                 )
                 return@post
             }
-            val useCase by inject<CreateOrGetChatRoomUseCase>(WebSocketUseCase::class.java)
+            val useCase by inject<CreateOrGetChatRoomUseCase>(CreateOrGetChatRoomUseCase::class.java)
             val chatRoom = useCase(
                 sender = request.sender,
                 receiver = request.receiver,
@@ -51,6 +58,7 @@ fun Route.chatRoute() {
                 message = chatRoom
             )
         }
+
         post("/chat/public/start") {
             val request = call.receive<ChatRoomModel>()
             val creatorId = call.parameters["creatorId"] ?: return@post call.respond(
@@ -76,8 +84,44 @@ fun Route.chatRoute() {
             )
             val useCase by inject<JoinPublicChatRoomUseCase>(JoinPublicChatRoomUseCase::class.java)
             val roomJoined = useCase(roomId, userId)
-            call.respond(HttpStatusCode.OK, roomJoined)
+            if (roomJoined != null) {
+                call.respond(
+                    status = HttpStatusCode.OK,
+                    message = roomJoined
+                )
+            } else {
+                call.response.status(HttpStatusCode.BadGateway)
+            }
         }
+
+        get("/chat/history") {
+            val roomId = call.parameters["roomId"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Room ID is required"
+            )
+            val useCase by inject<GetChatHistoryUseCase>(GetChatHistoryUseCase::class.java)
+            val messages = useCase(roomId)
+            call.respond(
+                status = HttpStatusCode.OK,
+                message = HistoryChatRoomDto(
+                    roomId = roomId,
+                    messages = messages.map { it.toDTO() })
+            )
+        }
+
+        get("/chat/rooms") {
+            val userId = call.parameters["userId"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "User ID is required"
+            )
+            val useCase by inject<GetChatRoomUserUseCase>(GetChatRoomUserUseCase::class.java)
+            val listRooms = useCase(userId)
+            call.respond(
+                status = HttpStatusCode.OK,
+                message = listRooms
+            )
+        }
+
     }
 
 }

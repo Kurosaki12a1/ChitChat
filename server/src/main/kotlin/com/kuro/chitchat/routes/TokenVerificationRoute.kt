@@ -13,6 +13,7 @@ import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.util.Constants.ISSUER
 import data.model.dto.ApiResponse
+import domain.model.StatusUser
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -25,6 +26,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.set
 import io.ktor.util.pipeline.PipelineContext
+import org.bson.types.ObjectId
 import utils.CLIENT_ID
 import utils.now
 import java.util.Collections
@@ -67,11 +69,13 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     val emailAddress = result.payload["email"].toString()
     val profilePhoto = result.payload["picture"].toString()
     val user = User(
+        id = ObjectId().toHexString(),
         userId = sub,
         name = name,
         emailAddress = emailAddress,
         profilePhoto = profilePhoto,
-        lastActive = now()
+        lastActive = now(),
+        status = StatusUser.ONLINE
     )
 
     val response = userDataSource.saveUserInfo(user = user)

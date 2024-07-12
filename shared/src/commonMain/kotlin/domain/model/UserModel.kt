@@ -9,5 +9,6 @@ data class UserModel(
     val name: String,
     val emailAddress: String,
     val profilePhoto: String,
-    val lastActive: LocalDateTime
+    val lastActive: LocalDateTime,
+    val status : StatusUser
 )

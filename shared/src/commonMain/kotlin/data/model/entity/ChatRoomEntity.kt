@@ -3,6 +3,7 @@ package data.model.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import domain.model.RoomType
+import kotlinx.datetime.LocalDateTime
 
 @Entity(tableName = "ChatRoom")
 data class ChatRoomEntity(
@@ -18,5 +19,8 @@ data class ChatRoomEntity(
     // Last Message
     val lastMessage: MessageEntity?,
     val unReadCount: Int = 0,
-    val roomType: RoomType
+    val roomType: RoomType,
+    val createdTime: LocalDateTime,
+    val updatedTime: LocalDateTime,
+    val createdBy: String
 )

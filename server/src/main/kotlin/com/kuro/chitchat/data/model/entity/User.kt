@@ -1,6 +1,6 @@
 package com.kuro.chitchat.data.model.entity
 
-import com.kuro.chitchat.data.conveter.KotlinLocalDateTimeSerializer
+import com.kuro.chitchat.common.conveter.KotlinLocalDateTimeSerializer
 import domain.model.StatusUser
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Contextual

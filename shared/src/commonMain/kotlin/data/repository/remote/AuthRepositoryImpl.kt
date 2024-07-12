@@ -3,34 +3,101 @@ package data.repository.remote
 import data.model.dto.ApiResponse
 import domain.model.ApiRequest
 import domain.model.UserUpdate
-import domain.repository.remote.ApiRepository
 import domain.repository.remote.AuthRepository
-import org.koin.core.component.KoinComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.path
+import utils.DELETE_USER
+import utils.GET_USER
+import utils.SIGN_IN
+import utils.TOKEN_VERIFICATION
+import utils.UPDATE_USER
 
 class AuthRepositoryImpl(
-    private val repository: ApiRepository
-) : AuthRepository, KoinComponent {
-    override suspend fun verifyTokenOnBackend(request: ApiRequest): ApiResponse {
-        return repository.verifyTokenOnBackend(request)
-    }
+    private val client: HttpClient
+) : AuthRepository {
 
-    override suspend fun signIn(): ApiResponse {
-        return repository.signIn()
+    override suspend fun verifyTokenOnBackend(request: ApiRequest): ApiResponse {
+        return try {
+            val response = client.post {
+                url {
+                    path(TOKEN_VERIFICATION)
+                    contentType(ContentType.Application.Json)
+                    setBody(request)
+                }
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ApiResponse(success = false, error = e)
+        }
     }
 
     override suspend fun getUserInfo(): ApiResponse {
-        return repository.getUserInfo()
+        return try {
+            val response = client.get {
+                url { path(GET_USER) }
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            ApiResponse(success = false, error = e)
+        }
+    }
+
+    override suspend fun signIn(): ApiResponse {
+        return try {
+            val response = client.get {
+                url { path(SIGN_IN) }
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            ApiResponse(success = false, error = e)
+        }
     }
 
     override suspend fun updateUser(request: UserUpdate): ApiResponse {
-        return repository.updateUser(request)
+        return try {
+            val response = client.put {
+                url {
+                    path(UPDATE_USER)
+                    contentType(ContentType.Application.Json)
+                    setBody(request)
+                }
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            ApiResponse(success = false, error = e)
+        }
     }
 
     override suspend fun deleteUser(): ApiResponse {
-        return repository.deleteUser()
+        return try {
+            val response: HttpResponse = client.delete {
+                url(DELETE_USER)
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            ApiResponse(success = false, error = e)
+        }
     }
 
     override suspend fun clearSession(): ApiResponse {
-        return repository.clearSession()
+        return try {
+            val response: HttpResponse = client.get {
+                url("/sign_out")
+            }
+            response.body<ApiResponse>()
+        } catch (e: Exception) {
+            ApiResponse(success = false, error = e)
+        }
     }
 }

@@ -22,11 +22,15 @@ sealed class Endpoint(val path: String) {
     data object UpdateUserInfo : Endpoint(path = UPDATE_USER)
     data object DeleteUser : Endpoint(path = DELETE_USER)
     data object SearchUser : Endpoint(path = SEARCH_USER)
+    data object SignOut : Endpoint(path = SIGN_OUT)
+    data object Unauthorized : Endpoint(path = UNAUTHORIZED)
+    data object Authorized : Endpoint(path = AUTHORIZED)
+}
+
+
+sealed class ChatEndPoint(val path : String) {
     data object Chat : Endpoint(path = CHAT)
     data object ChatRoom : Endpoint(path = CHAT_ROOM)
     data object GetChatHistory : Endpoint(path = GET_CHAT_HISTORY)
     data object JoinRoom: Endpoint(path = JOIN_ROOM)
-    data object SignOut : Endpoint(path = SIGN_OUT)
-    data object Unauthorized : Endpoint(path = UNAUTHORIZED)
-    data object Authorized : Endpoint(path = AUTHORIZED)
 }

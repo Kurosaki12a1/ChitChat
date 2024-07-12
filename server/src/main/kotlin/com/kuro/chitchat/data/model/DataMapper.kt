@@ -6,62 +6,71 @@ import com.kuro.chitchat.data.model.entity.User
 import data.model.dto.ChatRoomDto
 import data.model.dto.MessageDto
 import data.model.dto.UserDto
-import kotlinx.datetime.LocalDateTime
-import org.bson.types.ObjectId
-
-fun String.toObjectId(): ObjectId = ObjectId(this)
+import domain.model.StatusUser
+import utils.now
 
 fun Message.toDTO() = MessageDto(
-    id = this.id.toHexString(),
+    id = this.id,
     senderId = this.senderId,
     content = this.content,
     timeStamp = this.timeStamp,
     chatRoomId = this.chatRoomId,
-    isRead = this.isRead
+    isRead = this.isRead,
+    edited = this.edited,
+    reactions = this.reactions
 )
 
 fun User.toDTO() = UserDto(
-    id = this.id.toHexString(),
+    id = this.id,
     userId = this.userId,
     name = this.name,
     emailAddress = this.emailAddress,
     profilePhoto = this.profilePhoto,
-    lastActive = this.lastActive
+    lastActive = this.lastActive,
+    status = this.status
 )
 
 fun ChatRoom.toDTO() = ChatRoomDto(
-    id = this.id.toHexString(),
+    id = this.id,
     roomName = this.roomName,
     participants = this.participants,
     lastMessage = this.lastMessage?.toDTO(),
-    unReadCount = this.unReadCount
+    unReadCount = this.unReadCount,
+    createdTime = this.createdTime,
+    updatedTime = this.updatedTime,
+    createdBy = this.createdBy,
+    roomType = this.roomType
 )
 
 fun MessageDto.toEntity() = Message(
-    id = this.id.toObjectId(),
+    id = this.id,
     senderId = this.senderId ?: "",
     content = this.content ?: "",
-    timeStamp = this.timeStamp ?: defaultLocalDateTime(),
+    timeStamp = this.timeStamp ?: now(),
     chatRoomId = this.chatRoomId ?: "",
-    isRead = this.isRead ?: false
+    isRead = this.isRead ?: false,
+    edited = this.edited ?: false,
+    reactions = this.reactions ?: emptyMap()
 )
 
 fun UserDto.toEntity() = User(
-    id = this.id.toObjectId(),
+    id = this.id,
     userId = this.userId ?: "",
     name = this.name ?: "",
     emailAddress = this.emailAddress ?: "",
     profilePhoto = this.profilePhoto,
-    lastActive = this.lastActive ?: defaultLocalDateTime()
+    lastActive = this.lastActive ?: now(),
+    status = StatusUser.ONLINE
 )
 
 fun ChatRoomDto.toEntity() = ChatRoom(
-    id = this.id.toObjectId(),
+    id = this.id,
     roomName = this.roomName ?: "",
     participants = this.participants ?: listOf(),
     lastMessage = this.lastMessage?.toEntity(),
     unReadCount = this.unReadCount ?: 0,
-    roomType = this.roomType
+    roomType = this.roomType,
+    createdBy = "",
+    createdTime = this.createdTime ?: now(),
+    updatedTime = this.updatedTime ?: now()
 )
-
-fun defaultLocalDateTime(): LocalDateTime = LocalDateTime(1970, 1, 1, 0, 0, 0)

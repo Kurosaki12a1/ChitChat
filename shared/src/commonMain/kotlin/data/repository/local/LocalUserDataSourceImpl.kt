@@ -4,16 +4,16 @@ import data.data_source.local.dao.UserDao
 import data.model.toEntity
 import data.model.toModel
 import domain.model.UserModel
-import domain.repository.local.UserRepository
+import domain.repository.local.LocalUserDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class UserRepositoryImpl(
+class LocalUserDataSourceImpl(
     private val userDao: UserDao
-) : UserRepository {
+) : LocalUserDataSource {
     override suspend fun insertUser(user: UserModel) {
         withContext(Dispatchers.IO) {
             userDao.insertUser(user.toEntity())

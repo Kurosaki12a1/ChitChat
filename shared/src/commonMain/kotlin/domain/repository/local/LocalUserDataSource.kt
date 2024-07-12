@@ -3,7 +3,7 @@ package domain.repository.local
 import domain.model.UserModel
 import kotlinx.coroutines.flow.Flow
 
-interface UserRepository {
+interface LocalUserDataSource {
     suspend fun insertUser(user: UserModel)
 
     suspend fun updateUser(user: UserModel)

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import domain.model.UserModel
 import domain.repository.DataStoreOperations
-import domain.repository.local.UserRepository
+import domain.repository.local.LocalUserDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.collectLatest
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 open class MoreViewModel(
     private val dataStoreOperations: DataStoreOperations,
-    private val userRepository: UserRepository
+    private val userRepository: LocalUserDataSource
 ) : ViewModel() {
 
     private val _user: MutableState<UserModel?> = mutableStateOf(null)

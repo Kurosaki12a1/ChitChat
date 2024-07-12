@@ -1,4 +1,4 @@
-package com.kuro.chitchat.data.conveter
+package com.kuro.chitchat.common.conveter
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -28,14 +28,18 @@ object KotlinLocalDateTimeSerializer : KSerializer<LocalDateTime> {
         return when (decoder) {
             is BsonDecoder -> {
                 val bsonValue = decoder.decodeBsonValue()
-                if (bsonValue.bsonType == BsonType.DATE_TIME) {
-                    val dateTime = (bsonValue as BsonDateTime).value
-                    Instant.fromEpochMilliseconds(dateTime).toLocalDateTime(TimeZone.UTC)
-                } else if (bsonValue.bsonType == BsonType.STRING) {
-                    val value = (bsonValue as BsonString).value
-                    LocalDateTime.parse(value, formatter)
-                } else {
-                    throw SerializationException("Expected DATE_TIME but found ${bsonValue.bsonType}")
+                when (bsonValue.bsonType) {
+                    BsonType.DATE_TIME -> {
+                        val dateTime = (bsonValue as BsonDateTime).value
+                        Instant.fromEpochMilliseconds(dateTime).toLocalDateTime(TimeZone.UTC)
+                    }
+                    BsonType.STRING -> {
+                        val value = (bsonValue as BsonString).value
+                        LocalDateTime.parse(value, formatter)
+                    }
+                    else -> {
+                        throw SerializationException("Expected DATE_TIME but found ${bsonValue.bsonType}")
+                    }
                 }
             }
 

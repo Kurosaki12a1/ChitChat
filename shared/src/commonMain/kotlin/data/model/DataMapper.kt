@@ -8,6 +8,7 @@ import data.model.entity.MessageEntity
 import data.model.entity.UserEntity
 import domain.model.ChatRoomModel
 import domain.model.MessageModel
+import domain.model.StatusUser
 import domain.model.UserModel
 import utils.now
 
@@ -17,7 +18,9 @@ fun MessageModel.toEntity() = MessageEntity(
     content = this.content,
     timeStamp = this.timeStamp,
     chatRoomId = this.chatRoomId,
-    isRead = this.isRead
+    isRead = this.isRead,
+    reactions = this.reactions,
+    edited = this.edited
 )
 
 fun UserModel.toEntity() = UserEntity(
@@ -25,7 +28,8 @@ fun UserModel.toEntity() = UserEntity(
     name = this.name,
     profilePhoto = this.profilePhoto,
     emailAddress = this.emailAddress,
-    lastActive = this.lastActive
+    lastActive = this.lastActive,
+    status = this.status
 )
 
 fun ChatRoomModel.toEntity() = ChatRoomEntity(
@@ -34,7 +38,10 @@ fun ChatRoomModel.toEntity() = ChatRoomEntity(
     participants = this.participants,
     lastMessage = this.lastMessage?.toEntity(),
     unReadCount = this.unReadCount,
-    roomType = this.roomType
+    roomType = this.roomType,
+    createdBy = this.createdBy,
+    createdTime = this.createdTime,
+    updatedTime = this.updatedTime
 )
 
 fun MessageEntity.toModel() = MessageModel(
@@ -43,7 +50,9 @@ fun MessageEntity.toModel() = MessageModel(
     content = this.content,
     timeStamp = this.timeStamp,
     chatRoomId = this.chatRoomId,
-    isRead = this.isRead
+    isRead = this.isRead,
+    edited = this.edited,
+    reactions = this.reactions
 )
 
 fun UserEntity.toModel() = UserModel(
@@ -51,7 +60,8 @@ fun UserEntity.toModel() = UserModel(
     name = this.name,
     profilePhoto = profilePhoto ?: "",
     emailAddress = this.emailAddress,
-    lastActive = this.lastActive
+    lastActive = this.lastActive,
+    status = this.status
 )
 
 fun ChatRoomEntity.toModel() = ChatRoomModel(
@@ -60,7 +70,10 @@ fun ChatRoomEntity.toModel() = ChatRoomModel(
     participants = this.participants,
     lastMessage = this.lastMessage?.toModel(),
     unReadCount = this.unReadCount,
-    roomType = this.roomType
+    roomType = this.roomType,
+    createdBy = this.createdBy,
+    createdTime = this.createdTime,
+    updatedTime = this.updatedTime
 )
 
 
@@ -78,7 +91,8 @@ fun UserDto.toModel() = UserModel(
     name = this.name ?: "",
     profilePhoto = this.profilePhoto ?: "",
     emailAddress = this.emailAddress ?: "",
-    lastActive = this.lastActive ?: now()
+    lastActive = this.lastActive ?: now(),
+    status = this.status ?: StatusUser.OFFLINE
 )
 
 fun ChatRoomDto.toModel() = ChatRoomModel(
@@ -87,5 +101,8 @@ fun ChatRoomDto.toModel() = ChatRoomModel(
     participants = this.participants ?: listOf(),
     lastMessage = this.lastMessage?.toModel(),
     unReadCount = this.unReadCount ?: 0,
-    roomType = this.roomType
+    roomType = this.roomType,
+    createdTime = this.createdTime ?: now(),
+    updatedTime = this.updatedTime ?: now(),
+    createdBy = this.createdBy ?: ""
 )

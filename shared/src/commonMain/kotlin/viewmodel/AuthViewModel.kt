@@ -11,7 +11,7 @@ import data.model.toModel
 import domain.model.ApiRequest
 import domain.model.MessageBarState
 import domain.repository.DataStoreOperations
-import domain.repository.local.UserRepository
+import domain.repository.local.LocalUserDataSource
 import domain.repository.remote.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -32,7 +32,7 @@ import utils.RequestState
 open class AuthViewModel(
     private val repository: AuthRepository,
     private val dataStoreOperations: DataStoreOperations,
-    private val userRepository: UserRepository
+    private val userRepository: LocalUserDataSource
 ) : ViewModel(), KoinComponent {
 
     // State to keep track of whether the user is signed in or not.

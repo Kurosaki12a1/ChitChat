@@ -2,6 +2,7 @@ package data.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import domain.model.StatusUser
 import kotlinx.datetime.LocalDateTime
 
 @Entity(tableName = "User")
@@ -10,5 +11,6 @@ data class UserEntity(
     val name: String,
     val emailAddress: String,
     val profilePhoto: String? = null,
-    val lastActive: LocalDateTime
+    val lastActive: LocalDateTime,
+    val status: StatusUser
 )

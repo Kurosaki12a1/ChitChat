@@ -4,16 +4,16 @@ import data.data_source.local.dao.MessageDao
 import data.model.toEntity
 import data.model.toModel
 import domain.model.MessageModel
-import domain.repository.local.MessageRepository
+import domain.repository.local.LocalMessageDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class MessageRepositoryImpl(
+class LocalMessageDataSourceImpl(
     private val messageDao: MessageDao
-) : MessageRepository {
+) : LocalMessageDataSource {
     override suspend fun sendMessage(message: MessageModel) {
         withContext(Dispatchers.IO) {
             messageDao.sendMessage(message.toEntity())

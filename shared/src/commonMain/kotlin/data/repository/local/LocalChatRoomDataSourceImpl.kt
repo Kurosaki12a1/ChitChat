@@ -4,16 +4,16 @@ import data.data_source.local.dao.ChatRoomDao
 import data.model.toEntity
 import data.model.toModel
 import domain.model.ChatRoomModel
-import domain.repository.local.ChatRoomRepository
+import domain.repository.local.LocalChatRoomDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class ChatRoomRepositoryImpl(
+class LocalChatRoomDataSourceImpl(
     private val chatRoomDao: ChatRoomDao
-) : ChatRoomRepository {
+) : LocalChatRoomDataSource {
     override suspend fun createChatRoom(chatRoom: ChatRoomModel) {
         withContext(Dispatchers.IO) {
             chatRoomDao.createChatRoom(chatRoom.toEntity())
