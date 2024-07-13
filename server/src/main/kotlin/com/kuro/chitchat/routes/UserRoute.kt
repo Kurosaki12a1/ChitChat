@@ -25,6 +25,12 @@ import io.ktor.server.sessions.sessions
 import io.ktor.util.pipeline.PipelineContext
 import utils.AUTH_SESSION
 
+/**
+ * Defines the user-related routes for the Ktor application.
+ *
+ * @param app The Ktor Application instance.
+ * @param userDataSource The data source for user-related operations.
+ */
 fun Route.userRoute(
     app: Application,
     userDataSource: UserDataSource
@@ -37,12 +43,16 @@ fun Route.userRoute(
          * To get another user, see SearchRoute
          */
         get(Endpoint.SignIn.path) {
+            // Retrieves the user session from the call
             val userSession = call.principal<UserSession>()
             if (userSession == null) {
+                // Logs an error message if the session is invalid
                 app.log.error("Invalid Session when get: ${Endpoint.SignIn.path}")
+                // Redirects the user to the unauthorized endpoint if the session is invalid
                 call.respondRedirect(Endpoint.Unauthorized.path)
             } else {
                 try {
+                    // Responds with the user data if the session is valid
                     call.respond(
                         message = ApiResponse(
                             success = true,
@@ -52,11 +62,17 @@ fun Route.userRoute(
                         status = HttpStatusCode.OK
                     )
                 } catch (e: Exception) {
+                    // Logs an error message if there is an exception
                     app.log.info("Sign In error: ${e.message}")
+                    // Redirects the user to the unauthorized endpoint if there is an exception
                     call.respondRedirect(Endpoint.Unauthorized.path)
                 }
             }
         }
+        /**
+         * Endpoint for getting user information.
+         * Only accessible by the user with a valid session.
+         */
         get(Endpoint.GetUserInfo.path) {
             val userSession = call.principal<UserSession>()
             if (userSession == null) {
@@ -78,6 +94,11 @@ fun Route.userRoute(
                 }
             }
         }
+
+        /**
+         * Endpoint for updating user information.
+         * Only accessible by the user with a valid session.
+         */
         put(Endpoint.UpdateUserInfo.path) {
             val userSession = call.principal<UserSession>()
             val userUpdate = call.receive<UserUpdate>()
@@ -98,6 +119,11 @@ fun Route.userRoute(
                 }
             }
         }
+
+        /**
+         * Endpoint for deleting the user.
+         * Only accessible by the user with a valid session.
+         */
         delete(Endpoint.DeleteUser.path) {
             val userSession = call.principal<UserSession>()
             if (userSession == null) {
@@ -117,6 +143,11 @@ fun Route.userRoute(
                 }
             }
         }
+
+        /**
+         * Endpoint for signing out the user.
+         * Clears the user's session.
+         */
         get(Endpoint.SignOut.path) {
             call.sessions.clear<UserSession>()
             call.respond(
@@ -128,6 +159,13 @@ fun Route.userRoute(
     }
 }
 
+/**
+ * Deletes a user from the database and responds with the result.
+ *
+ * @param app The Ktor Application instance.
+ * @param userId The ID of the user to be deleted.
+ * @param userDataSource The data source for user-related operations.
+ */
 private suspend fun PipelineContext<Unit, ApplicationCall>.deleteUserFromDb(
     app: Application,
     userId: String,
@@ -135,6 +173,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.deleteUserFromDb(
 ) {
     val result = userDataSource.deleteUser(userId = userId)
     if (result) {
+        // Logs a success message if the user is successfully deleted
         app.log.info("USER SUCCESSFULLY DELETED")
         call.respond(
             message = ApiResponse(success = true),
@@ -149,6 +188,14 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.deleteUserFromDb(
     }
 }
 
+/**
+ * Updates user information in the database and responds with the result.
+ *
+ * @param app The Ktor Application instance.
+ * @param userId The ID of the user to be updated.
+ * @param userUpdate The UserUpdate object containing the updated information.
+ * @param userDataSource The data source for user-related operations.
+ */
 private suspend fun PipelineContext<Unit, ApplicationCall>.updateUserInfo(
     app: Application,
     userId: String,

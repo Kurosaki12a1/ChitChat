@@ -22,10 +22,24 @@ import utils.SIGN_IN
 import utils.TOKEN_VERIFICATION
 import utils.UPDATE_USER
 
+
+/**
+ * Implementation of AuthRepository for handling authentication-related operations.
+ * If you want use like Retrofit Android, can replace to KtorFit
+ * https://foso.github.io/Ktorfit/
+ * @property client The HttpClient used for making HTTP requests.
+ */
 class AuthRepositoryImpl(
     private val client: HttpClient
 ) : AuthRepository {
 
+
+    /**
+     * Verifies the token on the backend.
+     *
+     * @param request The API request containing the token to be verified.
+     * @return The API response indicating the result of the token verification.
+     */
     override suspend fun verifyTokenOnBackend(request: ApiRequest): ApiResponse {
         return try {
             val response = client.post {
@@ -42,6 +56,11 @@ class AuthRepositoryImpl(
         }
     }
 
+    /**
+     * Retrieves user information.
+     *
+     * @return The API response containing the user information.
+     */
     override suspend fun getUserInfo(): ApiResponse {
         return try {
             val response = client.get {
@@ -53,6 +72,11 @@ class AuthRepositoryImpl(
         }
     }
 
+    /**
+     * Signs in the user.
+     *
+     * @return The API response indicating the result of the sign-in attempt.
+     */
     override suspend fun signIn(): ApiResponse {
         return try {
             val response = client.get {
@@ -63,6 +87,13 @@ class AuthRepositoryImpl(
             ApiResponse(success = false, error = e)
         }
     }
+
+    /**
+     * Updates user information.
+     *
+     * @param request The request containing the user information to be updated.
+     * @return The API response indicating the result of the update attempt.
+     */
 
     override suspend fun updateUser(request: UserUpdate): ApiResponse {
         return try {
@@ -79,6 +110,11 @@ class AuthRepositoryImpl(
         }
     }
 
+    /**
+     * Deletes the user.
+     *
+     * @return The API response indicating the result of the delete attempt.
+     */
     override suspend fun deleteUser(): ApiResponse {
         return try {
             val response: HttpResponse = client.delete {
@@ -90,6 +126,11 @@ class AuthRepositoryImpl(
         }
     }
 
+    /**
+     * Clears the user session.
+     *
+     * @return The API response indicating the result of the session clearing attempt.
+     */
     override suspend fun clearSession(): ApiResponse {
         return try {
             val response: HttpResponse = client.get {

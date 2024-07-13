@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MessageModel(
-    val id: String,
+    val id: String = "",
     val senderId: String,
     val content: String,
     val timeStamp: LocalDateTime,

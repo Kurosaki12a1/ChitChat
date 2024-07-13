@@ -4,6 +4,7 @@ import data.model.dto.ChatRoomDto
 import data.model.dto.HistoryChatRoomDto
 import data.model.dto.MessageDto
 import domain.model.ChatRoomModel
+import domain.model.MessageModel
 import domain.model.PrivateChatRequest
 import domain.repository.remote.ChatRoomRemoteRepository
 import domain.repository.remote.SessionChatRepository
@@ -42,12 +43,12 @@ class SessionChatRepositoryImpl(
         return socketRepository.connectToWebSocket(userId)
     }
 
-    override suspend fun sendMessage(session: WebSocketSession, message: MessageDto) {
-        return socketRepository.sendMessage(session, message)
+    override suspend fun sendMessage(message: MessageModel) {
+        return socketRepository.sendMessage(message)
     }
 
-    override fun receiveMessages(session: WebSocketSession): Flow<MessageDto> {
-        return socketRepository.receiveMessages(session)
+    override fun receiveMessages(): Flow<MessageDto> {
+        return socketRepository.receiveMessages()
     }
 
 }

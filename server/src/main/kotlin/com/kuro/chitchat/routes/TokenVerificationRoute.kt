@@ -32,6 +32,12 @@ import utils.now
 import java.util.Collections
 
 
+/**
+ * Defines the route for token verification.
+ *
+ * @param app The Ktor Application instance.
+ * @param userDataSource The data source for user-related operations.
+ */
 fun Route.tokenVerificationRoute(
     app: Application,
     userDataSource: UserDataSource
@@ -59,6 +65,14 @@ fun Route.tokenVerificationRoute(
     }
 }
 
+
+/**
+ * Saves user information to the database after successful token verification.
+ *
+ * @param app The Ktor Application instance.
+ * @param result The Google ID token result containing user information.
+ * @param userDataSource The data source for user-related operations.
+ */
 private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     app: Application,
     result: GoogleIdToken,
@@ -97,6 +111,12 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     }
 }
 
+/**
+ * Verifies the Google ID token.
+ *
+ * @param tokenId The Google ID token to be verified.
+ * @return The GoogleIdToken if verification is successful, null otherwise.
+ */
 fun verifyGoogleTokenId(tokenId: String): GoogleIdToken? {
     return try {
         val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())

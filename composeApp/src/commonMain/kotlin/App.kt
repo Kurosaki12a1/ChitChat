@@ -41,36 +41,51 @@ import presenter.more.MoreScreen
 import presenter.settings.SettingsScreen
 import ui.theme.BackgroundColorEmphasis
 
+/**
+ * The main entry point for the application.
+ *
+ * @param root The RootComponent used for navigation and managing child stacks.
+ */
 @ExperimentalCoilApi
 @Composable
 @Preview
 fun App(root: RootComponent) {
+    // Applying Material theme to the entire application
     MaterialTheme {
+        // Subscribing to the current child stack state from the root component
         val childStack by root.childStack.subscribeAsState()
+
+        // Scaffold provides a structure with top and bottom bars and a body
         Scaffold(
             bottomBar = {
-                if (shouldTopBarAndBottomBarVisible(childStack.active.configuration)) {
+                // Conditionally showing the bottom bar based on the active screen
+                if (shouldShowBottomBar(childStack.active.configuration)) {
                     AppBottomNavigation(navigation = childStack) { navigationItem ->
+                        // Navigating to the selected item
                         root.navigateTo(navigationItem)
                     }
                 }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { innerPadding ->
+            // Managing the display of child components with animations
             Children(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 stack = childStack,
                 animation = stackAnimation { _, otherChild, _ ->
+                    // Custom animation for SettingsScreen
                     if (otherChild.instance is NavigationChild.SettingsScreen) {
                         slide(
                             animationSpec = tween(easing = LinearEasing),
                             orientation = Orientation.Vertical
                         ) + fade()
                     } else {
+                        // Default slide and fade animation
                         slide(animationSpec = tween(easing = LinearEasing)) + fade()
                     }
                 }
             ) { child ->
+                // Displaying the appropriate screen based on the current child instance
                 when (val instance = child.instance) {
                     is NavigationChild.AuthScreen -> {
                         AuthScreen(instance.component)
@@ -98,22 +113,39 @@ fun App(root: RootComponent) {
     }
 }
 
-private fun shouldTopBarAndBottomBarVisible(child: NavigationItem): Boolean =
+/**
+ * Determines if bottom bars should be visible based on the current screen.
+ *
+ * @param child The current navigation item.
+ * @return True bottom bars should be visible, false otherwise.
+ */
+private fun shouldShowBottomBar(child: NavigationItem): Boolean =
     child == NavigationItem.MoreScreen || child == NavigationItem.ChatScreen || child == NavigationItem.ContactsScreen
 
+/**
+ * Composable function for the bottom navigation bar of the application.
+ *
+ * @param navigation The current child stack of navigation items.
+ * @param onClick The callback to be invoked when a navigation item is clicked.
+ */
 @Composable
 private fun AppBottomNavigation(
     navigation: ChildStack<NavigationItem, NavigationChild>,
     onClick: (NavigationItem) -> Unit
 ) {
+    // Divider at the top of the bottom navigation bar
     Divider(modifier = Modifier.fillMaxWidth().height(1.dp).background(BackgroundColorEmphasis))
+    // BottomNavigation component to hold the navigation items
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = BackgroundColorEmphasis,
         elevation = 0.dp
     ) {
+        // Iterating over each bottom navigation item
         bottomNavigationItems.forEach { item ->
             val isSelected = item.route == navigation.active.configuration
+
+            // BottomNavigationItem represents each navigation option in the bar
             BottomNavigationItem(
                 modifier = Modifier.weight(1f),
                 selected = isSelected,

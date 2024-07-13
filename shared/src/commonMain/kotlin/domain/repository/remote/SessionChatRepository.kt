@@ -4,6 +4,7 @@ import data.model.dto.ChatRoomDto
 import data.model.dto.HistoryChatRoomDto
 import data.model.dto.MessageDto
 import domain.model.ChatRoomModel
+import domain.model.MessageModel
 import domain.model.PrivateChatRequest
 import io.ktor.websocket.WebSocketSession
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,6 @@ interface SessionChatRepository {
     suspend fun getChatHistory(roomId: String): HistoryChatRoomDto
 
     fun connectToWebSocket(userId: String): Flow<WebSocketSession>
-    suspend fun sendMessage(session: WebSocketSession, message: MessageDto)
-    fun receiveMessages(session: WebSocketSession): Flow<MessageDto>
+    suspend fun sendMessage(message: MessageModel)
+    fun receiveMessages(): Flow<MessageDto>
 }

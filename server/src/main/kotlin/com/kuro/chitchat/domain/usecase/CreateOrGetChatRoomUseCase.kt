@@ -9,7 +9,26 @@ import domain.model.MessageModel
 import domain.model.RoomType
 import domain.model.UserModel
 
+/**
+ * Use case class for creating or retrieving a chat room.
+ *
+ * @property chatRepository The repository for managing chat-related data and operations.
+ */
 class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
+
+    /**
+     * Creates a new chat room or retrieves an existing one based on the sender and receiver.
+     *
+     * This function generates a chat room ID based on the sender and receiver IDs,
+     * checks if a chat room with that ID already exists, and either retrieves the existing
+     * room or creates a new one. If a new room is created, it also sends the first message
+     * if provided.
+     *
+     * @param sender The user model of the sender.
+     * @param receiver The user model of the receiver.
+     * @param firstMessage The first message to be sent in the chat room, if any.
+     * @return The existing or newly created chat room.
+     */
     suspend operator fun invoke(
         sender: UserModel,
         receiver: UserModel,
@@ -40,6 +59,15 @@ class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
         }
     }
 
+    /**
+     * Converts a MessageModel to a Message.
+     *
+     * This function takes a MessageModel and converts it to a Message entity that
+     * can be used within the chat room.
+     *
+     * @param messageModel The message model to be converted.
+     * @return The converted Message, or null if the input message model is null.
+     */
     private fun convertMessageModelToMessage(messageModel: MessageModel?): Message? {
         return if (messageModel != null) {
             Message(

@@ -75,7 +75,6 @@ open class AuthViewModel(
                     repository.signIn()
                 }
                 if (response.success) {
-                    println("User: ${response.user}")
                     val job = async {
                         saveUserToLocalStorage(response.user)
                     }
@@ -104,7 +103,6 @@ open class AuthViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             userDto?.let {
                 userRepository.insertUser(it.toModel())
-                println("userid: ${it.userId}")
                 dataStoreOperations.saveSignedInId(it.userId!!)
             }
         }

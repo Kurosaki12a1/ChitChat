@@ -32,7 +32,7 @@ class RootComponent(
     val childStack = childStack(
         source = navigation,
         serializer = NavigationItem.serializer(),
-        initialConfiguration = NavigationItem.ChatScreen,
+        initialConfiguration = NavigationItem.AuthScreen,
         //   initialConfiguration = NavigationItem.AuthScreen,
         handleBackButton = true,
         childFactory = ::createChild

@@ -6,7 +6,7 @@ import io.ktor.websocket.WebSocketSession
 import kotlinx.coroutines.flow.Flow
 
 class ReceiveMessagesUseCase(private val repository: SessionChatRepository) {
-    operator fun invoke(session: WebSocketSession): Flow<MessageDto> {
-        return repository.receiveMessages(session)
+    operator fun invoke(): Flow<MessageDto> {
+        return repository.receiveMessages()
     }
 }

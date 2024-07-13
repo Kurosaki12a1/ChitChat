@@ -55,7 +55,7 @@ fun Route.chatRoute() {
             )
             call.respond(
                 status = HttpStatusCode.OK,
-                message = chatRoom
+                message = chatRoom.toDTO()
             )
         }
 
@@ -69,7 +69,7 @@ fun Route.chatRoute() {
             val room = useCase(request, creatorId)
             call.respond(
                 status = HttpStatusCode.OK,
-                message = room
+                message = room.toDTO()
             )
         }
 
@@ -87,7 +87,7 @@ fun Route.chatRoute() {
             if (roomJoined != null) {
                 call.respond(
                     status = HttpStatusCode.OK,
-                    message = roomJoined
+                    message = roomJoined.toDTO()
                 )
             } else {
                 call.response.status(HttpStatusCode.BadGateway)
@@ -118,7 +118,7 @@ fun Route.chatRoute() {
             val listRooms = useCase(userId)
             call.respond(
                 status = HttpStatusCode.OK,
-                message = listRooms
+                message = listRooms.map { it.toDTO() }
             )
         }
 

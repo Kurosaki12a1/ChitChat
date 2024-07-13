@@ -14,7 +14,18 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.path
 
+/**
+ * Implementation of ChatRoomRemoteRepository for handling chat room-related remote operations.
+ *
+ * @property client The HttpClient used for making HTTP requests.
+ */
 class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRemoteRepository {
+    /**
+     * Retrieves chat rooms for a specific user.
+     *
+     * @param userId The ID of the user.
+     * @return A list of ChatRoomDto representing the chat rooms of the user.
+     */
     override suspend fun getUserChatRooms(userId: String): List<ChatRoomDto> {
         return try {
             val response = client.get {
@@ -30,6 +41,13 @@ class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRem
         }
     }
 
+    /**
+     * Creates a new public chat room.
+     *
+     * @param room The ChatRoomModel representing the room to be created.
+     * @param creatorId The ID of the user creating the room.
+     * @return The created ChatRoomDto, or null if the operation failed.
+     */
     override suspend fun createPublicChatRoom(
         room: ChatRoomModel,
         creatorId: String
@@ -49,6 +67,12 @@ class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRem
         }
     }
 
+    /**
+     * Starts a private chat between users.
+     *
+     * @param request The PrivateChatRequest containing the necessary information to start the chat.
+     * @return The created ChatRoomDto, or null if the operation failed.
+     */
     override suspend fun startPrivateChat(request: PrivateChatRequest): ChatRoomDto? {
         return try {
             val response = client.post {
@@ -68,6 +92,13 @@ class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRem
         }
     }
 
+    /**
+     * Joins a public chat room.
+     *
+     * @param roomId The ID of the room to join.
+     * @param userId The ID of the user joining the room.
+     * @return The joined ChatRoomDto, or null if the operation failed.
+     */
     override suspend fun joinPublicChatRoom(roomId: String, userId: String): ChatRoomDto? {
         return try {
             val response = client.post {
@@ -84,6 +115,12 @@ class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRem
         }
     }
 
+    /**
+     * Retrieves chat history for a specific chat room.
+     *
+     * @param roomId The ID of the chat room.
+     * @return A HistoryChatRoomDto containing the chat history.
+     */
     override suspend fun getChatHistory(roomId: String): HistoryChatRoomDto {
         return try {
             val response = client.get {
@@ -98,5 +135,4 @@ class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRem
             HistoryChatRoomDto(roomId, emptyList(), e)
         }
     }
-
 }

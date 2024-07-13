@@ -24,7 +24,17 @@ import domain.repository.remote.AuthRepository
 import domain.repository.remote.ChatRoomRemoteRepository
 import domain.repository.remote.SessionChatRepository
 import domain.repository.remote.SocketRepository
+import domain.usecase.auth.GetUserInfoUseCase
+import domain.usecase.chat.ConnectToWebSocketUseCase
+import domain.usecase.chat.CreatePublicChatRoomUseCase
+import domain.usecase.chat.GetChatHistoryUseCase
+import domain.usecase.chat.GetUserChatRoomsUseCase
+import domain.usecase.chat.JoinPublicChatRoomUseCase
+import domain.usecase.chat.ReceiveMessagesUseCase
+import domain.usecase.chat.SendMessageUseCase
 import domain.usecase.chat.SessionChatUseCase
+import domain.usecase.chat.SocketUseCase
+import domain.usecase.chat.StartPrivateChatUseCase
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -35,6 +45,7 @@ import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
@@ -70,7 +81,30 @@ fun commonModule() = module {
     single<ChatRoomRemoteRepository> { ChatRoomRemoteRepositoryImpl(get()) }
     single<SocketRepository> { SocketRepositoryImpl(get()) }
     single<SessionChatRepository> { SessionChatRepositoryImpl(get(), get()) }
-    single { SessionChatUseCase(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory<SessionChatUseCase> {
+        SessionChatUseCase(
+            getUserChatRoomsUseCase = GetUserChatRoomsUseCase((get())),
+            createPublicChatRoomUseCase = CreatePublicChatRoomUseCase(get()),
+            startPrivateChatUseCase = StartPrivateChatUseCase(get()),
+            joinPublicChatRoomUseCase = JoinPublicChatRoomUseCase(get()),
+            getChatHistoryUseCase = GetChatHistoryUseCase(get()),
+            connectToWebSocketUseCase = ConnectToWebSocketUseCase(get()),
+            sendMessageUseCase = SendMessageUseCase(get()),
+            receiveMessagesUseCase = ReceiveMessagesUseCase(get()),
+        )
+    }
+
+    factory<GetUserInfoUseCase> {
+        GetUserInfoUseCase(get(), get())
+    }
+
+    factory<SocketUseCase> {
+        SocketUseCase(
+            connectToWebSocketUseCase = ConnectToWebSocketUseCase(get()),
+            sendMessageUseCase = SendMessageUseCase(get()),
+            receiveMessagesUseCase = ReceiveMessagesUseCase(get()),
+        )
+    }
 
     single<UserDao> { createUserDao(get()) }
     single<ChatRoomDao> { createChatRoomDao(get()) }
@@ -103,6 +137,10 @@ fun createHttpClient(
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.NONE
+        }
+        install(WebSockets) {
+            pingInterval = 15_000
+            maxFrameSize = Long.MAX_VALUE
         }
         defaultRequest {
             url {

@@ -22,10 +22,10 @@ fun main() {
 fun Application.module() {
     configureKoin()
     configureAuth()
-    configureRouting()
+    configureSockets()
     configureMonitoring()
     configureSession()
-    configureSockets()
     configureStatusPage()
+    configureRouting()
     configureSerialization()
 }

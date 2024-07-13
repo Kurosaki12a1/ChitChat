@@ -26,10 +26,6 @@ fun MoreScreen(
     moreViewModel: MoreViewModel = koinInject()
 ) {
     val user by moreViewModel.user
-
-    /**
-     *
-     */
     LaunchedEffect(Unit) {
         moreViewModel.init()
     }
@@ -88,5 +84,4 @@ fun MoreScreen(
             }
         )
     }
-
 }
