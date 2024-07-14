@@ -3,8 +3,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.mmk.kmpauth.google.GoogleAuthCredentials
-import com.mmk.kmpauth.google.GoogleAuthProvider
+import com.kuro.chitchat.auth_google.GoogleAuthCredentials
+import com.kuro.chitchat.auth_google.GoogleAuthProvider
 import data.data_source.local.AppDatabase
 import data.data_source.local.dbFileName
 import di.createDataStore

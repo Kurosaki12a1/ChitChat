@@ -69,17 +69,17 @@ kotlin {
 
             api(libs.kotlinx.datetime)
         }
+
         androidMain.dependencies {
+            implementation(project(":auth:auth-google"))
             implementation(libs.ktor.client.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.okhttp.urlconnection)
             implementation(libs.lifecycle.compose)
-
-            implementation(libs.kmpauth.google)
         }
         iosMain.dependencies {
+            implementation(project(":auth:auth-google"))
             implementation(libs.ktor.client.ios)
-            implementation(libs.kmpauth.google)
         }
     }
 }

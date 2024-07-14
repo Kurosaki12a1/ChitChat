@@ -21,8 +21,8 @@ import chitchatmultiplatform.composeapp.generated.resources.Res
 import chitchatmultiplatform.composeapp.generated.resources.app_logo
 import chitchatmultiplatform.composeapp.generated.resources.sign_in_to_continue
 import chitchatmultiplatform.composeapp.generated.resources.sign_in_with_google
-import com.mmk.kmpauth.google.GoogleButtonUiContainer
-import com.mmk.kmpauth.google.GoogleUser
+import com.kuro.chitchat.auth_google.GoogleButtonUiContainer
+import com.kuro.chitchat.auth_google.GoogleUser
 import component.GoogleButton
 import component.MessageBar
 import domain.model.MessageBarState

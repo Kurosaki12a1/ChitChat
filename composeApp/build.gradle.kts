@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -44,6 +43,7 @@ kotlin {
 
         }
         commonMain.dependencies {
+            implementation(project(":auth:auth-google"))
             implementation(projects.shared)
 
             implementation(compose.runtime)
@@ -68,9 +68,8 @@ kotlin {
             // Coil
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            // KMPAuth
-            implementation(libs.kmpauth.google)
         }
+
         /*     desktopMain.dependencies {
                  implementation(compose.desktop.currentOs)
              }*/
@@ -131,5 +130,4 @@ compose.desktop {
         }
     }
 }
-
 */

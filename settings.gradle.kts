@@ -32,3 +32,6 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":server")
 include(":shared")
+include(":auth")
+include(":auth:auth-core")
+include(":auth:auth-google")
