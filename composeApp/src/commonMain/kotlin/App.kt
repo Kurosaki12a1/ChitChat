@@ -16,6 +16,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -55,11 +57,16 @@ fun App(root: RootComponent) {
         // Subscribing to the current child stack state from the root component
         val childStack by root.childStack.subscribeAsState()
 
+        val isBottomSheetEnable = remember { mutableStateOf(false) }
         // Scaffold provides a structure with top and bottom bars and a body
         Scaffold(
             bottomBar = {
                 // Conditionally showing the bottom bar based on the active screen
-                if (shouldShowBottomBar(childStack.active.configuration)) {
+                if (shouldShowBottomBar(
+                        childStack.active.configuration,
+                        isBottomSheetEnable.value
+                    )
+                ) {
                     AppBottomNavigation(navigation = childStack) { navigationItem ->
                         // Navigating to the selected item
                         root.navigateTo(navigationItem)
@@ -92,7 +99,13 @@ fun App(root: RootComponent) {
                     }
 
                     is NavigationChild.ChatScreen -> {
-                        ChatScreen(instance.component)
+                        ChatScreen(
+                            isBottomSheetVisible = isBottomSheetEnable.value,
+                            onStartNewChatClick = { shouldEnable ->
+                                isBottomSheetEnable.value = shouldEnable
+                            },
+                            instance.component
+                        )
                     }
 
                     is NavigationChild.ContactsScreen -> {
@@ -119,8 +132,8 @@ fun App(root: RootComponent) {
  * @param child The current navigation item.
  * @return True bottom bars should be visible, false otherwise.
  */
-private fun shouldShowBottomBar(child: NavigationItem): Boolean =
-    child == NavigationItem.MoreScreen || child == NavigationItem.ChatScreen || child == NavigationItem.ContactsScreen
+private fun shouldShowBottomBar(child: NavigationItem, isBottomSheetEnable: Boolean): Boolean =
+    (child == NavigationItem.MoreScreen || child == NavigationItem.ChatScreen || child == NavigationItem.ContactsScreen) && !isBottomSheetEnable
 
 /**
  * Composable function for the bottom navigation bar of the application.

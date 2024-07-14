@@ -2,6 +2,7 @@
 
 package presenter.chat
 
+import BottomSheetView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import navigation.chat.ChatComponent
 import navigation.chat.TabChatChild
+import presenter.chat.component.BottomSheetStartNewChatScreen
 import presenter.chat.component.ChatBar
 import presenter.chat.component.StickyHeaderChat
 import presenter.chat.tabs.TabChatAllScreen
@@ -27,6 +29,8 @@ import presenter.chat.tabs.TabChatUnreadScreen
 
 @Composable
 fun ChatScreen(
+    isBottomSheetVisible: Boolean,
+    onStartNewChatClick: (Boolean) -> Unit,
     component: ChatComponent
 ) {
     val state = rememberLazyListState()
@@ -40,7 +44,7 @@ fun ChatScreen(
 
                     },
                     onStartNewChat = {
-
+                        onStartNewChatClick.invoke(true)
                     },
                     onBookmarkClick = {
 
@@ -78,4 +82,21 @@ fun ChatScreen(
             }
         }
     }
+    BottomSheetView(
+        visible = isBottomSheetVisible,
+        onSheetStateChange = { onStartNewChatClick.invoke(it) },
+        content = {
+            BottomSheetStartNewChatScreen(
+                onChatClick = {
+
+                },
+                onSecretChatClick = {
+
+                },
+                onAnnouncementClick = {
+
+                }
+            )
+        }
+    )
 }

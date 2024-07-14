@@ -69,4 +69,8 @@
     <string name="password_and_lock">Password and Lock</string>
     <string name="service_information">Service Information</string>
     <string name="release_note">Release Note</string>
+
+    <string name="start_new_chat">Start a New Chat</string>
+    <string name="secret_chat">Secret Chat</string>
+    <string name="announcement">Announcement</string>
 </resources>
