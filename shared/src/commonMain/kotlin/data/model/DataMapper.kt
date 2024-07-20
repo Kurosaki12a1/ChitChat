@@ -1,15 +1,16 @@
 package data.model
 
+import com.kuro.chitchat.database.client.entity.ChatRoomEntity
+import com.kuro.chitchat.database.client.entity.MessageEntity
+import com.kuro.chitchat.database.client.entity.UserEntity
 import data.model.dto.ChatRoomDto
 import data.model.dto.MessageDto
 import data.model.dto.UserDto
-import data.model.entity.ChatRoomEntity
-import data.model.entity.MessageEntity
-import data.model.entity.UserEntity
-import domain.model.ChatRoomModel
-import domain.model.MessageModel
-import domain.model.StatusUser
-import domain.model.UserModel
+import domain.models.ChatRoomModel
+import domain.models.MessageModel
+import domain.models.RoomType
+import domain.models.StatusUser
+import domain.models.UserModel
 import utils.now
 
 fun MessageModel.toEntity() = MessageEntity(
@@ -92,7 +93,7 @@ fun UserDto.toModel() = UserModel(
     profilePhoto = this.profilePhoto ?: "",
     emailAddress = this.emailAddress ?: "",
     lastActive = this.lastActive ?: now(),
-    status = this.status ?: StatusUser.OFFLINE
+    status = this.status ?: StatusUser.ONLINE.status
 )
 
 fun ChatRoomDto.toModel() = ChatRoomModel(
@@ -101,7 +102,39 @@ fun ChatRoomDto.toModel() = ChatRoomModel(
     participants = this.participants ?: listOf(),
     lastMessage = this.lastMessage?.toModel(),
     unReadCount = this.unReadCount ?: 0,
-    roomType = this.roomType,
+    roomType = this.roomType ?: RoomType.NORMAL.type,
+    createdTime = this.createdTime ?: now(),
+    updatedTime = this.updatedTime ?: now(),
+    createdBy = this.createdBy ?: ""
+)
+
+fun MessageDto.toMessage() = MessageEntity(
+    id = this.id,
+    senderId = this.senderId ?: "",
+    content = this.content ?: "",
+    timeStamp = this.timeStamp ?: now(),
+    chatRoomId = this.chatRoomId ?: "",
+    isRead = this.isRead ?: false,
+    edited = this.edited ?: false,
+    reactions = this.reactions ?: emptyMap()
+)
+
+fun UserDto.toUser() = UserEntity(
+    userId = this.userId ?: "",
+    name = this.name ?: "",
+    profilePhoto = this.profilePhoto ?: "",
+    emailAddress = this.emailAddress ?: "",
+    lastActive = this.lastActive ?: now(),
+    status = this.status ?: StatusUser.ONLINE.status
+)
+
+fun ChatRoomDto.toChatRoom() = ChatRoomEntity(
+    id = this.id,
+    roomName = this.roomName ?: "",
+    participants = this.participants ?: listOf(),
+    lastMessage = this.lastMessage?.toMessage(),
+    unReadCount = this.unReadCount ?: 0,
+    roomType = this.roomType ?: RoomType.NORMAL.type,
     createdTime = this.createdTime ?: now(),
     updatedTime = this.updatedTime ?: now(),
     createdBy = this.createdBy ?: ""

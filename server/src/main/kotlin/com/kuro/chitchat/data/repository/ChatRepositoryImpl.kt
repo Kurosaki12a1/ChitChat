@@ -1,12 +1,12 @@
 package com.kuro.chitchat.data.repository
 
-import com.kuro.chitchat.data.model.entity.ChatRoom
-import com.kuro.chitchat.data.model.entity.Message
-import com.kuro.chitchat.data.model.toDTO
+import com.kuro.chitchat.data.mapper.toDTO
+import com.kuro.chitchat.database.server.domain.repository.MessageDataSource
+import com.kuro.chitchat.database.server.domain.repository.RoomDataSource
+import com.kuro.chitchat.database.server.entity.ChatRoom
+import com.kuro.chitchat.database.server.entity.Message
 import com.kuro.chitchat.domain.model.Member
 import com.kuro.chitchat.domain.repository.ChatRepository
-import com.kuro.chitchat.domain.repository.MessageRepository
-import com.kuro.chitchat.domain.repository.RoomRepository
 import com.kuro.chitchat.util.Constants.ADMIN_ID
 import data.model.dto.MessageDto
 import io.ktor.websocket.Frame
@@ -22,8 +22,8 @@ import utils.now
  * @property messageRepository The repository for managing message data and operations.
  */
 class ChatRepositoryImpl(
-    private val roomRepository: RoomRepository,
-    private val messageRepository: MessageRepository
+    private val roomRepository: RoomDataSource,
+    private val messageRepository: MessageDataSource
 ) : ChatRepository {
     private val members = mutableMapOf<String, Member>()
 

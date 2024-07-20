@@ -2,8 +2,8 @@ package data.repository.remote
 
 import data.model.dto.ChatRoomDto
 import data.model.dto.HistoryChatRoomDto
-import domain.model.ChatRoomModel
-import domain.model.PrivateChatRequest
+import domain.models.ChatRoomModel
+import domain.models.PrivateChatRequest
 import domain.repository.remote.ChatRoomRemoteRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -11,7 +11,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.http.path
 
 /**
@@ -57,6 +59,7 @@ class ChatRoomRemoteRepositoryImpl(private val client: HttpClient) : ChatRoomRem
                 url {
                     path("/chat/public/start")
                     parameter("creatorId", creatorId)
+                    contentType(ContentType.Application.Json)
                     setBody(room)
                 }
             }

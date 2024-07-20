@@ -1,7 +1,7 @@
 package domain.usecase.chat
 
 import data.model.dto.ChatRoomDto
-import domain.model.PrivateChatRequest
+import domain.models.PrivateChatRequest
 import domain.repository.remote.SessionChatRepository
 
 class StartPrivateChatUseCase(private val repository: SessionChatRepository) {

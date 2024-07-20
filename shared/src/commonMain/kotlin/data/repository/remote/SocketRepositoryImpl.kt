@@ -1,7 +1,7 @@
 package data.repository.remote
 
 import data.model.dto.MessageDto
-import domain.model.MessageModel
+import domain.models.MessageModel
 import domain.repository.remote.SocketRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.webSocketSession

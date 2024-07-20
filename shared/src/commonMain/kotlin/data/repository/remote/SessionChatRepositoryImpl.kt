@@ -3,9 +3,9 @@ package data.repository.remote
 import data.model.dto.ChatRoomDto
 import data.model.dto.HistoryChatRoomDto
 import data.model.dto.MessageDto
-import domain.model.ChatRoomModel
-import domain.model.MessageModel
-import domain.model.PrivateChatRequest
+import domain.models.ChatRoomModel
+import domain.models.MessageModel
+import domain.models.PrivateChatRequest
 import domain.repository.remote.ChatRoomRemoteRepository
 import domain.repository.remote.SessionChatRepository
 import domain.repository.remote.SocketRepository

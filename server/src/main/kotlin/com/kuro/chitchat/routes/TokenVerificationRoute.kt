@@ -5,15 +5,15 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
-import com.kuro.chitchat.data.model.entity.User
-import com.kuro.chitchat.data.model.toDTO
+import com.kuro.chitchat.data.mapper.toDTO
+import com.kuro.chitchat.database.server.domain.repository.UserDataSource
+import com.kuro.chitchat.database.server.entity.User
 import com.kuro.chitchat.domain.model.ApiRequest
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
-import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.util.Constants.ISSUER
 import data.model.dto.ApiResponse
-import domain.model.StatusUser
+import domain.models.StatusUser
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -89,7 +89,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
         emailAddress = emailAddress,
         profilePhoto = profilePhoto,
         lastActive = now(),
-        status = StatusUser.ONLINE
+        status = StatusUser.ONLINE.status
     )
 
     val response = userDataSource.saveUserInfo(user = user)

@@ -18,6 +18,8 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    jvm()
+
     sourceSets {
         val commonMain by getting {
             dependencies {

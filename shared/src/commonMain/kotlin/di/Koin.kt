@@ -3,25 +3,20 @@ package di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import data.data_source.local.AppDatabase
+import com.kuro.chitchat.auth_google.GoogleAuthCredentials
+import com.kuro.chitchat.auth_google.GoogleAuthProvider
+import com.kuro.chitchat.database.client.di.databaseClientModule
 import data.data_source.local.cookie.CookieStorageManager
-import data.data_source.local.dao.ChatRoomDao
-import data.data_source.local.dao.MessageDao
-import data.data_source.local.dao.UserDao
 import data.repository.DataStoreOperationsImpl
-import data.repository.local.LocalChatRoomDataSourceImpl
-import data.repository.local.LocalMessageDataSourceImpl
-import data.repository.local.LocalUserDataSourceImpl
 import data.repository.remote.AuthRepositoryImpl
 import data.repository.remote.ChatRoomRemoteRepositoryImpl
+import data.repository.remote.SearchRepositoryImpl
 import data.repository.remote.SessionChatRepositoryImpl
 import data.repository.remote.SocketRepositoryImpl
 import domain.repository.DataStoreOperations
-import domain.repository.local.LocalChatRoomDataSource
-import domain.repository.local.LocalMessageDataSource
-import domain.repository.local.LocalUserDataSource
 import domain.repository.remote.AuthRepository
 import domain.repository.remote.ChatRoomRemoteRepository
+import domain.repository.remote.SearchRepository
 import domain.repository.remote.SessionChatRepository
 import domain.repository.remote.SocketRepository
 import domain.usecase.auth.GetUserInfoUseCase
@@ -35,6 +30,7 @@ import domain.usecase.chat.SendMessageUseCase
 import domain.usecase.chat.SessionChatUseCase
 import domain.usecase.chat.SocketUseCase
 import domain.usecase.chat.StartPrivateChatUseCase
+import domain.usecase.search.SearchUserUseCase
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -53,9 +49,11 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okio.Path.Companion.toPath
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 import platformModule
+import utils.CLIENT_ID
 import utils.CONNECTION_TIME_OUT
 import utils.DOMAIN
 import utils.HOST
@@ -66,13 +64,22 @@ import utils.SOCKET_TIME_OUT
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
-        modules(commonModule(), platformModule())
+        modules(getListModule())
     }
 
 // called by iOS etc
 fun initKoin() = initKoin {}
 
+fun getListModule(): List<Module> {
+    val lists = mutableListOf<Module>()
+    lists.add(commonModule())
+    lists.add(platformModule())
+    lists.addAll(databaseClientModule)
+    return lists
+}
+
 fun commonModule() = module {
+    GoogleAuthProvider.create(credentials = GoogleAuthCredentials(CLIENT_ID))
     single { createJson() }
     single { createHttpClient(get(), get(), get()) }
 
@@ -81,6 +88,12 @@ fun commonModule() = module {
     single<ChatRoomRemoteRepository> { ChatRoomRemoteRepositoryImpl(get()) }
     single<SocketRepository> { SocketRepositoryImpl(get()) }
     single<SessionChatRepository> { SessionChatRepositoryImpl(get(), get()) }
+    single<SearchRepository> { SearchRepositoryImpl(get()) }
+
+    factory<CreatePublicChatRoomUseCase> {
+        CreatePublicChatRoomUseCase(get())
+    }
+
     factory<SessionChatUseCase> {
         SessionChatUseCase(
             getUserChatRoomsUseCase = GetUserChatRoomsUseCase((get())),
@@ -98,6 +111,10 @@ fun commonModule() = module {
         GetUserInfoUseCase(get(), get())
     }
 
+    factory<SearchUserUseCase> {
+        SearchUserUseCase(get())
+    }
+
     factory<SocketUseCase> {
         SocketUseCase(
             connectToWebSocketUseCase = ConnectToWebSocketUseCase(get()),
@@ -105,14 +122,6 @@ fun commonModule() = module {
             receiveMessagesUseCase = ReceiveMessagesUseCase(get()),
         )
     }
-
-    single<UserDao> { createUserDao(get()) }
-    single<ChatRoomDao> { createChatRoomDao(get()) }
-    single<MessageDao> { createMessageDao(get()) }
-
-    single<LocalUserDataSource> { LocalUserDataSourceImpl(get()) }
-    single<LocalChatRoomDataSource> { LocalChatRoomDataSourceImpl(get()) }
-    single<LocalMessageDataSource> { LocalMessageDataSourceImpl(get()) }
 }
 
 fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrint = true }
@@ -161,7 +170,3 @@ fun createDataStore(
     migrations = emptyList(),
     produceFile = { producePath().toPath() },
 )
-
-fun createChatRoomDao(appDatabase: AppDatabase): ChatRoomDao = appDatabase.chatRoomDao()
-fun createMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.messageDao()
-fun createUserDao(appDatabase: AppDatabase): UserDao = appDatabase.userDao()

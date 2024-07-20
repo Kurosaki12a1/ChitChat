@@ -5,13 +5,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuro.chitchat.database.client.domain.repository.LocalUserDataSource
 import data.model.dto.ApiResponse
 import data.model.dto.UserDto
-import data.model.toModel
-import domain.model.ApiRequest
-import domain.model.MessageBarState
+import data.model.toUser
+import domain.models.ApiRequest
+import domain.models.LoginState
 import domain.repository.DataStoreOperations
-import domain.repository.local.LocalUserDataSource
 import domain.repository.remote.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -40,15 +40,15 @@ open class AuthViewModel(
     val signedInState: State<Boolean> = _signedInState
 
     // State to manage the message bar status.
-    private val _messageBarState: MutableState<MessageBarState> = mutableStateOf(MessageBarState())
-    val messageBarState: State<MessageBarState> = _messageBarState
+    private val _loginState: MutableState<LoginState> = mutableStateOf(LoginState())
+    val loginState: State<LoginState> = _loginState
 
     // State to manage the API response.
     private val _apiResponse: MutableState<RequestState<ApiResponse>> =
         mutableStateOf(RequestState.Idle)
     val apiResponse: State<RequestState<ApiResponse>> = _apiResponse
 
-    init {
+    fun init() {
         // Read the signed-in state from DataStore when the ViewModel is initialized.
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreOperations.readSignedInState().collect { completed ->
@@ -60,6 +60,7 @@ open class AuthViewModel(
             }
         }
     }
+
 
     /**
      * SignIn Account.
@@ -80,7 +81,7 @@ open class AuthViewModel(
                     }
                     job.await()
                     _apiResponse.value = RequestState.Success(response)
-                    _messageBarState.value = MessageBarState(
+                    _loginState.value = LoginState(
                         message = response.message,
                     )
                 } else {
@@ -89,7 +90,7 @@ open class AuthViewModel(
                 }
             } catch (e: Exception) {
                 _apiResponse.value = RequestState.Error(e)
-                _messageBarState.value = MessageBarState(error = e)
+                _loginState.value = LoginState(error = e)
             }
         }
     }
@@ -102,7 +103,7 @@ open class AuthViewModel(
     private fun saveUserToLocalStorage(userDto: UserDto?) {
         viewModelScope.launch(Dispatchers.IO) {
             userDto?.let {
-                userRepository.insertUser(it.toModel())
+                userRepository.insertUser(it.toUser())
                 dataStoreOperations.saveSignedInId(it.userId!!)
             }
         }
@@ -124,7 +125,7 @@ open class AuthViewModel(
      * Updates the message bar state with a specific error.
      */
     fun updateMessageBarState() {
-        _messageBarState.value = MessageBarState(
+        _loginState.value = LoginState(
             error = GoogleAccountNotFoundException()
         )
     }
@@ -141,17 +142,15 @@ open class AuthViewModel(
             viewModelScope.launch(Dispatchers.IO) {
                 val response = repository.verifyTokenOnBackend(request = request)
                 if (response.success) {
-                    val job = async {
-                        saveUserToLocalStorage(response.user)
-                    }
+                    val job = async { saveUserToLocalStorage(response.user) }
                     job.await()
                     _apiResponse.value = RequestState.Success(response)
-                    _messageBarState.value = MessageBarState(
+                    _loginState.value = LoginState(
                         message = response.message,
                     )
                 } else {
                     _apiResponse.value = RequestState.Error(Exception(response.message ?: ""))
-                    _messageBarState.value = MessageBarState(
+                    _loginState.value = LoginState(
                         message = response.message,
                         error = response.error ?: Exception(response.message ?: "")
                     )
@@ -160,7 +159,7 @@ open class AuthViewModel(
             }
         } catch (e: Exception) {
             _apiResponse.value = RequestState.Error(e)
-            _messageBarState.value = MessageBarState(error = e)
+            _loginState.value = LoginState(error = e)
         }
     }
 }

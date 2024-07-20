@@ -1,13 +1,13 @@
 package com.kuro.chitchat.domain.usecase
 
-import com.kuro.chitchat.data.model.entity.ChatRoom
-import com.kuro.chitchat.data.model.entity.Message
+import com.kuro.chitchat.database.server.entity.ChatRoom
+import com.kuro.chitchat.database.server.entity.Message
 import com.kuro.chitchat.domain.repository.ChatRepository
 import com.kuro.chitchat.util.generateChatRoomId
 import com.kuro.chitchat.util.generateChatRoomName
-import domain.model.MessageModel
-import domain.model.RoomType
-import domain.model.UserModel
+import domain.models.MessageModel
+import domain.models.RoomType
+import domain.models.UserModel
 
 /**
  * Use case class for creating or retrieving a chat room.
@@ -48,7 +48,7 @@ class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
                 participants = listOf(sender.userId, receiver.userId),
                 lastMessage = message,
                 createdBy = sender.userId,
-                roomType = RoomType.NORMAL
+                roomType = RoomType.NORMAL.type
             )
             chatRepository.createChatRoom(newRoom)
             chatRepository.addRoomToMembers(newRoom.id, newRoom.participants)

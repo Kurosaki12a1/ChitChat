@@ -11,6 +11,7 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
+import navigation.add_chat.AddChatComponent
 import navigation.auth.AuthComponent
 import navigation.chat.ChatComponent
 import navigation.contacts.ContactsComponent
@@ -31,9 +32,9 @@ class RootComponent(
     // Child stack for managing the current stack of child components
     val childStack = childStack(
         source = navigation,
-        serializer = NavigationItem.serializer(),
+        serializer = NavigationItemSerializer,
+        // initialConfiguration = NavigationItem.ChatScreen,
         initialConfiguration = NavigationItem.AuthScreen,
-        //   initialConfiguration = NavigationItem.AuthScreen,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -73,8 +74,8 @@ class RootComponent(
                 NavigationChild.ChatScreen(
                     ChatComponent(
                         componentContext = context,
-                        onNavigateTo = {
-
+                        onNavigateTo = { item ->
+                            navigateTo(item)
                         }
                     )
                 )
@@ -85,11 +86,7 @@ class RootComponent(
                     MoreComponent(
                         componentContext = context,
                         onNavigateTo = { item ->
-                            if (shouldPopBackStack(item)) {
-                                navigation.bringToFront(item)
-                            } else {
-                                navigation.pushNew(item)
-                            }
+                            navigateTo(item)
                         }
                     )
                 )
@@ -107,11 +104,20 @@ class RootComponent(
                 NavigationChild.SettingsScreen(
                     SettingsComponent(
                         componentContext = context,
-                        onPop = { navigation.pop () }
+                        onPop = { navigation.pop() }
                     )
                 )
             }
 
+            is NavigationItem.AddChatScreen -> {
+                NavigationChild.AddChatScreen(
+                    AddChatComponent(
+                        componentContext = context,
+                        title = navigationItem.type,
+                        onPop = { navigation.pop() }
+                    )
+                )
+            }
         }
     }
 

@@ -36,6 +36,7 @@ import navigation.bottomNavigationItems
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import presenter.add_chat.AddChatScreen
 import presenter.chat.ChatScreen
 import presenter.contacts.ContactsScreen
 import presenter.login.AuthScreen
@@ -81,7 +82,7 @@ fun App(root: RootComponent) {
                 stack = childStack,
                 animation = stackAnimation { _, otherChild, _ ->
                     // Custom animation for SettingsScreen
-                    if (otherChild.instance is NavigationChild.SettingsScreen) {
+                    if (otherChild.instance is NavigationChild.SettingsScreen || otherChild.instance is NavigationChild.AddChatScreen) {
                         slide(
                             animationSpec = tween(easing = LinearEasing),
                             orientation = Orientation.Vertical
@@ -118,6 +119,10 @@ fun App(root: RootComponent) {
 
                     is NavigationChild.SettingsScreen -> {
                         SettingsScreen(instance.component)
+                    }
+
+                    is NavigationChild.AddChatScreen -> {
+                        AddChatScreen(instance.component)
                     }
                 }
             }

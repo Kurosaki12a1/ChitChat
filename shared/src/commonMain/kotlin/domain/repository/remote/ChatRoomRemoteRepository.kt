@@ -2,8 +2,8 @@ package domain.repository.remote
 
 import data.model.dto.ChatRoomDto
 import data.model.dto.HistoryChatRoomDto
-import domain.model.ChatRoomModel
-import domain.model.PrivateChatRequest
+import domain.models.ChatRoomModel
+import domain.models.PrivateChatRequest
 
 interface ChatRoomRemoteRepository {
     suspend fun getUserChatRooms(userId: String): List<ChatRoomDto>

@@ -20,6 +20,8 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    jvm()
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
@@ -31,11 +33,11 @@ kotlin {
         }
 
         commonMain.dependencies {
+            api(projects.auth.authCore)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(libs.koin.compose)
             implementation(libs.koin.core)
-            api(project(":auth:auth-core"))
         }
     }
 }
@@ -43,9 +45,21 @@ kotlin {
 android {
     namespace = "com.kuro.chitchat.google"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    sourceSets["main"].res.srcDirs("src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

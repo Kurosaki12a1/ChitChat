@@ -1,10 +1,10 @@
 package com.kuro.chitchat.routes
 
-import com.kuro.chitchat.data.model.toDTO
+import com.kuro.chitchat.data.mapper.toDTO
+import com.kuro.chitchat.database.server.domain.repository.UserDataSource
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
 import com.kuro.chitchat.domain.model.UserUpdate
-import com.kuro.chitchat.domain.repository.UserDataSource
 import data.model.dto.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application

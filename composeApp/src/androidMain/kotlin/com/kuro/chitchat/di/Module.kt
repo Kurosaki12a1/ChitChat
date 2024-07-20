@@ -6,8 +6,5 @@ import viewmodel.AuthViewModel
 import viewmodel.MoreViewModel
 
 val appModule = module {
-    viewModel { AuthViewModel(get(), get(), get()) }
-    viewModel { MoreViewModel(get(), get()) }
-    // viewModel { SetUpViewModel(get(), get()) }
-    // factory<PlatformScreen> { PlatformScreenModule() }
+
 }

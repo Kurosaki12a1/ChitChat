@@ -5,8 +5,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.room)
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -27,19 +25,16 @@ kotlin {
         }
     }
 
-
     jvm()
 
     sourceSets {
-        sourceSets.commonMain {
-            kotlin.srcDir("build/generated/ksp/metadata")
-        }
-
         all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
 
         commonMain.dependencies {
+            implementation(project(":database:client"))
+            api(project(":auth:auth-google"))
             // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.json)
@@ -60,8 +55,8 @@ kotlin {
             implementation(libs.koin.test)
 
             // Data store
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.sqlite.bundled)
+         /*   implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)*/
             implementation(libs.datastore.preferences)
 
             implementation(libs.decompose)
@@ -71,14 +66,12 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(project(":auth:auth-google"))
             implementation(libs.ktor.client.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.okhttp.urlconnection)
             implementation(libs.lifecycle.compose)
         }
         iosMain.dependencies {
-            implementation(project(":auth:auth-google"))
             implementation(libs.ktor.client.ios)
         }
     }
@@ -93,19 +86,5 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
-}
-
-dependencies {
-    add("kspCommonMainMetadata", libs.androidx.room.compiler)
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata" ) {
-        dependsOn("kspCommonMainKotlinMetadata")
     }
 }

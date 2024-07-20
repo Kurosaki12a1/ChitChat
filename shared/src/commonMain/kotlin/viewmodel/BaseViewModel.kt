@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import data.model.dto.MessageDto
-import domain.model.MessageModel
-import domain.model.UserModel
+import domain.models.MessageModel
+import domain.models.UserModel
 import domain.usecase.auth.GetUserInfoUseCase
 import domain.usecase.chat.SocketUseCase
 import io.ktor.websocket.WebSocketSession

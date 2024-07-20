@@ -72,5 +72,11 @@
 
     <string name="start_new_chat">Start a New Chat</string>
     <string name="secret_chat">Secret Chat</string>
+    <string name="start_secret_chat">Start Secret Chat</string>
+    <string name="create_announcement">Create an Announcement</string>
     <string name="announcement">Announcement</string>
+    <string name="search_chat_placeholder">Search by name, email...</string>
+    <string name="employee">Employee</string>
+
+    <string name="ok">Ok</string>
 </resources>

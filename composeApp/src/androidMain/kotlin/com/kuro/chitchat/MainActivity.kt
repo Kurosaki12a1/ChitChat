@@ -26,10 +26,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        lifecycleScope.launch {
-            socketRepository.disconnectToWebsocket()
-            // After disconnect then call destroy to avoid memory leak
-            super.onDestroy()
-        }
+        lifecycleScope.launch { socketRepository.disconnectToWebsocket() }
+        super.onDestroy()
     }
 }

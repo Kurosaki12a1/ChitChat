@@ -1,6 +1,6 @@
 package com.kuro.chitchat.plugins
 
-import com.kuro.chitchat.domain.repository.UserDataSource
+import com.kuro.chitchat.database.server.domain.repository.UserDataSource
 import com.kuro.chitchat.routes.authorizedRoute
 import com.kuro.chitchat.routes.chatRoute
 import com.kuro.chitchat.routes.rootRoute

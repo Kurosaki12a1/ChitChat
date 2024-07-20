@@ -1,3 +1,4 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -17,7 +18,7 @@ kotlin {
         }
     }
 
-    //jvm("desktop")
+    jvm("desktop")
 
     listOf(
         iosX64(), iosArm64(), iosSimulatorArm64()
@@ -29,7 +30,7 @@ kotlin {
     }
 
     sourceSets {
-//        val desktopMain by getting
+        val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -43,7 +44,7 @@ kotlin {
 
         }
         commonMain.dependencies {
-            implementation(project(":auth:auth-google"))
+            implementation(projects.messageBar)
             implementation(projects.shared)
 
             implementation(compose.runtime)
@@ -70,9 +71,9 @@ kotlin {
             implementation(libs.coil.network.ktor)
         }
 
-        /*     desktopMain.dependencies {
-                 implementation(compose.desktop.currentOs)
-             }*/
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
     }
 }
 
@@ -118,7 +119,6 @@ dependencies {
 
 }
 
-/*
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -130,4 +130,3 @@ compose.desktop {
         }
     }
 }
-*/

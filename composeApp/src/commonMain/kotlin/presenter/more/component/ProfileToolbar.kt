@@ -33,7 +33,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
-import domain.model.UserModel
+import domain.models.UserModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.theme.HighlightDefaultDefault

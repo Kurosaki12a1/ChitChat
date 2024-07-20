@@ -18,6 +18,8 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import domain.models.RoomType
+import navigation.NavigationItem
 import navigation.chat.ChatComponent
 import navigation.chat.TabChatChild
 import presenter.chat.component.BottomSheetStartNewChatScreen
@@ -44,7 +46,9 @@ fun ChatScreen(
 
                     },
                     onStartNewChat = {
-                        onStartNewChatClick.invoke(true)
+                        if (!isBottomSheetVisible) {
+                            onStartNewChatClick.invoke(true)
+                        }
                     },
                     onBookmarkClick = {
 
@@ -88,13 +92,17 @@ fun ChatScreen(
         content = {
             BottomSheetStartNewChatScreen(
                 onChatClick = {
-
+                    // Hide bottom sheet
+                    onStartNewChatClick(false)
+                    component.navigateTo(NavigationItem.AddChatScreen(RoomType.NORMAL.type))
                 },
                 onSecretChatClick = {
-
+                    onStartNewChatClick(false)
+                    component.navigateTo(NavigationItem.AddChatScreen(RoomType.SECRET.type))
                 },
                 onAnnouncementClick = {
-
+                    onStartNewChatClick(false)
+                    component.navigateTo(NavigationItem.AddChatScreen(RoomType.BROADCAST.type))
                 }
             )
         }

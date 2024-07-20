@@ -1,6 +1,6 @@
 package com.kuro.chitchat.domain.usecase
 
-import com.kuro.chitchat.data.model.entity.Message
+import com.kuro.chitchat.database.server.entity.Message
 import com.kuro.chitchat.domain.repository.ChatRepository
 import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession

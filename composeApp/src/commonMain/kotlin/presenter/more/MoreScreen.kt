@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import navigation.NavigationItem
 import navigation.more.MoreComponent
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import presenter.more.component.BottomActionBar
 import presenter.more.component.MoreBar
 import presenter.more.component.MoreServices
@@ -23,7 +24,7 @@ import viewmodel.MoreViewModel
 @Composable
 fun MoreScreen(
     component: MoreComponent,
-    moreViewModel: MoreViewModel = koinInject()
+    moreViewModel: MoreViewModel = koinViewModel()
 ) {
     val user by moreViewModel.user
     LaunchedEffect(Unit) {

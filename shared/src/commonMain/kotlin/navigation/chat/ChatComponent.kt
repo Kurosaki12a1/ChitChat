@@ -8,13 +8,15 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pushNew
 import kotlinx.serialization.Serializable
+import navigation.NavigationChild
+import navigation.NavigationItem
 import navigation.chat.tabs.ChatAllComponent
 import navigation.chat.tabs.ChatFavoritesComponent
 import navigation.chat.tabs.ChatUnreadComponent
 
 class ChatComponent(
     componentContext: ComponentContext,
-    private val onNavigateTo: (String) -> Unit
+    private val onNavigateTo: (NavigationItem) -> Unit
 ) : ComponentContext by componentContext {
 
     // StackNavigation for managing navigation items
@@ -36,6 +38,10 @@ class ChatComponent(
         } else {
             navigation.pushNew(item)
         }
+    }
+
+    fun navigateTo(route: NavigationItem) {
+        onNavigateTo(route)
     }
 
     private fun createChild(

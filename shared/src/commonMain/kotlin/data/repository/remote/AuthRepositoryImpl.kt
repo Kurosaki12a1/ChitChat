@@ -1,8 +1,8 @@
 package data.repository.remote
 
 import data.model.dto.ApiResponse
-import domain.model.ApiRequest
-import domain.model.UserUpdate
+import domain.models.ApiRequest
+import domain.models.UserUpdate
 import domain.repository.remote.AuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

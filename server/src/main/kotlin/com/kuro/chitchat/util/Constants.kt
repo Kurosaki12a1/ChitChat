@@ -1,7 +1,6 @@
 package com.kuro.chitchat.util
 
 object Constants {
-    const val DATABASE_NAME = "Chit-Chat-Database"
     const val AUDIENCE_1 =
         "351539534874-sfiaijh3iirnfgjftvnlo9vik1s7rs9k.apps.googleusercontent.com"
     const val AUDIENCE_2 =

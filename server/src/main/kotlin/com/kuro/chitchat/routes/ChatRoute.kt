@@ -1,6 +1,6 @@
 package com.kuro.chitchat.routes
 
-import com.kuro.chitchat.data.model.toDTO
+import com.kuro.chitchat.data.mapper.toDTO
 import com.kuro.chitchat.domain.usecase.CreateOrGetChatRoomUseCase
 import com.kuro.chitchat.domain.usecase.CreatePublicChatRoomUseCase
 import com.kuro.chitchat.domain.usecase.GetChatHistoryUseCase
@@ -8,8 +8,8 @@ import com.kuro.chitchat.domain.usecase.GetChatRoomUserUseCase
 import com.kuro.chitchat.domain.usecase.JoinPublicChatRoomUseCase
 import com.kuro.chitchat.domain.usecase.WebSocketUseCase
 import data.model.dto.HistoryChatRoomDto
-import domain.model.ChatRoomModel
-import domain.model.PrivateChatRequest
+import domain.models.ChatRoomModel
+import domain.models.PrivateChatRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate

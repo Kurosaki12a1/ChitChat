@@ -1,8 +1,9 @@
 package domain.usecase.auth
 
-import domain.model.UserModel
+import com.kuro.chitchat.database.client.domain.repository.LocalUserDataSource
+import data.model.toModel
+import domain.models.UserModel
 import domain.repository.DataStoreOperations
-import domain.repository.local.LocalUserDataSource
 import kotlinx.coroutines.flow.firstOrNull
 
 class GetUserInfoUseCase(
@@ -13,7 +14,7 @@ class GetUserInfoUseCase(
     suspend operator fun invoke(): UserModel? {
         val userId = dataStoreOperations.getCurrentSignedIn().firstOrNull()
         return if (!userId.isNullOrEmpty()) {
-            localUserDataSource.getUserById(userId).firstOrNull()
+            localUserDataSource.getUserById(userId).firstOrNull()?.toModel()
         } else {
             null
         }

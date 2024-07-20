@@ -1,7 +1,7 @@
 package domain.repository.remote
 
 import data.model.dto.MessageDto
-import domain.model.MessageModel
+import domain.models.MessageModel
 import io.ktor.websocket.WebSocketSession
 import kotlinx.coroutines.flow.Flow
 

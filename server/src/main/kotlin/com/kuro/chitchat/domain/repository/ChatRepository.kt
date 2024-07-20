@@ -1,7 +1,7 @@
 package com.kuro.chitchat.domain.repository
 
-import com.kuro.chitchat.data.model.entity.ChatRoom
-import com.kuro.chitchat.data.model.entity.Message
+import com.kuro.chitchat.database.server.entity.ChatRoom
+import com.kuro.chitchat.database.server.entity.Message
 import io.ktor.websocket.WebSocketSession
 
 interface ChatRepository {

@@ -3,9 +3,9 @@ package domain.repository.remote
 import data.model.dto.ChatRoomDto
 import data.model.dto.HistoryChatRoomDto
 import data.model.dto.MessageDto
-import domain.model.ChatRoomModel
-import domain.model.MessageModel
-import domain.model.PrivateChatRequest
+import domain.models.ChatRoomModel
+import domain.models.MessageModel
+import domain.models.PrivateChatRequest
 import io.ktor.websocket.WebSocketSession
 import kotlinx.coroutines.flow.Flow
 

@@ -6,6 +6,4 @@ import domain.usecase.chat.SocketUseCase
 open class MoreViewModel(
     socketUseCase: SocketUseCase,
     getUserInfoUseCase: GetUserInfoUseCase
-) : BaseViewModel(socketUseCase, getUserInfoUseCase) {
-
-}
+) : BaseViewModel(socketUseCase, getUserInfoUseCase)
