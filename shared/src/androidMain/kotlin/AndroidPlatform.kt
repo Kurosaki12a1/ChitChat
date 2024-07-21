@@ -7,6 +7,8 @@ import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import viewmodel.AddChatViewModel
 import viewmodel.AuthViewModel
+import viewmodel.ChatRoomViewModel
+import viewmodel.ChatViewModel
 import viewmodel.MoreViewModel
 
 actual fun platformModule() = module {
@@ -15,7 +17,9 @@ actual fun platformModule() = module {
 
     viewModel { AuthViewModel(get(), get(), get()) }
     viewModel { MoreViewModel(get(), get()) }
-    viewModel { AddChatViewModel(get(), get(), get(), get()) }
+    viewModel { ChatViewModel(get(), get()) }
+    viewModel { AddChatViewModel(get(), get(), get()) }
+    viewModel { ChatRoomViewModel(get(), get(), get()) }
 }
 
 fun dataStore(context: Context): DataStore<Preferences> =

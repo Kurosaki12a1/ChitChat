@@ -47,7 +47,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.kuro.chitchat.messagebar.MessageBar
 import com.kuro.chitchat.messagebar.rememberMessageBarState
-import data.model.dto.ChatRoomDto
+import component.BaseScreen
 import data.model.dto.UserDto
 import data.model.toModel
 import domain.models.RoomType
@@ -76,113 +76,96 @@ fun AddChatScreen(
     component: AddChatComponent,
     viewModel: AddChatViewModel = koinViewModel()
 ) {
-    val searchText by derivedStateOf { viewModel.searchValue.value }
-    val childStack by component.childStack.subscribeAsState()
-    val searchResponse by viewModel.searchResponse
-    val createChatResponse by viewModel.createChatRoomResponse
-    val listUserSelected = viewModel.userSelected
-    val isSelected by derivedStateOf { listUserSelected.isNotEmpty() }
+    BaseScreen(viewModel) {
+        val searchText by derivedStateOf { viewModel.searchValue.value }
+        val childStack by component.childStack.subscribeAsState()
+        val searchResponse by viewModel.searchResponse
+        val listUserSelected = viewModel.userSelected
+        val isSelected by derivedStateOf { listUserSelected.isNotEmpty() }
 
-    val messageBarState = rememberMessageBarState()
-    val listResult = remember { mutableStateListOf<UserDto>() }
+        val messageBarState = rememberMessageBarState()
+        val listResult = remember { mutableStateListOf<UserDto>() }
 
-    LaunchedEffect(Unit) {
-        viewModel.init()
-    }
+        LaunchedEffect(searchResponse) {
+            when (searchResponse) {
+                is RequestState.Error -> {
+                    messageBarState.addError((searchResponse as RequestState.Error).exception)
+                }
 
-    LaunchedEffect(searchResponse) {
-        when (searchResponse) {
-            is RequestState.Error -> {
-                messageBarState.addError((searchResponse as RequestState.Error).exception)
-            }
+                is RequestState.Success -> {
+                    listResult.addAll((searchResponse as RequestState.Success).data)
+                }
 
-            is RequestState.Success -> {
-                listResult.addAll((searchResponse as RequestState.Success).data)
-            }
+                else -> {
 
-            else -> {
-
-            }
-        }
-    }
-
-    LaunchedEffect(createChatResponse) {
-        when (createChatResponse) {
-            is RequestState.Error -> {
-                messageBarState.addError((createChatResponse as RequestState.Error).exception)
-            }
-
-            is RequestState.Success -> {
-                println("Test create chat: ${(createChatResponse as RequestState.Success<ChatRoomDto?>).data}")
-            }
-
-            else -> {
-
-            }
-        }
-    }
-
-    MessageBar(
-        messageBarState = messageBarState,
-        showCopyButton = false
-    ) {
-        Scaffold(
-            topBar = {
-                Column {
-                    AddChatTopBar(
-                        title = stringResource(getTitle(component.title)),
-                        userSelected = listUserSelected.size,
-                        onSelectClick = {
-                            viewModel.createRoomAndInvite(listUserSelected)
-                        },
-                        onCancel = { component.pop() }
-                    )
-                    if (isSelected) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            listUserSelected.forEach { selectedUser ->
-                                SelectedEmployee(
-                                    user = selectedUser,
-                                    onRemove = {
-                                        viewModel.updateListSelected(selectedUser)
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    AddChatSearch(
-                        searchValue = searchText,
-                        onTextChange = { viewModel.onSearchTextChange(it) },
-                        onSearch = { viewModel.search() }
-                    )
-                    AddChatTab(
-                        navigation = childStack,
-                        onTabSelected = { item -> component.onTabSelect(item) }
-                    )
                 }
             }
+        }
+
+
+        MessageBar(
+            messageBarState = messageBarState,
+            showCopyButton = false
         ) {
-            Children(
-                modifier = Modifier.fillMaxWidth().background(BackgroundColorEmphasis).padding(it),
-                stack = childStack,
-                animation = stackAnimation(slide() + fade())
-            ) { child ->
-                when (child.instance) {
-                    is TabAddChatChild.EmployeeScreen -> {
-                        TabAddEmployee(listResult.map { result -> result.toModel() }) { user ->
-                            viewModel.updateListSelected(user)
+            Scaffold(
+                topBar = {
+                    Column {
+                        AddChatTopBar(
+                            title = stringResource(getTitle(component.title)),
+                            userSelected = listUserSelected.size,
+                            onSelectClick = {
+                                component.navigateToChatRoom(listUserSelected, component.title)
+                            },
+                            onCancel = { component.pop() }
+                        )
+                        if (isSelected) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                listUserSelected.forEach { selectedUser ->
+                                    SelectedEmployee(
+                                        user = selectedUser,
+                                        onRemove = {
+                                            viewModel.updateListSelected(selectedUser)
+                                        }
+                                    )
+                                }
+                            }
                         }
+                        AddChatSearch(
+                            searchValue = searchText,
+                            onTextChange = { viewModel.onSearchTextChange(it) },
+                            onSearch = { viewModel.search() }
+                        )
+                        AddChatTab(
+                            navigation = childStack,
+                            onTabSelected = { item -> component.onTabSelect(item) }
+                        )
                     }
+                }
+            ) {
+                Children(
+                    modifier = Modifier.fillMaxWidth().background(BackgroundColorEmphasis)
+                        .padding(it),
+                    stack = childStack,
+                    animation = stackAnimation(slide() + fade())
+                ) { child ->
+                    when (child.instance) {
+                        is TabAddChatChild.EmployeeScreen -> {
+                            TabAddEmployee(listResult.map { result -> result.toModel() }) { user ->
+                                viewModel.updateListSelected(user)
+                            }
+                        }
 
-                    is TabAddChatChild.ChatScreen -> {
-                        TabAddChat()
-                    }
+                        is TabAddChatChild.ChatScreen -> {
+                            TabAddChat()
+                        }
 
-                    is TabAddChatChild.ContactsScreen -> {
-                        TabAddContacts()
+                        is TabAddChatChild.ContactsScreen -> {
+                            TabAddContacts()
+                        }
                     }
                 }
             }

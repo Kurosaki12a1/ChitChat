@@ -38,6 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presenter.add_chat.AddChatScreen
 import presenter.chat.ChatScreen
+import presenter.chat_room.ChatRoomScreen
 import presenter.contacts.ContactsScreen
 import presenter.login.AuthScreen
 import presenter.more.MoreScreen
@@ -123,6 +124,10 @@ fun App(root: RootComponent) {
 
                     is NavigationChild.AddChatScreen -> {
                         AddChatScreen(instance.component)
+                    }
+
+                    is NavigationChild.ChatRoomScreen -> {
+                        ChatRoomScreen(instance.component)
                     }
                 }
             }

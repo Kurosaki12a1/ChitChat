@@ -7,12 +7,14 @@ import com.arkivanov.decompose.router.stack.backStack
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pushNew
+import domain.models.UserModel
 import kotlinx.serialization.Serializable
 
 class AddChatComponent(
     componentContext: ComponentContext,
     val title: String,
-    private val onPop: () -> Unit
+    private val onPop: () -> Unit,
+    private val navigateToRoom: (List<UserModel>, String) -> Unit
 ) : ComponentContext by componentContext {
 
     // StackNavigation for managing navigation items
@@ -26,6 +28,10 @@ class AddChatComponent(
         handleBackButton = true,
         childFactory = ::createChild
     )
+
+    fun navigateToChatRoom(listUser: List<UserModel>, type: String) {
+        navigateToRoom(listUser, type)
+    }
 
     fun onTabSelect(item: TabAddChatItem) {
         if (childStack.value.active.configuration == item) return

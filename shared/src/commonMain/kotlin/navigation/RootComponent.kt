@@ -14,6 +14,7 @@ import com.arkivanov.decompose.router.stack.pushNew
 import navigation.add_chat.AddChatComponent
 import navigation.auth.AuthComponent
 import navigation.chat.ChatComponent
+import navigation.chat_room.ChatRoomComponent
 import navigation.contacts.ContactsComponent
 import navigation.more.MoreComponent
 import navigation.settings.SettingsComponent
@@ -114,7 +115,20 @@ class RootComponent(
                     AddChatComponent(
                         componentContext = context,
                         title = navigationItem.type,
-                        onPop = { navigation.pop() }
+                        onPop = { navigation.pop() },
+                        navigateToRoom = { listUser, type ->
+                            navigateTo(NavigationItem.ChatRoomScreen(listUser, type))
+                        }
+                    )
+                )
+            }
+
+            is NavigationItem.ChatRoomScreen -> {
+                NavigationChild.ChatRoomScreen(
+                    ChatRoomComponent(
+                        componentContext = context,
+                        listUser = navigationItem.listUser,
+                        roomType = navigationItem.roomType
                     )
                 )
             }
