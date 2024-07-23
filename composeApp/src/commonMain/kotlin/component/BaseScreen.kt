@@ -9,6 +9,9 @@ fun BaseScreen(
     viewModel: BaseViewModel,
     content: @Composable () -> Unit
 ) {
-    LaunchedEffect(Unit) { viewModel.init() }
+    LaunchedEffect(Unit) {
+        println("Có vào đây init không?")
+        viewModel.init()
+    }
     content()
 }

@@ -7,8 +7,12 @@ import com.arkivanov.decompose.router.stack.backStack
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import domain.models.UserModel
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinNavViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import viewmodel.AddChatViewModel
 
 class AddChatComponent(
     componentContext: ComponentContext,
@@ -29,8 +33,14 @@ class AddChatComponent(
         childFactory = ::createChild
     )
 
-    fun navigateToChatRoom(listUser: List<UserModel>, type: String) {
-        navigateToRoom(listUser, type)
+    fun navigateToChatRoom(currentUser: UserModel, listUser: List<UserModel>, type: String) {
+        val finalListUser = mutableListOf<UserModel>()
+        // Add myself
+        finalListUser.add(currentUser)
+
+        // Add selected
+        finalListUser.addAll(listUser)
+        navigateToRoom(finalListUser, type)
     }
 
     fun onTabSelect(item: TabAddChatItem) {

@@ -10,14 +10,17 @@ import com.arkivanov.decompose.router.stack.backStack
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popWhile
 import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.decompose.router.stack.replaceCurrent
+import domain.models.ChatRoomModel
 import navigation.add_chat.AddChatComponent
-import navigation.auth.AuthComponent
 import navigation.chat.ChatComponent
-import navigation.chat_room.ChatRoomComponent
 import navigation.contacts.ContactsComponent
 import navigation.more.MoreComponent
 import navigation.settings.SettingsComponent
+import utils.now
+import utils.viewModelStoreOwner
 
 /**
  * RootComponent class for handling navigation in a Kotlin Multiplatform project
@@ -34,8 +37,8 @@ class RootComponent(
     val childStack = childStack(
         source = navigation,
         serializer = NavigationItemSerializer,
-        // initialConfiguration = NavigationItem.ChatScreen,
-        initialConfiguration = NavigationItem.AuthScreen,
+        initialConfiguration = NavigationItem.ChatScreen,
+        //    initialConfiguration = NavigationItem.AuthScreen,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -53,6 +56,14 @@ class RootComponent(
         }
     }
 
+    fun replace(navigationItem: NavigationItem) {
+        navigation.replaceCurrent(navigationItem)
+    }
+
+    fun pop() {
+        navigation.pop()
+    }
+
     // Factory method to create child components based on the navigation item
     private fun createChild(
         navigationItem: NavigationItem,
@@ -61,75 +72,81 @@ class RootComponent(
         return when (navigationItem) {
             is NavigationItem.AuthScreen -> {
                 NavigationChild.AuthScreen(
-                    AuthComponent(
-                        componentContext = context,
-                        onNavigateToHomeScreen = {
-                            // Navigate to ChatScreen when authenticated
-                            navigation.pushNew(NavigationItem.ChatScreen)
-                        }
-                    )
+                    viewModelStore = viewModelStoreOwner()
                 )
             }
 
             is NavigationItem.ChatScreen -> {
                 NavigationChild.ChatScreen(
-                    ChatComponent(
+                    component = ChatComponent(
                         componentContext = context,
                         onNavigateTo = { item ->
                             navigateTo(item)
                         }
-                    )
+                    ),
+                    viewModelStore = viewModelStoreOwner()
                 )
             }
 
             is NavigationItem.MoreScreen -> {
                 NavigationChild.MoreScreen(
-                    MoreComponent(
+                    component = MoreComponent(
                         componentContext = context,
                         onNavigateTo = { item ->
                             navigateTo(item)
                         }
-                    )
+                    ),
+                    viewModelStore = viewModelStoreOwner()
                 )
             }
 
             is NavigationItem.ContactsScreen -> {
                 NavigationChild.ContactsScreen(
-                    ContactsComponent(
+                    component = ContactsComponent(
                         componentContext = context
-                    )
+                    ),
+                    viewModelStore = viewModelStoreOwner()
                 )
             }
 
             is NavigationItem.SettingsScreen -> {
                 NavigationChild.SettingsScreen(
-                    SettingsComponent(
+                    component = SettingsComponent(
                         componentContext = context,
                         onPop = { navigation.pop() }
-                    )
+                    ),
+                    viewModelStore = viewModelStoreOwner()
                 )
             }
 
             is NavigationItem.AddChatScreen -> {
                 NavigationChild.AddChatScreen(
-                    AddChatComponent(
+                    component = AddChatComponent(
                         componentContext = context,
                         title = navigationItem.type,
                         onPop = { navigation.pop() },
                         navigateToRoom = { listUser, type ->
-                            navigateTo(NavigationItem.ChatRoomScreen(listUser, type))
+                            navigation.popWhile { it is NavigationItem.AddChatScreen }
+                            val newRoomModel = ChatRoomModel(
+                                roomName = "New Room",
+                                participants = listUser.map { it.userId },
+                                createdBy = "",
+                                createdTime = now(),
+                                roomType = type,
+                                updatedTime = now(),
+                                listUser = listUser
+                            )
+                            navigateTo(NavigationItem.ChatRoomScreen(newRoomModel))
                         }
-                    )
+                    ),
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
 
             is NavigationItem.ChatRoomScreen -> {
                 NavigationChild.ChatRoomScreen(
-                    ChatRoomComponent(
-                        componentContext = context,
-                        listUser = navigationItem.listUser,
-                        roomType = navigationItem.roomType
-                    )
+                    chatRoom = navigationItem.chatRoom,
+                    viewModelStore = viewModelStoreOwner()
                 )
             }
         }

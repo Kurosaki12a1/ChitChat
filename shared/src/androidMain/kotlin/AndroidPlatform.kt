@@ -19,7 +19,7 @@ actual fun platformModule() = module {
     viewModel { MoreViewModel(get(), get()) }
     viewModel { ChatViewModel(get(), get()) }
     viewModel { AddChatViewModel(get(), get(), get()) }
-    viewModel { ChatRoomViewModel(get(), get(), get()) }
+    viewModel { ChatRoomViewModel(get(), get(), get(), get(), get()) }
 }
 
 fun dataStore(context: Context): DataStore<Preferences> =

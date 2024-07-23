@@ -10,7 +10,7 @@ data class MessageModel(
     val senderId: String,
     val content: String,
     @Contextual val timeStamp: LocalDateTime,
-    val chatRoomId: String,
+    val chatRoomId: String = "",
     val isRead: Boolean = false,
     val edited: Boolean = false,
     val reactions: Map<String, Int> = emptyMap()

@@ -74,17 +74,33 @@ fun Route.userRoute(
          * Only accessible by the user with a valid session.
          */
         get(Endpoint.GetUserInfo.path) {
-            val userSession = call.principal<UserSession>()
-            if (userSession == null) {
-                app.log.error("Invalid Session when get: ${Endpoint.GetUserInfo.path}")
-                call.respondRedirect(Endpoint.Unauthorized.path)
+            val userId = call.parameters["userId"]
+            if (userId.isNullOrEmpty()) {
+                val userSession = call.principal<UserSession>()
+                if (userSession == null) {
+                    app.log.error("Invalid Session when get: ${Endpoint.GetUserInfo.path}")
+                    call.respondRedirect(Endpoint.Unauthorized.path)
+                } else {
+                    try {
+                        call.respond(
+                            message = ApiResponse(
+                                success = true,
+                                user = userDataSource.getUserInfo(userId = userSession.id)
+                                    ?.toDTO()
+                            ),
+                            status = HttpStatusCode.OK
+                        )
+                    } catch (e: Exception) {
+                        app.log.info("GETTING USER INFO ERROR: ${e.message}")
+                        call.respondRedirect(Endpoint.Unauthorized.path)
+                    }
+                }
             } else {
                 try {
                     call.respond(
                         message = ApiResponse(
                             success = true,
-                            user = userDataSource.getUserInfo(userId = userSession.id)
-                                ?.toDTO()
+                            user = userDataSource.getUserInfo(userId = userId)?.toDTO()
                         ),
                         status = HttpStatusCode.OK
                     )

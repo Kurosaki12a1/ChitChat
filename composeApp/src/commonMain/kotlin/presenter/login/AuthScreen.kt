@@ -6,8 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import data.model.dto.ApiResponse
 import domain.models.ApiRequest
-import navigation.auth.AuthComponent
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import presenter.login.component.AuthContent
@@ -18,7 +16,7 @@ import viewmodel.AuthViewModel
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun AuthScreen(
-    component: AuthComponent,
+    onNavigateToHomeScreen: () -> Unit,
     viewModel: AuthViewModel = koinViewModel()
 ) {
     val signedInState by viewModel.signedInState
@@ -34,7 +32,7 @@ fun AuthScreen(
             is RequestState.Success -> {
                 val response = (apiResponse as RequestState.Success<ApiResponse>).data
                 if (response.success) {
-                    component.navigateToNextScreen()
+                    onNavigateToHomeScreen()
                 } else {
                     viewModel.saveSignedInState(signedIn = false)
                 }

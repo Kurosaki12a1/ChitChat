@@ -57,6 +57,7 @@ import navigation.add_chat.TabAddChatChild
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinNavViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import presenter.add_chat.component.AddChatSearch
@@ -79,6 +80,7 @@ fun AddChatScreen(
     BaseScreen(viewModel) {
         val searchText by derivedStateOf { viewModel.searchValue.value }
         val childStack by component.childStack.subscribeAsState()
+        val currentUser by viewModel.user
         val searchResponse by viewModel.searchResponse
         val listUserSelected = viewModel.userSelected
         val isSelected by derivedStateOf { listUserSelected.isNotEmpty() }
@@ -114,7 +116,13 @@ fun AddChatScreen(
                             title = stringResource(getTitle(component.title)),
                             userSelected = listUserSelected.size,
                             onSelectClick = {
-                                component.navigateToChatRoom(listUserSelected, component.title)
+                                currentUser?.let {
+                                    component.navigateToChatRoom(
+                                        it,
+                                        listUserSelected,
+                                        component.title
+                                    )
+                                }
                             },
                             onCancel = { component.pop() }
                         )

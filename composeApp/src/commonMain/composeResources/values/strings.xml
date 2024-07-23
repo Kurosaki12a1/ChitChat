@@ -79,4 +79,5 @@
     <string name="employee">Employee</string>
 
     <string name="ok">Ok</string>
+    <string name="place_holder_message">Enter a message</string>
 </resources>

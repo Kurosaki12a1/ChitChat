@@ -9,7 +9,7 @@ interface AuthRepository {
 
     suspend fun signIn() : ApiResponse
 
-    suspend fun getUserInfo(): ApiResponse
+    suspend fun getUserInfo(userId : String?): ApiResponse
 
     suspend fun updateUser(request: UserUpdate): ApiResponse
 

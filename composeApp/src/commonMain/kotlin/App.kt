@@ -15,12 +15,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import coil3.annotation.ExperimentalCoilApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
@@ -60,15 +63,17 @@ fun App(root: RootComponent) {
         val childStack by root.childStack.subscribeAsState()
 
         val isBottomSheetEnable = remember { mutableStateOf(false) }
+        val shouldShowBottomBar by derivedStateOf {
+            shouldShowBottomBar(
+                childStack.active.configuration,
+                isBottomSheetEnable.value
+            )
+        }
         // Scaffold provides a structure with top and bottom bars and a body
         Scaffold(
             bottomBar = {
                 // Conditionally showing the bottom bar based on the active screen
-                if (shouldShowBottomBar(
-                        childStack.active.configuration,
-                        isBottomSheetEnable.value
-                    )
-                ) {
+                if (shouldShowBottomBar) {
                     AppBottomNavigation(navigation = childStack) { navigationItem ->
                         // Navigating to the selected item
                         root.navigateTo(navigationItem)
@@ -81,9 +86,11 @@ fun App(root: RootComponent) {
             Children(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 stack = childStack,
-                animation = stackAnimation { _, otherChild, _ ->
+                animation = stackAnimation { child, otherChild, _ ->
                     // Custom animation for SettingsScreen
-                    if (otherChild.instance is NavigationChild.SettingsScreen || otherChild.instance is NavigationChild.AddChatScreen) {
+                    if (child.instance is NavigationChild.ChatRoomScreen && otherChild.instance is NavigationChild.ChatRoomScreen) {
+                        fade()
+                    } else if (otherChild.instance is NavigationChild.SettingsScreen || otherChild.instance is NavigationChild.AddChatScreen) {
                         slide(
                             animationSpec = tween(easing = LinearEasing),
                             orientation = Orientation.Vertical
@@ -97,37 +104,60 @@ fun App(root: RootComponent) {
                 // Displaying the appropriate screen based on the current child instance
                 when (val instance = child.instance) {
                     is NavigationChild.AuthScreen -> {
-                        AuthScreen(instance.component)
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            AuthScreen(
+                                onNavigateToHomeScreen = {
+                                    root.navigateTo(NavigationItem.ChatScreen)
+                                }
+                            )
+                        }
                     }
 
                     is NavigationChild.ChatScreen -> {
-                        ChatScreen(
-                            isBottomSheetVisible = isBottomSheetEnable.value,
-                            onStartNewChatClick = { shouldEnable ->
-                                isBottomSheetEnable.value = shouldEnable
-                            },
-                            instance.component
-                        )
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            ChatScreen(
+                                isBottomSheetVisible = isBottomSheetEnable.value,
+                                onStartNewChatClick = { shouldEnable ->
+                                    isBottomSheetEnable.value = shouldEnable
+                                },
+                                component = instance.component
+                            )
+                        }
                     }
 
                     is NavigationChild.ContactsScreen -> {
-                        ContactsScreen(instance.component)
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            ContactsScreen(instance.component)
+                        }
                     }
 
                     is NavigationChild.MoreScreen -> {
-                        MoreScreen(instance.component)
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            MoreScreen(instance.component)
+                        }
                     }
 
                     is NavigationChild.SettingsScreen -> {
-                        SettingsScreen(instance.component)
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            SettingsScreen(instance.component)
+                        }
                     }
 
                     is NavigationChild.AddChatScreen -> {
-                        AddChatScreen(instance.component)
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            AddChatScreen(instance.component)
+                        }
                     }
 
                     is NavigationChild.ChatRoomScreen -> {
-                        ChatRoomScreen(instance.component)
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            ChatRoomScreen(
+                                chatRoom = instance.chatRoom,
+                                onReCreateChatRoom = { chatRoom ->
+                                    root.replace(NavigationItem.ChatRoomScreen(chatRoom))
+                                },
+                                onBack = { root.pop() })
+                        }
                     }
                 }
             }
@@ -166,7 +196,7 @@ private fun AppBottomNavigation(
     ) {
         // Iterating over each bottom navigation item
         bottomNavigationItems.forEach { item ->
-            val isSelected = item.route == navigation.active.configuration
+            val isSelected by derivedStateOf { item.route == navigation.active.configuration }
 
             // BottomNavigationItem represents each navigation option in the bar
             BottomNavigationItem(
@@ -181,7 +211,7 @@ private fun AppBottomNavigation(
                         painter = if (isSelected) painterResource(item.focusedIcon) else painterResource(
                             item.unFocusedIcon
                         ),
-                        contentDescription = stringResource(item.iconContentDescription),
+                        contentDescription = "Icon",
                         tint = Color.Unspecified
                     )
                 },

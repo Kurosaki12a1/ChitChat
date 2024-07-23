@@ -44,12 +44,12 @@ fun TabAddEmployee(
     ) {
         item(key = "search result") {
             Text(
-                text = "Search Result: (${listUser.size})",
+                text = "Search Result: (${listTest.size})",
                 style = MaterialTheme.typography.body1,
                 fontWeight = FontWeight.Bold
             )
         }
-        items(listUser, key = { it.userId }) { user ->
+        items(listTest, key = { it.userId }) { user ->
             ItemEmployee(
                 user = user,
                 onClick = {
@@ -60,7 +60,6 @@ fun TabAddEmployee(
     }
 }
 
-/*
 private val listTest = listOf(
     UserModel(
         userId = "123",
@@ -95,7 +94,6 @@ private val listTest = listOf(
         StatusUser.BUSY.status
     ),
 )
-*/
 
 
 @Composable

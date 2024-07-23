@@ -8,6 +8,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -61,10 +62,14 @@ class AuthRepositoryImpl(
      *
      * @return The API response containing the user information.
      */
-    override suspend fun getUserInfo(): ApiResponse {
+    override suspend fun getUserInfo(userId: String?): ApiResponse {
         return try {
             val response = client.get {
-                url { path(GET_USER) }
+                url {
+                    contentType(ContentType.Application.Json)
+                    path(GET_USER)
+                    parameter("userId", userId)
+                }
             }
             response.body<ApiResponse>()
         } catch (e: Exception) {

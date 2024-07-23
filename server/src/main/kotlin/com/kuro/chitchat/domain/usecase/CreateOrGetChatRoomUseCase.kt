@@ -8,6 +8,7 @@ import com.kuro.chitchat.util.generateChatRoomName
 import domain.models.MessageModel
 import domain.models.RoomType
 import domain.models.UserModel
+import org.bson.types.ObjectId
 
 /**
  * Use case class for creating or retrieving a chat room.
@@ -41,7 +42,7 @@ class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
             chatRepository.addRoomToMembers(existingRoom.id, existingRoom.participants)
             existingRoom
         } else {
-            val message = convertMessageModelToMessage(firstMessage)
+            val message = convertMessageModelToMessage(firstMessage, roomId)
             val newRoom = ChatRoom(
                 id = roomId,
                 roomName = generateChatRoomName(sender.name, receiver.name),
@@ -68,13 +69,16 @@ class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
      * @param messageModel The message model to be converted.
      * @return The converted Message, or null if the input message model is null.
      */
-    private fun convertMessageModelToMessage(messageModel: MessageModel?): Message? {
+    private fun convertMessageModelToMessage(
+        messageModel: MessageModel?,
+        roomId: String
+    ): Message? {
         return if (messageModel != null) {
             Message(
-                id = messageModel.id,
+                id = ObjectId().toHexString(),
                 content = messageModel.content,
                 senderId = messageModel.senderId,
-                chatRoomId = messageModel.chatRoomId,
+                chatRoomId = roomId,
                 timeStamp = messageModel.timeStamp,
                 isRead = messageModel.isRead,
                 edited = messageModel.edited,

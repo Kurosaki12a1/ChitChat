@@ -23,6 +23,7 @@ import domain.usecase.auth.GetUserInfoUseCase
 import domain.usecase.chat.ConnectToWebSocketUseCase
 import domain.usecase.chat.CreatePublicChatRoomUseCase
 import domain.usecase.chat.GetChatHistoryUseCase
+import domain.usecase.chat.GetListJoinedUserUseCase
 import domain.usecase.chat.GetUserChatRoomsUseCase
 import domain.usecase.chat.JoinPublicChatRoomUseCase
 import domain.usecase.chat.ReceiveMessagesUseCase
@@ -92,6 +93,14 @@ fun commonModule() = module {
 
     factory<CreatePublicChatRoomUseCase> {
         CreatePublicChatRoomUseCase(get())
+    }
+
+    factory<GetListJoinedUserUseCase> {
+        GetListJoinedUserUseCase(get())
+    }
+
+    factory<StartPrivateChatUseCase> {
+        StartPrivateChatUseCase(get())
     }
 
     factory<SessionChatUseCase> {
