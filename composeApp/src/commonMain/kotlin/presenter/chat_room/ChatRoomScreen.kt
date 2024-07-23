@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,7 +20,6 @@ import data.model.dto.UserDto
 import data.model.toModel
 import domain.models.ChatRoomModel
 import domain.models.MessageModel
-import domain.models.StatusUser
 import domain.models.UserModel
 import org.koin.compose.viewmodel.koinViewModel
 import presenter.chat_room.component.BottomBarChatRoom
@@ -38,14 +38,19 @@ fun ChatRoomScreen(
 ) {
     val listJoinedUser = remember { mutableStateListOf<UserDto>() }
     val isPublic by derivedStateOf { chatRoom.participants.size > 2 }
+    val isChatRoomCreated by remember { mutableStateOf(chatRoom.id.isNotBlank()) }
 
     LaunchedEffect(viewModel.listJoinedUser) {
         when (val result = viewModel.listJoinedUser.value) {
-            is RequestState.Error -> { /* handle error */ }
+            is RequestState.Error -> { /* handle error */
+            }
+
             is RequestState.Success -> {
                 listJoinedUser.addAll(result.data)
             }
-            else -> { /* handle other states */ }
+
+            else -> { /* handle other states */
+            }
         }
     }
 
@@ -57,35 +62,66 @@ fun ChatRoomScreen(
         }
 
         if (isPublic) {
-            PublicChatScreen()
+            if (isChatRoomCreated) {
+                PublicChatScreen(
+                    chatRoom = chatRoom,
+                    myUser = myUser,
+                    otherUsers =
+                    listJoinedUser
+                        .filter { it.userId != myUser?.userId }
+                        .map { it.toModel() },
+                    onBack = {
+
+                    },
+                    onSendMessage = {
+
+                    }
+                )
+            } else {
+                PublicChatScreen(
+                    chatRoom = chatRoom,
+                    myUser = myUser,
+                    otherUsers = chatRoom.listUser.filter { it.userId != myUser?.userId },
+                    onBack = {
+
+                    },
+                    onSendMessage = {
+                        //OnReCreate
+                    }
+                )
+            }
+
         } else {
             // New room
-            if (chatRoom.id.isBlank()) {
+            if (isChatRoomCreated) {
                 val isListChanged = derivedStateOf { chatRoom.participants.map { it } }
-                val otherUser = remember(isListChanged) { chatRoom.listUser.find { it.userId != myUser?.userId } }
-                SharedPrivateChatScreen(
+                val otherUser =
+                    remember(isListChanged) { chatRoom.listUser.find { it.userId != myUser?.userId } }
+                PrivateChatScreen(
                     chatRoom = chatRoom,
+                    myUser = myUser,
                     otherUser = otherUser,
                     onBack = onBack,
                     onSendMessage = { message ->
-                   /*     onReCreateChatRoom(
-                            ChatRoomModel(
-                                id = "ada;dasdasd",
-                                participants = chatRoom.participants,
-                                roomType = chatRoom.roomType,
-                                createdBy = chatRoom.createdBy,
-                                createdTime = chatRoom.createdTime,
-                                updatedTime = chatRoom.updatedTime,
-                            )
-                        )*/
-                   //     viewModel.startPrivateChat(receiver = otherUser, message = message)
-                      //  onReCreateChatRoom(chatRoom.copy(id = generateRoomId()))
+                        /*     onReCreateChatRoom(
+                                 ChatRoomModel(
+                                     id = "ada;dasdasd",
+                                     participants = chatRoom.participants,
+                                     roomType = chatRoom.roomType,
+                                     createdBy = chatRoom.createdBy,
+                                     createdTime = chatRoom.createdTime,
+                                     updatedTime = chatRoom.updatedTime,
+                                 )
+                             )*/
+                        //     viewModel.startPrivateChat(receiver = otherUser, message = message)
+                        //  onReCreateChatRoom(chatRoom.copy(id = generateRoomId()))
                     }
                 )
             } else {
                 val otherUser = listJoinedUser.find { it.userId != myUser?.userId }?.toModel()
-                SharedPrivateChatScreen(
+                PrivateChatScreen(
                     chatRoom = chatRoom,
+                    myUser = myUser,
                     otherUser = otherUser,
                     onBack = onBack,
                     onSendMessage = { message ->
@@ -98,13 +134,14 @@ fun ChatRoomScreen(
 }
 
 @Composable
-private fun SharedPrivateChatScreen(
+private fun PrivateChatScreen(
     chatRoom: ChatRoomModel,
+    myUser: UserModel?,
     otherUser: UserModel?,
     onBack: () -> Unit,
     onSendMessage: (MessageModel) -> Unit
 ) {
-    if (otherUser == null) return
+    if (otherUser == null || myUser == null) return
     Scaffold(
         topBar = {
             Column {
@@ -116,27 +153,35 @@ private fun SharedPrivateChatScreen(
                     onSearchMessage = {}
                 )
                 Divider(
-                    modifier = Modifier.fillMaxWidth().height(3.dp).background(BackgroundColorEmphasis)
+                    modifier = Modifier.fillMaxWidth().height(3.dp)
+                        .background(BackgroundColorEmphasis)
                 )
             }
         },
         bottomBar = {
             BottomBarChatRoom(
-                senderId = otherUser.userId,
+                senderId = myUser.userId,
                 chatRoomId = chatRoom.id,
                 onSend = { onSendMessage(it) })
         }) { padding ->
         MessageChatRoom(padding)
     }
 }
+
 @Composable
-private fun PublicChatScreen() {
+private fun PublicChatScreen(
+    chatRoom: ChatRoomModel,
+    myUser: UserModel?,
+    otherUsers: List<UserModel>?,
+    onBack: () -> Unit,
+    onSendMessage: (MessageModel) -> Unit
+) {
+    if (otherUsers == null || myUser == null) return
     Scaffold(
         topBar = {
             Column {
                 TopBarChatRoom(
-                    title = "Test Pubkic",
-                    status = StatusUser.ONLINE.status,
+                    title = (otherUsers.map { it.name } + myUser.name).joinToString(", "),
                     onBack = {
 
                     },
@@ -155,7 +200,8 @@ private fun PublicChatScreen() {
         },
         bottomBar = {
             BottomBarChatRoom(
-                senderId = "",
+                senderId = myUser.userId,
+                chatRoomId = chatRoom.id,
                 onSend = {
 
                 })
