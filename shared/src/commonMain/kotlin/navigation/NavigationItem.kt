@@ -34,6 +34,9 @@ sealed class NavigationItem {
     data class AddChatScreen(val type: String) : NavigationItem()
 
     @Serializable
+    data class AddChatRoomScreen(val temporaryRoom: ChatRoomModel) : NavigationItem()
+
+    @Serializable
     data class ChatRoomScreen(val chatRoom: ChatRoomModel) :
         NavigationItem()
 }
@@ -65,6 +68,11 @@ sealed class NavigationChild {
         val viewModelStore: ViewModelStoreOwner
     ) : NavigationChild()
 
+    data class AddChatRoomScreen(
+        val chatRoom: ChatRoomModel,
+        val viewModelStore: ViewModelStoreOwner
+    ) : NavigationChild()
+
     data class ChatRoomScreen(
         val chatRoom: ChatRoomModel,
         val viewModelStore: ViewModelStoreOwner
@@ -75,6 +83,7 @@ object NavigationItemSerializer :
     JsonContentPolymorphicSerializer<NavigationItem>(NavigationItem::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<NavigationItem> {
         return when {
+            "temporaryRoom" in element.jsonObject ->NavigationItem.AddChatRoomScreen.serializer()
             "chatRoom" in element.jsonObject -> NavigationItem.ChatRoomScreen.serializer()
             "type" in element.jsonObject -> NavigationItem.AddChatScreen.serializer()
             else -> NavigationItem.serializer()

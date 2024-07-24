@@ -33,6 +33,7 @@ class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
     suspend operator fun invoke(
         sender: UserModel,
         receiver: UserModel,
+        type : String,
         firstMessage: MessageModel?
     ): ChatRoom {
         val roomId = generateChatRoomId(sender.userId, receiver.userId)
@@ -49,7 +50,7 @@ class CreateOrGetChatRoomUseCase(private val chatRepository: ChatRepository) {
                 participants = listOf(sender.userId, receiver.userId),
                 lastMessage = message,
                 createdBy = sender.userId,
-                roomType = RoomType.NORMAL.type
+                roomType = type
             )
             chatRepository.createChatRoom(newRoom)
             chatRepository.addRoomToMembers(newRoom.id, newRoom.participants)

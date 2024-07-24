@@ -5,6 +5,7 @@ import di.createDataStore
 import io.ktor.client.engine.okhttp.OkHttp
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import viewmodel.AddChatRoomViewModel
 import viewmodel.AddChatViewModel
 import viewmodel.AuthViewModel
 import viewmodel.ChatRoomViewModel
@@ -19,7 +20,8 @@ actual fun platformModule() = module {
     viewModel { MoreViewModel(get(), get()) }
     viewModel { ChatViewModel(get(), get()) }
     viewModel { AddChatViewModel(get(), get(), get()) }
-    viewModel { ChatRoomViewModel(get(), get(), get(), get(), get()) }
+    viewModel { ChatRoomViewModel(get(), get(), get(), get()) }
+    viewModel { AddChatRoomViewModel(get(), get(), get(), get()) }
 }
 
 fun dataStore(context: Context): DataStore<Preferences> =

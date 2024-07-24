@@ -60,8 +60,8 @@ class RootComponent(
         navigation.replaceCurrent(navigationItem)
     }
 
-    fun pop() {
-        navigation.pop()
+    fun pop(isSuccess: ((Boolean) -> Unit)? = null) {
+        isSuccess?.let { navigation.pop(it) } ?: run { navigation.pop() }
     }
 
     // Factory method to create child components based on the navigation item
@@ -72,7 +72,7 @@ class RootComponent(
         return when (navigationItem) {
             is NavigationItem.AuthScreen -> {
                 NavigationChild.AuthScreen(
-                    viewModelStore = viewModelStoreOwner()
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
 
@@ -84,7 +84,7 @@ class RootComponent(
                             navigateTo(item)
                         }
                     ),
-                    viewModelStore = viewModelStoreOwner()
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
 
@@ -96,7 +96,7 @@ class RootComponent(
                             navigateTo(item)
                         }
                     ),
-                    viewModelStore = viewModelStoreOwner()
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
 
@@ -105,7 +105,7 @@ class RootComponent(
                     component = ContactsComponent(
                         componentContext = context
                     ),
-                    viewModelStore = viewModelStoreOwner()
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
 
@@ -115,7 +115,7 @@ class RootComponent(
                         componentContext = context,
                         onPop = { navigation.pop() }
                     ),
-                    viewModelStore = viewModelStoreOwner()
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
 
@@ -136,7 +136,7 @@ class RootComponent(
                                 updatedTime = now(),
                                 listUser = listUser
                             )
-                            navigateTo(NavigationItem.ChatRoomScreen(newRoomModel))
+                            navigateTo(NavigationItem.AddChatRoomScreen(newRoomModel))
                         }
                     ),
                     viewModelStore = context.viewModelStoreOwner()
@@ -146,7 +146,14 @@ class RootComponent(
             is NavigationItem.ChatRoomScreen -> {
                 NavigationChild.ChatRoomScreen(
                     chatRoom = navigationItem.chatRoom,
-                    viewModelStore = viewModelStoreOwner()
+                    viewModelStore = context.viewModelStoreOwner()
+                )
+            }
+
+            is NavigationItem.AddChatRoomScreen -> {
+                NavigationChild.AddChatRoomScreen(
+                    chatRoom = navigationItem.temporaryRoom,
+                    viewModelStore = context.viewModelStoreOwner()
                 )
             }
         }

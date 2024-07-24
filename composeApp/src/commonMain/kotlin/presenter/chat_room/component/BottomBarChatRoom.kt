@@ -39,7 +39,9 @@ import utils.now
 
 @Composable
 fun BottomBarChatRoom(
-    senderId: String? = "", chatRoomId: String? = "", onSend: (MessageModel) -> Unit
+    senderId: String? = "",
+    chatRoomId: String? = "",
+    onSend: (MessageModel) -> Unit
 ) {
     val messageValue = remember { mutableStateOf("") }
     Row(
@@ -68,14 +70,7 @@ fun BottomBarChatRoom(
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
             keyboardActions = KeyboardActions(onSend = {
-                onSend(
-                    MessageModel(
-                        senderId = senderId ?: "",
-                        chatRoomId = chatRoomId ?: "",
-                        content = messageValue.value,
-                        timeStamp = now()
-                    )
-                )
+                onSend(generateMessageModel(senderId, chatRoomId, messageValue.value))
                 messageValue.value = ""
             }),
             placeholder = { Text(text = stringResource(Res.string.place_holder_message)) },
@@ -89,28 +84,14 @@ fun BottomBarChatRoom(
         if (messageValue.value.isNotEmpty()) {
             Icon(
                 modifier = Modifier.clickable {
-                    onSend(
-                        MessageModel(
-                            senderId = senderId ?: "",
-                            chatRoomId = chatRoomId ?: "",
-                            content = messageValue.value,
-                            timeStamp = now()
-                        )
-                    )
+                    onSend(generateMessageModel(senderId, chatRoomId, messageValue.value))
                     messageValue.value = ""
                 }, imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send"
             )
         } else {
             Icon(
                 modifier = Modifier.clickable {
-                    onSend(
-                        MessageModel(
-                            senderId = senderId ?: "",
-                            chatRoomId = chatRoomId ?: "",
-                            content = ":emo:like",
-                            timeStamp = now()
-                        )
-                    )
+                    onSend(generateMessageModel(senderId, chatRoomId, ":emo:like"))
                 },
                 painter = painterResource(Res.drawable.ic_thumb_up),
                 contentDescription = "Like"
@@ -118,3 +99,11 @@ fun BottomBarChatRoom(
         }
     }
 }
+
+private fun generateMessageModel(senderId: String?, chatRoomId: String?, content: String) =
+    MessageModel(
+        senderId = senderId ?: "",
+        chatRoomId = chatRoomId ?: "",
+        content = content,
+        timeStamp = now()
+    )

@@ -103,6 +103,10 @@ fun commonModule() = module {
         StartPrivateChatUseCase(get())
     }
 
+    factory<GetChatHistoryUseCase> {
+        GetChatHistoryUseCase(get())
+    }
+
     factory<SessionChatUseCase> {
         SessionChatUseCase(
             getUserChatRoomsUseCase = GetUserChatRoomsUseCase((get())),

@@ -1,4 +1,4 @@
-package presenter.chat_room
+package presenter.create_chat_room
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,103 +8,85 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import component.BaseScreen
-import data.model.dto.UserDto
 import data.model.toModel
 import domain.models.ChatRoomModel
 import domain.models.MessageModel
 import domain.models.UserModel
-import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 import presenter.chat_room.component.BottomBarChatRoom
-import presenter.chat_room.component.MessageChatRoom
 import presenter.chat_room.component.TopBarChatRoom
+import presenter.create_chat_room.component.OnBoardChatScreen
 import ui.theme.BackgroundColorEmphasis
 import utils.RequestState
-import viewmodel.ChatRoomViewModel
+import viewmodel.AddChatRoomViewModel
 
 @Composable
-fun ChatRoomScreen(
+fun AddChatRoomScreen(
     chatRoom: ChatRoomModel,
+    onCreateChatRoom: (ChatRoomModel) -> Unit,
     onBack: () -> Unit,
-    viewModel: ChatRoomViewModel = koinViewModel()
+    viewModel: AddChatRoomViewModel = koinViewModel()
 ) {
-    val listJoinedUser = remember { mutableStateListOf<UserDto>() }
     val isPublic by derivedStateOf { chatRoom.participants.size > 2 }
-    val listMessageChat = remember { mutableStateListOf<MessageModel>() }
 
-    LaunchedEffect(viewModel.listJoinedUser) {
-        when (val result = viewModel.listJoinedUser.value) {
-            is RequestState.Error -> {
-                /* handle error */
+    LaunchedEffect(viewModel.createChatRoomResponse) {
+        when (val result = viewModel.createChatRoomResponse.value) {
+            is RequestState.Success -> {
+                result.data?.let {
+                    onCreateChatRoom(it.toModel())
+                }
             }
 
-            is RequestState.Success -> {
-                listJoinedUser.clear()
-                listJoinedUser.addAll(result.data)
+            is RequestState.Error -> {
+
             }
 
             else -> {
-                /* handle other states */
+                // Do nothing
             }
         }
-    }
-
-    LaunchedEffect(viewModel.incomingMessages.collectAsState()) {
-        viewModel.incomingMessages.collectLatest { message ->
-            if (message != null && message.chatRoomId == chatRoom.id) {
-                listMessageChat.add(message.toModel())
-            }
-        }
-    }
-
-    LaunchedEffect(chatRoom.participants.size) {
-        viewModel.updateRoomUser(chatRoom.participants)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.getChatHistory(chatRoom.id)
     }
 
     BaseScreen(viewModel) {
         val myUser by viewModel.user
-        val historyChat by viewModel.chatHistory
         if (isPublic) {
             PublicChatScreen(
                 chatRoom = chatRoom,
                 myUser = myUser,
-                otherUsers =
-                listJoinedUser
-                    .filter { it.userId != myUser?.userId }
-                    .map { it.toModel() },
+                otherUsers = chatRoom.listUser.filter { it.userId != myUser?.userId },
                 onBack = onBack,
-                oldChats = historyChat.map { it.toModel() },
-                newChat = listMessageChat,
                 onSendMessage = { message ->
-                    viewModel.sendMessage(message)
+                    // TODO
+                    /* viewModel.startPublicChat(
+
+                     )*/
                 }
             )
         } else {
             PrivateChatScreen(
                 chatRoom = chatRoom,
                 myUser = myUser,
-                otherUser = listJoinedUser.find { it.userId != myUser?.userId }?.toModel(),
+                otherUser = chatRoom.listUser.find { it.userId != myUser?.userId },
                 onBack = onBack,
-                oldChats = historyChat.map { it.toModel() },
-                newChat = listMessageChat,
                 onSendMessage = { message ->
-                    viewModel.sendMessage(message)
+                    onCreateChatRoom(
+                        ChatRoomModel(
+                            id = "Test room nè",
+                            participants = chatRoom.participants,
+                            roomType = chatRoom.roomType,
+                            createdBy = chatRoom.createdBy,
+                            createdTime = chatRoom.createdTime,
+                            updatedTime = chatRoom.updatedTime,
+                        )
+                    )
+                    // viewModel.startPrivateChat()
                 }
             )
-
         }
     }
 }
@@ -115,8 +97,6 @@ private fun PrivateChatScreen(
     myUser: UserModel?,
     otherUser: UserModel?,
     onBack: () -> Unit,
-    oldChats: List<MessageModel>,
-    newChat: List<MessageModel>,
     onSendMessage: (MessageModel) -> Unit
 ) {
     if (otherUser == null || myUser == null) return
@@ -143,11 +123,7 @@ private fun PrivateChatScreen(
                 onSend = onSendMessage
             )
         }) { padding ->
-        MessageChatRoom(
-            oldChats = oldChats,
-            newChat = newChat,
-            paddingValues = padding
-        )
+        OnBoardChatScreen(chatRoom, padding)
     }
 }
 
@@ -157,8 +133,6 @@ private fun PublicChatScreen(
     myUser: UserModel?,
     otherUsers: List<UserModel>?,
     onBack: () -> Unit,
-    oldChats: List<MessageModel>,
-    newChat: List<MessageModel>,
     onSendMessage: (MessageModel) -> Unit
 ) {
     if (otherUsers == null || myUser == null) return
@@ -166,14 +140,10 @@ private fun PublicChatScreen(
         topBar = {
             Column {
                 TopBarChatRoom(
-                    title = chatRoom.roomName,
+                    title = (otherUsers.map { it.name } + myUser.name).joinToString(", "),
                     onBack = onBack,
-                    onMore = {
-
-                    },
-                    onSearchMessage = {
-
-                    }
+                    onMore = {},
+                    onSearchMessage = {}
                 )
                 Divider(
                     modifier = Modifier.fillMaxWidth().height(3.dp)
@@ -188,10 +158,6 @@ private fun PublicChatScreen(
                 onSend = onSendMessage
             )
         }) { padding ->
-        MessageChatRoom(
-            oldChats = oldChats,
-            newChat = newChat,
-            paddingValues = padding
-        )
+        OnBoardChatScreen(chatRoom, padding)
     }
 }

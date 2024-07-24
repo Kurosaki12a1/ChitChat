@@ -51,6 +51,7 @@ fun Route.chatRoute() {
             val chatRoom = useCase(
                 sender = request.sender,
                 receiver = request.receiver,
+                type = request.roomType,
                 firstMessage = request.firstMessage
             )
             call.respond(

@@ -43,6 +43,7 @@ import presenter.add_chat.AddChatScreen
 import presenter.chat.ChatScreen
 import presenter.chat_room.ChatRoomScreen
 import presenter.contacts.ContactsScreen
+import presenter.create_chat_room.AddChatRoomScreen
 import presenter.login.AuthScreen
 import presenter.more.MoreScreen
 import presenter.settings.SettingsScreen
@@ -87,8 +88,8 @@ fun App(root: RootComponent) {
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 stack = childStack,
                 animation = stackAnimation { child, otherChild, _ ->
-                    // Custom animation for SettingsScreen
-                    if (child.instance is NavigationChild.ChatRoomScreen && otherChild.instance is NavigationChild.ChatRoomScreen) {
+                    // Custom animation for AddChatRoomScreen
+                    if (child.instance is NavigationChild.AddChatRoomScreen && otherChild.instance is NavigationChild.ChatRoomScreen) {
                         fade()
                     } else if (otherChild.instance is NavigationChild.SettingsScreen || otherChild.instance is NavigationChild.AddChatScreen) {
                         slide(
@@ -153,7 +154,15 @@ fun App(root: RootComponent) {
                         CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
                             ChatRoomScreen(
                                 chatRoom = instance.chatRoom,
-                                onReCreateChatRoom = { chatRoom ->
+                                onBack = { root.pop() })
+                        }
+                    }
+
+                    is NavigationChild.AddChatRoomScreen -> {
+                        CompositionLocalProvider(LocalViewModelStoreOwner provides instance.viewModelStore) {
+                            AddChatRoomScreen(
+                                chatRoom = instance.chatRoom,
+                                onCreateChatRoom = { chatRoom ->
                                     root.replace(NavigationItem.ChatRoomScreen(chatRoom))
                                 },
                                 onBack = { root.pop() })
@@ -162,7 +171,6 @@ fun App(root: RootComponent) {
                 }
             }
         }
-
     }
 }
 

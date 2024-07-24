@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.InstanceKeeperOwner
 import com.arkivanov.essenty.instancekeeper.getOrCreate
-import kotlin.jvm.Synchronized
 
 internal fun InstanceKeeperOwner.viewModelStoreOwner(): ViewModelStoreOwner =
     instanceKeeper.getOrCreate(::ViewModelStoreOwnerInstance)
@@ -25,8 +24,7 @@ private class ViewModelStoreOwnerInstance : ViewModelStoreOwner, InstanceKeeper.
         get() = getInstance()
 
     override fun onDestroy() {
-        println("Có vào destroy không?")
+        println("Có destroy không?")
         viewModelStore.clear()
     }
-
 }
