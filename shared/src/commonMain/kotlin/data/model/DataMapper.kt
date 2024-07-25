@@ -2,16 +2,28 @@ package data.model
 
 import com.kuro.chitchat.database.client.entity.ChatRoomEntity
 import com.kuro.chitchat.database.client.entity.MessageEntity
+import com.kuro.chitchat.database.client.entity.ReactionEntity
 import com.kuro.chitchat.database.client.entity.UserEntity
 import data.model.dto.ChatRoomDto
 import data.model.dto.MessageDto
 import data.model.dto.UserDto
 import domain.models.ChatRoomModel
 import domain.models.MessageModel
+import domain.models.Reaction
 import domain.models.RoomType
 import domain.models.StatusUser
 import domain.models.UserModel
 import utils.now
+
+fun Reaction.toEntity() = ReactionEntity(
+    userId = this.userId,
+    emoCode = this.emoCode
+)
+
+fun ReactionEntity.toReaction() = Reaction(
+    userId = this.userId,
+    emoCode = this.emoCode
+)
 
 fun MessageModel.toEntity() = MessageEntity(
     id = this.id,
@@ -20,7 +32,7 @@ fun MessageModel.toEntity() = MessageEntity(
     timeStamp = this.timeStamp,
     chatRoomId = this.chatRoomId,
     isRead = this.isRead,
-    reactions = this.reactions,
+    reactions = this.reactions.map { it.toEntity() },
     edited = this.edited
 )
 
@@ -42,7 +54,8 @@ fun ChatRoomModel.toEntity() = ChatRoomEntity(
     roomType = this.roomType,
     createdBy = this.createdBy,
     createdTime = this.createdTime,
-    updatedTime = this.updatedTime
+    updatedTime = this.updatedTime,
+    roomPhoto = this.roomPhoto
 )
 
 fun MessageEntity.toModel() = MessageModel(
@@ -53,7 +66,7 @@ fun MessageEntity.toModel() = MessageModel(
     chatRoomId = this.chatRoomId,
     isRead = this.isRead,
     edited = this.edited,
-    reactions = this.reactions
+    reactions = this.reactions.map { it.toReaction() }
 )
 
 fun UserEntity.toModel() = UserModel(
@@ -74,7 +87,8 @@ fun ChatRoomEntity.toModel() = ChatRoomModel(
     roomType = this.roomType,
     createdBy = this.createdBy,
     createdTime = this.createdTime,
-    updatedTime = this.updatedTime
+    updatedTime = this.updatedTime,
+    roomPhoto = this.roomPhoto
 )
 
 
@@ -84,7 +98,8 @@ fun MessageDto.toModel() = MessageModel(
     content = this.content ?: "",
     timeStamp = this.timeStamp ?: now(),
     chatRoomId = this.chatRoomId ?: "",
-    isRead = this.isRead ?: false
+    isRead = this.isRead ?: false,
+    reactions = this.reactions ?: listOf()
 )
 
 fun UserDto.toModel() = UserModel(
@@ -105,7 +120,8 @@ fun ChatRoomDto.toModel() = ChatRoomModel(
     roomType = this.roomType ?: RoomType.NORMAL.type,
     createdTime = this.createdTime ?: now(),
     updatedTime = this.updatedTime ?: now(),
-    createdBy = this.createdBy ?: ""
+    createdBy = this.createdBy ?: "",
+    roomPhoto = this.roomPhoto
 )
 
 fun MessageDto.toMessage() = MessageEntity(
@@ -116,7 +132,7 @@ fun MessageDto.toMessage() = MessageEntity(
     chatRoomId = this.chatRoomId ?: "",
     isRead = this.isRead ?: false,
     edited = this.edited ?: false,
-    reactions = this.reactions ?: emptyMap()
+    reactions = this.reactions?.map { it.toEntity() } ?: listOf()
 )
 
 fun UserDto.toUser() = UserEntity(
@@ -137,5 +153,6 @@ fun ChatRoomDto.toChatRoom() = ChatRoomEntity(
     roomType = this.roomType ?: RoomType.NORMAL.type,
     createdTime = this.createdTime ?: now(),
     updatedTime = this.updatedTime ?: now(),
-    createdBy = this.createdBy ?: ""
+    createdBy = this.createdBy ?: "",
+    roomPhoto = this.roomPhoto
 )

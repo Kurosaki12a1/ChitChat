@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b066871157e398ca4ec3d50dff4b64c3",
+    "identityHash": "cd824f363c83a2c4a17da13e9b3a97e0",
     "entities": [
       {
         "tableName": "ChatRoom",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `roomName` TEXT NOT NULL, `participants` TEXT NOT NULL, `lastMessage` TEXT, `unReadCount` INTEGER NOT NULL, `roomType` TEXT NOT NULL, `createdTime` TEXT NOT NULL, `updatedTime` TEXT NOT NULL, `createdBy` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `roomName` TEXT NOT NULL, `participants` TEXT NOT NULL, `lastMessage` TEXT, `unReadCount` INTEGER NOT NULL, `roomPhoto` TEXT, `roomType` TEXT NOT NULL, `createdTime` TEXT NOT NULL, `updatedTime` TEXT NOT NULL, `createdBy` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -36,6 +36,11 @@
             "columnName": "unReadCount",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "roomPhoto",
+            "columnName": "roomPhoto",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "roomType",
@@ -179,7 +184,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b066871157e398ca4ec3d50dff4b64c3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cd824f363c83a2c4a17da13e9b3a97e0')"
     ]
   }
 }

@@ -6,6 +6,7 @@ import io.ktor.websocket.WebSocketSession
 
 interface ChatRepository {
     suspend fun createChatRoom(room: ChatRoom): ChatRoom
+    suspend fun updateChatRoom(room: ChatRoom) : Boolean
     suspend fun findChatRoomById(roomId: String): ChatRoom?
     suspend fun getMessageForRoom(roomId: String): List<Message>
     suspend fun sendMessage(message: Message)

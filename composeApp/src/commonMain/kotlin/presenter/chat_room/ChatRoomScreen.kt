@@ -144,6 +144,7 @@ private fun PrivateChatScreen(
             )
         }) { padding ->
         MessageChatRoom(
+            myUser = myUser,
             oldChats = oldChats,
             newChat = newChat,
             paddingValues = padding
@@ -189,6 +190,7 @@ private fun PublicChatScreen(
             )
         }) { padding ->
         MessageChatRoom(
+            myUser = myUser,
             oldChats = oldChats,
             newChat = newChat,
             paddingValues = padding

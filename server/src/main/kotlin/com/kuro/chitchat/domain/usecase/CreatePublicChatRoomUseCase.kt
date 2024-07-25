@@ -1,5 +1,6 @@
 package com.kuro.chitchat.domain.usecase
 
+import com.kuro.chitchat.data.mapper.toServer
 import com.kuro.chitchat.database.server.entity.ChatRoom
 import com.kuro.chitchat.database.server.entity.Message
 import com.kuro.chitchat.domain.repository.ChatRepository
@@ -50,7 +51,7 @@ class CreatePublicChatRoomUseCase(private val chatRepository: ChatRepository) {
                 timeStamp = messageModel.timeStamp,
                 isRead = messageModel.isRead,
                 edited = messageModel.edited,
-                reactions = messageModel.reactions
+                reactions = messageModel.reactions.map { it.toServer() }
             )
         } else null
     }

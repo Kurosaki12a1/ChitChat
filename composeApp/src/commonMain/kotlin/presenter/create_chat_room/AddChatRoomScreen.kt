@@ -19,6 +19,7 @@ import domain.models.MessageModel
 import domain.models.UserModel
 import org.koin.compose.viewmodel.koinViewModel
 import presenter.chat_room.component.BottomBarChatRoom
+import presenter.chat_room.component.MessageChatRoom
 import presenter.chat_room.component.TopBarChatRoom
 import presenter.create_chat_room.component.OnBoardChatScreen
 import ui.theme.BackgroundColorEmphasis
@@ -123,7 +124,13 @@ private fun PrivateChatScreen(
                 onSend = onSendMessage
             )
         }) { padding ->
-        OnBoardChatScreen(chatRoom, padding)
+        MessageChatRoom(
+            myUser = myUser,
+            oldChats = listOf(),
+            newChat =  listOf(),
+            paddingValues = padding
+        )
+     //   OnBoardChatScreen(chatRoom, padding)
     }
 }
 

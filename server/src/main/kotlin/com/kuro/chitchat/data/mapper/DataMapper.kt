@@ -6,9 +6,21 @@ import com.kuro.chitchat.database.server.entity.User
 import data.model.dto.ChatRoomDto
 import data.model.dto.MessageDto
 import data.model.dto.UserDto
+import domain.models.Reaction
 import domain.models.RoomType
 import domain.models.StatusUser
 import utils.now
+import com.kuro.chitchat.database.server.entity.Reaction as ReactionServer
+
+fun ReactionServer.toDto() = Reaction(
+    userId = this.userId,
+    emoCode = this.emoCode
+)
+
+fun Reaction.toServer() = ReactionServer(
+    userId = this.userId,
+    emoCode = this.emoCode
+)
 
 fun Message.toDTO() = MessageDto(
     id = this.id,
@@ -18,7 +30,7 @@ fun Message.toDTO() = MessageDto(
     chatRoomId = this.chatRoomId,
     isRead = this.isRead,
     edited = this.edited,
-    reactions = this.reactions
+    reactions = this.reactions.map { it.toDto() }
 )
 
 fun User.toDTO() = UserDto(
@@ -40,7 +52,8 @@ fun ChatRoom.toDTO() = ChatRoomDto(
     createdTime = this.createdTime,
     updatedTime = this.updatedTime,
     createdBy = this.createdBy,
-    roomType = this.roomType
+    roomType = this.roomType,
+    roomPhoto = this.roomPhoto
 )
 
 fun MessageDto.toEntity() = Message(
@@ -51,7 +64,7 @@ fun MessageDto.toEntity() = Message(
     chatRoomId = this.chatRoomId ?: "",
     isRead = this.isRead ?: false,
     edited = this.edited ?: false,
-    reactions = this.reactions ?: emptyMap()
+    reactions = this.reactions?.map { it.toServer() } ?: listOf()
 )
 
 fun UserDto.toEntity() = User(
@@ -73,5 +86,6 @@ fun ChatRoomDto.toEntity() = ChatRoom(
     roomType = this.roomType ?: RoomType.NORMAL.type,
     createdBy = "",
     createdTime = this.createdTime ?: now(),
-    updatedTime = this.updatedTime ?: now()
+    updatedTime = this.updatedTime ?: now(),
+    roomPhoto = this.roomPhoto
 )

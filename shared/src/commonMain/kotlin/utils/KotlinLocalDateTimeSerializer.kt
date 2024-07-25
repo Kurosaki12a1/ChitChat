@@ -13,11 +13,18 @@ import kotlinx.serialization.encoding.Encoder
 object KotlinLocalDateTimeSerializer : KSerializer<LocalDateTime> {
     private val formatter = LocalDateTime.Formats.ISO
 
-    override val descriptor: SerialDescriptor =
+    override
+    val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("KotlinLocalDateTimeSerializer", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): LocalDateTime {
-        return LocalDateTime.parse(decoder.decodeString(), formatter)
+        var string = decoder.decodeString()
+        if (string.contains("+")) {
+            string = string.substring(0, string.indexOf("+"))
+        } else if (string.contains("-") && string.length > 19) {
+            string = string.substring(0, 19)
+        }
+        return LocalDateTime.parse(string, formatter)
     }
 
     override fun serialize(encoder: Encoder, value: LocalDateTime) {

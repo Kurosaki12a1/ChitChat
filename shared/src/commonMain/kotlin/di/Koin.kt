@@ -47,7 +47,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import okio.Path.Companion.toPath
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -58,6 +60,7 @@ import utils.CLIENT_ID
 import utils.CONNECTION_TIME_OUT
 import utils.DOMAIN
 import utils.HOST
+import utils.KotlinLocalDateTimeSerializer
 import utils.REQUEST_TIME_OUT
 import utils.SERVER_PORT
 import utils.SOCKET_TIME_OUT
@@ -137,7 +140,14 @@ fun commonModule() = module {
     }
 }
 
-fun createJson() = Json { isLenient = true; ignoreUnknownKeys = true; prettyPrint = true }
+fun createJson() = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+    prettyPrint = true
+    serializersModule = SerializersModule {
+        contextual(LocalDateTime::class, KotlinLocalDateTimeSerializer)
+    }
+}
 
 fun createHttpClient(
     httpClientEngine: HttpClientEngine,

@@ -9,6 +9,7 @@ import com.kuro.chitchat.database.client.data.dao.MessageDao
 import com.kuro.chitchat.database.client.data.dao.UserDao
 import com.kuro.chitchat.database.client.entity.ChatRoomEntity
 import com.kuro.chitchat.database.client.entity.MessageEntity
+import com.kuro.chitchat.database.client.entity.ReactionEntity
 import com.kuro.chitchat.database.client.entity.UserEntity
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.encodeToString
@@ -19,7 +20,7 @@ import kotlinx.serialization.json.Json
     LocalDateTimeConverter::class,
     ListStringConverter::class,
     MessageConverter::class,
-    MapStringIntConverter::class
+    ReactionConverter::class
 )
 abstract class AppDatabase : RoomDatabase(), DB {
     abstract fun chatRoomDao(): ChatRoomDao
@@ -29,6 +30,7 @@ abstract class AppDatabase : RoomDatabase(), DB {
     override fun clearAllTables() {
         super.clearAllTables()
     }
+
 }
 
 class LocalDateTimeConverter {
@@ -67,14 +69,16 @@ class MessageConverter {
     }
 }
 
-class MapStringIntConverter {
+class ReactionConverter {
     @TypeConverter
-    fun fromString(value: String): Map<String, Int> {
-        return Json.decodeFromString<Map<String, Int>>(value)
+    fun fromString(value: String?): List<ReactionEntity> {
+        if (value == null) return emptyList()
+        return Json.decodeFromString<List<ReactionEntity>>(value)
     }
 
     @TypeConverter
-    fun fromMap(data: Map<String, Int>?): String {
+    fun fromList(data: List<ReactionEntity>?): String {
+        if (data == null) return ""
         return Json.encodeToString(data)
     }
 }

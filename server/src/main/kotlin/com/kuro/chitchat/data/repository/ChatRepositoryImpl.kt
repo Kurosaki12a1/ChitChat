@@ -37,6 +37,10 @@ class ChatRepositoryImpl(
         return roomRepository.createChatRoom(room)
     }
 
+    override suspend fun updateChatRoom(room: ChatRoom): Boolean {
+        return roomRepository.updateChatRoom(room)
+    }
+
     /**
      * Finds a chat room by its ID.
      *

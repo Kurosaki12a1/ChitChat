@@ -12,6 +12,7 @@ data class ChatRoomModel(
     val participants: List<String> = listOf(),
     val lastMessage: MessageModel? = null,
     val unReadCount: Int = 0,
+    val roomPhoto: String? = null,
     val roomType: String,
     @Contextual val createdTime: LocalDateTime,
     @Contextual val updatedTime: LocalDateTime,

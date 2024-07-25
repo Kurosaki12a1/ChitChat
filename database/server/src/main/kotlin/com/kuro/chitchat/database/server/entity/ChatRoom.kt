@@ -17,6 +17,7 @@ data class ChatRoom(
     val participants: List<String>,
     val lastMessage: Message? = null,
     val unReadCount: Int = 0,
+    val roomPhoto: String? = null,
     val roomType: String,
     @Serializable(with = KotlinLocalDateTimeSerializer::class)
     val createdTime: LocalDateTime = now(),

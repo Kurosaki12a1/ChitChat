@@ -18,6 +18,7 @@ data class ChatRoomEntity(
     // Last Message
     val lastMessage: MessageEntity?,
     val unReadCount: Int = 0,
+    val roomPhoto: String?,
     val roomType: String,
     val createdTime: LocalDateTime,
     val updatedTime: LocalDateTime,

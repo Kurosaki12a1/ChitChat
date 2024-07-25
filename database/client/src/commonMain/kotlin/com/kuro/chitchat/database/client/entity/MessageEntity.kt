@@ -3,6 +3,7 @@ package com.kuro.chitchat.database.client.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
 
 @Entity(tableName = "Message")
 data class MessageEntity(
@@ -16,5 +17,12 @@ data class MessageEntity(
     val chatRoomId: String,
     val isRead: Boolean,
     val edited: Boolean,
-    val reactions: Map<String, Int>
+    val reactions: List<ReactionEntity>
 )
+
+@Serializable
+data class ReactionEntity(
+    val userId: String,
+    val emoCode: String
+)
+

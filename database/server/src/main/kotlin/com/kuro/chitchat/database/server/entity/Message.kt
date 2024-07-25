@@ -19,5 +19,11 @@ data class Message(
     val chatRoomId: String,
     val isRead: Boolean = false,
     val edited: Boolean = false,
-    val reactions: Map<String, Int> = emptyMap()
+    @Contextual val reactions: List<Reaction> = listOf()
+)
+
+@Serializable
+data class Reaction(
+    val userId: String,
+    val emoCode: String
 )

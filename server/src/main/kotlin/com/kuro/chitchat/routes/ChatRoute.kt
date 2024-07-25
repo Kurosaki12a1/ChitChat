@@ -18,6 +18,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.close
@@ -121,6 +122,10 @@ fun Route.chatRoute() {
                 status = HttpStatusCode.OK,
                 message = listRooms.map { it.toDTO() }
             )
+        }
+
+        put("/chat/rooms") {
+
         }
 
     }

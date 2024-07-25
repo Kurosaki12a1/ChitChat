@@ -6,6 +6,7 @@ import com.kuro.chitchat.database.server.entity.Message
 import com.kuro.chitchat.database.server.utils.now
 import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.CoroutineDatabase
+import org.litote.kmongo.coroutine.updateOne
 import org.litote.kmongo.eq
 
 /**
@@ -25,6 +26,10 @@ class RoomDataSourceImpl(database: CoroutineDatabase) : RoomDataSource {
     override suspend fun createChatRoom(room: ChatRoom): ChatRoom {
         chatRooms.insertOne(room)
         return room
+    }
+
+    override suspend fun updateChatRoom(room: ChatRoom): Boolean {
+        return chatRooms.updateOneById(room.id, room).wasAcknowledged()
     }
 
     /**
