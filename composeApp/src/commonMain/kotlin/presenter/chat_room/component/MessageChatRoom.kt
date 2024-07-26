@@ -1,22 +1,30 @@
 package presenter.chat_room.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import component.ChatBubble
 import component.TrianglePosition
 import domain.models.MessageModel
 import domain.models.UserModel
 import kotlinx.serialization.json.Json
-import ui.theme.HighlightDefaultDefault
+import ui.theme.BubbleChatOpponentColor
+import ui.theme.ForegroundAccentSubtle
 import utils.Utils
 
 @Composable
@@ -26,41 +34,55 @@ fun MessageChatRoom(
     newChat: List<MessageModel>,
     paddingValues: PaddingValues
 ) {
-   /* val test = Json.decodeFromString<List<MessageModel>>(oldJson)
-    val test2 = Json.decodeFromString<List<MessageModel>>(newJson)*/
+    // if (oldChats.isEmpty() && newChat.isEmpty()) return
+    val test = Json.decodeFromString<List<MessageModel>>(oldJson)
+    val test2 = Json.decodeFromString<List<MessageModel>>(newJson)
+    val totalList = test + test2
+    var timestampStates by remember { mutableStateOf((totalList).associate { it.id to false }) }
+    var showMenuForMessage by remember { mutableStateOf<MessageModel?>(null) }
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize().background(HighlightDefaultDefault)
+        modifier = Modifier.fillMaxSize()
             .padding(paddingValues)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        itemsIndexed(oldChats, key = { _, item -> item.id }) { index, item ->
+        itemsIndexed(totalList, key = { _, item -> item.id }) { index, item ->
             val isSender = item.senderId == myUser.userId
-            ChatBubble(
-                trianglePosition = if (isSender) TrianglePosition.BottomRight else TrianglePosition.TopLeft,
-                isContinuous = Utils.isContinuousSenderId(oldChats, index),
-            ) {
+            if (timestampStates[item.id]!!) {
                 Text(
-                    text = item.content
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    text = item.timeStamp.toString(),
+                    color = Color.Black,
+                    style = MaterialTheme.typography.caption
                 )
             }
-        }
-        itemsIndexed(newChat, key = { _, item -> item.id }) { index, item ->
-            val isSender = item.senderId == myUser.userId
             ChatBubble(
                 trianglePosition = if (isSender) TrianglePosition.BottomRight else TrianglePosition.TopLeft,
-                isContinuous = Utils.isContinuousSenderId(newChat, index)
-            ) {
-                Text(
-                    text = item.content
-                )
-            }
-
+                backgroundColor = if (isSender) ForegroundAccentSubtle else BubbleChatOpponentColor,
+                reactionColor = Color.White,
+                isContinuous = Utils.isContinuousSenderId(totalList, index),
+                messageModel = item,
+                shouldShowPopUp = showMenuForMessage != null && showMenuForMessage == item,
+                onClick = {
+                    timestampStates = timestampStates.mapValues { (id, _) ->
+                        if (id == item.id) !timestampStates[id]!! else false
+                    }
+                },
+                onLongClick = {
+                    showMenuForMessage = item
+                },
+                onDismissMenu = {
+                    showMenuForMessage = null
+                }
+            )
         }
     }
 }
 
-private val oldJson = "[\n" +
+
+private const val oldJson = "[\n" +
         "  {\n" +
         "    \"id\": \"1\",\n" +
         "    \"senderId\": \"108250150007484359736\",\n" +
@@ -183,7 +205,7 @@ private val oldJson = "[\n" +
         "  }\n" +
         "]"
 
-val newJson = "[\n" +
+private const val newJson = "[\n" +
         "  {\n" +
         "    \"id\": \"11\",\n" +
         "    \"senderId\": \"108250150007484359736\",\n" +
@@ -282,7 +304,7 @@ val newJson = "[\n" +
         "  {\n" +
         "    \"id\": \"19\",\n" +
         "    \"senderId\": \"108250150007484359736\",\n" +
-        "    \"content\": \"Saturday morning?\",\n" +
+        "    \"content\": \"Saturday morning? Maybe around 9:00AM. What do you think? Please tell me!\",\n" +
         "    \"timeStamp\": \"2024-07-25T10:00:00.000+00:00\",\n" +
         "    \"chatRoomId\": \"669bd9da542b68456f38cd54\",\n" +
         "    \"isRead\": false,\n" +
@@ -292,7 +314,7 @@ val newJson = "[\n" +
         "  {\n" +
         "    \"id\": \"20\",\n" +
         "    \"senderId\": \"104772134517320061836\",\n" +
-        "    \"content\": \"Sounds good to me!\",\n" +
+        "    \"content\": \"Sounds good to me! Let me know if you are ready because i am looking forward into it\",\n" +
         "    \"timeStamp\": \"2024-07-25T10:05:00.000+00:00\",\n" +
         "    \"chatRoomId\": \"669bd9da542b68456f38cd54\",\n" +
         "    \"isRead\": true,\n" +

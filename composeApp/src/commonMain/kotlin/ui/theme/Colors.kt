@@ -20,6 +20,8 @@ val Colors.topAppBarContentColor: Color
 val Colors.topAppBarBackgroundColor: Color
     get() = if (isLight) Gray500 else Color.Black
 
+val BubbleChatOpponentColor = Color(0xFFECECEC)
+val BubbleChatMyColor = Color(0xFFFAF0E6)
 
 // Default
 val BackgroundColorDefault = Color(0xFFFFFFFF)
