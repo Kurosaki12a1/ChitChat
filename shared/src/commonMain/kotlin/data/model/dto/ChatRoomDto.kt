@@ -1,6 +1,6 @@
 package data.model.dto
 
-import domain.model.RoomType
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,5 +10,9 @@ data class ChatRoomDto(
     val participants: List<String>? = null,
     val lastMessage: MessageDto? = null,
     val unReadCount: Int? = 0,
-    val roomType: RoomType = RoomType.NORMAL
+    val roomPhoto: String? = null,
+    val roomType: String? = null,
+    val createdTime: LocalDateTime?,
+    val updatedTime: LocalDateTime?,
+    val createdBy: String?
 )

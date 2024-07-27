@@ -69,4 +69,27 @@
     <string name="password_and_lock">Password and Lock</string>
     <string name="service_information">Service Information</string>
     <string name="release_note">Release Note</string>
+
+    <string name="start_new_chat">Start a New Chat</string>
+    <string name="secret_chat">Secret Chat</string>
+    <string name="start_secret_chat">Start Secret Chat</string>
+    <string name="create_announcement">Create an Announcement</string>
+    <string name="announcement">Announcement</string>
+    <string name="search_chat_placeholder">Search by name, email...</string>
+    <string name="employee">Employee</string>
+
+    <string name="ok">Ok</string>
+    <string name="place_holder_message">Enter a message</string>
+
+    <!-- Menu Mesasge -->
+    <string name="reply">Reply</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="forward">Forward</string>
+
+    <string name="to_me">To Me</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="send">Send</string>
+    <string name="translate">Translate</string>
+    <string name="edit">Edit</string>
 </resources>

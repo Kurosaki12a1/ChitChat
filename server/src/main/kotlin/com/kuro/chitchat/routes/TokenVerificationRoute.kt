@@ -5,14 +5,15 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
-import com.kuro.chitchat.data.model.entity.User
-import com.kuro.chitchat.data.model.toDTO
+import com.kuro.chitchat.data.mapper.toDTO
+import com.kuro.chitchat.database.server.domain.repository.UserDataSource
+import com.kuro.chitchat.database.server.entity.User
 import com.kuro.chitchat.domain.model.ApiRequest
 import com.kuro.chitchat.domain.model.Endpoint
 import com.kuro.chitchat.domain.model.UserSession
-import com.kuro.chitchat.domain.repository.UserDataSource
 import com.kuro.chitchat.util.Constants.ISSUER
 import data.model.dto.ApiResponse
+import domain.models.StatusUser
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -25,11 +26,18 @@ import io.ktor.server.routing.post
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.set
 import io.ktor.util.pipeline.PipelineContext
+import org.bson.types.ObjectId
 import utils.CLIENT_ID
 import utils.now
 import java.util.Collections
 
 
+/**
+ * Defines the route for token verification.
+ *
+ * @param app The Ktor Application instance.
+ * @param userDataSource The data source for user-related operations.
+ */
 fun Route.tokenVerificationRoute(
     app: Application,
     userDataSource: UserDataSource
@@ -57,6 +65,14 @@ fun Route.tokenVerificationRoute(
     }
 }
 
+
+/**
+ * Saves user information to the database after successful token verification.
+ *
+ * @param app The Ktor Application instance.
+ * @param result The Google ID token result containing user information.
+ * @param userDataSource The data source for user-related operations.
+ */
 private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     app: Application,
     result: GoogleIdToken,
@@ -67,11 +83,13 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     val emailAddress = result.payload["email"].toString()
     val profilePhoto = result.payload["picture"].toString()
     val user = User(
+        id = ObjectId().toHexString(),
         userId = sub,
         name = name,
         emailAddress = emailAddress,
         profilePhoto = profilePhoto,
-        lastActive = now()
+        lastActive = now(),
+        status = StatusUser.ONLINE.status
     )
 
     val response = userDataSource.saveUserInfo(user = user)
@@ -93,6 +111,12 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.saveUserToDatabase(
     }
 }
 
+/**
+ * Verifies the Google ID token.
+ *
+ * @param tokenId The Google ID token to be verified.
+ * @return The GoogleIdToken if verification is successful, null otherwise.
+ */
 fun verifyGoogleTokenId(tokenId: String): GoogleIdToken? {
     return try {
         val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())

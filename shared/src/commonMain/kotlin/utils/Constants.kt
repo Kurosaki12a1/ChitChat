@@ -26,9 +26,11 @@ const val SIGN_OUT = "/sign_out"
 const val UNAUTHORIZED = "/unauthorized"
 const val AUTHORIZED = "/authorized"
 const val SEARCH_USER = "/search_user"
+// Chat
 const val CHAT = "/chat"
-
-const val CREATE_CHAT_ROOM = "/chat/create_chat"
+const val CHAT_ROOM = "/chat/chat_room"
+const val GET_CHAT_HISTORY = "/chat/{roomId}/history"
+const val JOIN_ROOM = "/chat/{roomId}/join"
 
 const val USER_SESSION = "user_session"
 

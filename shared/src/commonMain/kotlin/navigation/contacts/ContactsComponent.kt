@@ -37,10 +37,10 @@ class ContactsComponent(
     }
 
     private fun createChild(
-        TabContactsItem: TabContactsItem,
+        tabContactsItem: TabContactsItem,
         context: ComponentContext
     ): TabContactsChild {
-        return when (TabContactsItem) {
+        return when (tabContactsItem) {
             is TabContactsItem.All -> {
                 TabContactsChild.AllScreen(
                     component = ContactsAllComponent(context)

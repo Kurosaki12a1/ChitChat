@@ -18,7 +18,7 @@ kotlin {
         }
     }
 
-    //jvm("desktop")
+    jvm("desktop")
 
     listOf(
         iosX64(), iosArm64(), iosSimulatorArm64()
@@ -30,7 +30,7 @@ kotlin {
     }
 
     sourceSets {
-//        val desktopMain by getting
+        val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -44,6 +44,7 @@ kotlin {
 
         }
         commonMain.dependencies {
+            implementation(projects.messageBar)
             implementation(projects.shared)
 
             implementation(compose.runtime)
@@ -68,12 +69,11 @@ kotlin {
             // Coil
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            // KMPAuth
-            implementation(libs.kmpauth.google)
         }
-        /*     desktopMain.dependencies {
-                 implementation(compose.desktop.currentOs)
-             }*/
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
     }
 }
 
@@ -119,7 +119,6 @@ dependencies {
 
 }
 
-/*
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -131,5 +130,3 @@ compose.desktop {
         }
     }
 }
-
-*/

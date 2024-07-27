@@ -18,6 +18,11 @@ import org.koin.core.component.KoinComponent
 import utils.PREFERENCES_SIGNED_IN_ID_KEY
 import utils.PREFERENCES_SIGNED_IN_KEY
 
+/**
+ * Implementation of DataStoreOperations for managing signed-in state and ID.
+ *
+ * @property dataStore The DataStore used for storing preferences.
+ */
 class DataStoreOperationsImpl(
     private val dataStore: DataStore<Preferences>
 ) : DataStoreOperations, KoinComponent {
@@ -26,12 +31,22 @@ class DataStoreOperationsImpl(
         val signedInIdKey = stringPreferencesKey(name = PREFERENCES_SIGNED_IN_ID_KEY)
     }
 
+    /**
+     * Saves the signed-in state.
+     *
+     * @param signedIn The signed-in state to be saved.
+     */
     override suspend fun saveSignedInState(signedIn: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKey.signedInKey] = signedIn
         }
     }
 
+    /**
+     * Reads the signed-in state.
+     *
+     * @return A Flow emitting the signed-in state.
+     */
     override fun readSignedInState(): Flow<Boolean> {
         return dataStore.data
             .catch { exception ->
@@ -47,12 +62,22 @@ class DataStoreOperationsImpl(
             }.flowOn(Dispatchers.IO)
     }
 
+    /**
+     * Saves the signed-in ID.
+     *
+     * @param id The signed-in ID to be saved.
+     */
     override suspend fun saveSignedInId(id: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKey.signedInIdKey] = id
         }
     }
 
+    /**
+     * Retrieves the current signed-in ID.
+     *
+     * @return A Flow emitting the current signed-in ID.
+     */
     override fun getCurrentSignedIn(): Flow<String> {
         return dataStore.data
             .catch { exception ->

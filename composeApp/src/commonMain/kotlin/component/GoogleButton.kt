@@ -55,7 +55,7 @@ fun GoogleButton(
         contentColor = Color.Transparent
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .clickable(enabled = !loadingState) { onClick.invoke() }
                 .padding(
                     start = 12.dp,

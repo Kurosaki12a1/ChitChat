@@ -3,7 +3,7 @@ package presenter.login.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ContentAlpha
@@ -21,11 +21,12 @@ import chitchatmultiplatform.composeapp.generated.resources.Res
 import chitchatmultiplatform.composeapp.generated.resources.app_logo
 import chitchatmultiplatform.composeapp.generated.resources.sign_in_to_continue
 import chitchatmultiplatform.composeapp.generated.resources.sign_in_with_google
-import com.mmk.kmpauth.google.GoogleButtonUiContainer
-import com.mmk.kmpauth.google.GoogleUser
+import com.kuro.chitchat.auth_google.GoogleButtonUiContainer
+import com.kuro.chitchat.auth_google.GoogleUser
+import com.kuro.chitchat.messagebar.MessageBar
+import com.kuro.chitchat.messagebar.rememberMessageBarState
 import component.GoogleButton
-import component.MessageBar
-import domain.model.MessageBarState
+import domain.models.LoginState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -33,21 +34,26 @@ import org.jetbrains.compose.resources.stringResource
 fun AuthContent(
     signedInState: Boolean,
     loadingState: Boolean,
-    messageBarState: MessageBarState,
+    loginState: LoginState,
     onButtonClicked: () -> Unit,
     onResult: (GoogleUser?) -> Unit
 ) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            MessageBar(messageBarState = messageBarState)
+    val state = rememberMessageBarState()
+
+    LaunchedEffect(loginState) {
+        if (loginState.error != null) {
+            state.addError(loginState.error!!)
+        } else if (loginState.message != null) {
+            state.addSuccess(loginState.message!!)
         }
+    }
+
+    MessageBar(
+        messageBarState = state,
+        showCopyButton = false
+    ) {
         Column(
-            modifier = Modifier
-                .weight(9f)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

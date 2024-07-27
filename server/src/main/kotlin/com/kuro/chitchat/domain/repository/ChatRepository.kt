@@ -1,24 +1,22 @@
 package com.kuro.chitchat.domain.repository
 
-import com.kuro.chitchat.data.model.entity.ChatRoom
-import com.kuro.chitchat.data.model.entity.Message
-import com.kuro.chitchat.domain.model.Member
-import domain.model.RoomType
+import com.kuro.chitchat.database.server.entity.ChatRoom
+import com.kuro.chitchat.database.server.entity.Message
+import io.ktor.websocket.WebSocketSession
 
 interface ChatRepository {
-    suspend fun createChatRoom(
-        roomName: String,
-        roomType: RoomType,
-        participants: List<String>
-    ): ChatRoom
-
+    suspend fun createChatRoom(room: ChatRoom): ChatRoom
+    suspend fun updateChatRoom(room: ChatRoom) : Boolean
     suspend fun findChatRoomById(roomId: String): ChatRoom?
-    suspend fun findChatRoomByName(roomName: String): ChatRoom?
+    suspend fun getMessageForRoom(roomId: String): List<Message>
     suspend fun sendMessage(message: Message)
-    suspend fun updateLastMessage(roomId: String, message: Message)
-    fun connectToSocket(member: Member)
-    fun updateMemberRoom(senderId: String, roomId: String)
-    fun disconnectFromSocket(senderId: String, roomId: String)
-    fun getMembersForRoom(roomId: String): List<Member>
-    fun findAllChatRoomsForUser(userId: String): List<String>
+    fun addWebSocketSession(userId: String, webSocketSession: WebSocketSession)
+    fun removeWebSocketSession(userId: String)
+    fun getWebSocketSession(userId: String): WebSocketSession?
+    suspend fun broadcastMessageToRoom(roomId: String, message: Message)
+    suspend fun addRoomToMember(userId: String, roomId: String)
+    suspend fun addRoomToMembers(roomId: String, memberIds: List<String>)
+    suspend fun removeRoomFromMember(userId: String, roomId: String)
+    suspend fun addParticipantToRoom(roomId: String, userId: String): ChatRoom?
+    suspend fun getUserChatRooms(userId: String): List<ChatRoom>
 }

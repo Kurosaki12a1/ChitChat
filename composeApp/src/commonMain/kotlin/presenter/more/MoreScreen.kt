@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import component.BaseScreen
 import navigation.NavigationItem
 import navigation.more.MoreComponent
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import presenter.more.component.BottomActionBar
 import presenter.more.component.MoreBar
 import presenter.more.component.MoreServices
@@ -23,70 +23,63 @@ import viewmodel.MoreViewModel
 @Composable
 fun MoreScreen(
     component: MoreComponent,
-    moreViewModel: MoreViewModel = koinInject()
+    moreViewModel: MoreViewModel = koinViewModel()
 ) {
-    val user by moreViewModel.user
-
-    /**
-     *
-     */
-    LaunchedEffect(Unit) {
-        moreViewModel.init()
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            MoreBar(
-                onSettingsClick = {
-                    component.navigateTo(NavigationItem.SettingsScreen)
-                }
-            )
-            user?.let {
-                ProfileToolbar(
-                    userModel = it,
-                    onProfileClick = {
-
-                    },
-                    onSyncClick = {
-
+    BaseScreen(moreViewModel) {
+        val user by moreViewModel.user
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                MoreBar(
+                    onSettingsClick = {
+                        component.navigateTo(NavigationItem.SettingsScreen)
                     }
                 )
-            }
-            ServicesBar { item ->
-                when (item) {
-                    MoreServices.MEMO.ordinal -> {
+                user?.let {
+                    ProfileToolbar(
+                        userModel = it,
+                        onProfileClick = {
 
-                    }
+                        },
+                        onSyncClick = {
 
-                    MoreServices.TASK.ordinal -> {
+                        }
+                    )
+                }
+                ServicesBar { item ->
+                    when (item) {
+                        MoreServices.MEMO.ordinal -> {
 
-                    }
+                        }
 
-                    MoreServices.APPS.ordinal -> {
+                        MoreServices.TASK.ordinal -> {
 
-                    }
+                        }
 
-                    MoreServices.NOTICE.ordinal -> {
+                        MoreServices.APPS.ordinal -> {
 
-                    }
+                        }
 
-                    MoreServices.SUPPORT.ordinal -> {
+                        MoreServices.NOTICE.ordinal -> {
 
+                        }
+
+                        MoreServices.SUPPORT.ordinal -> {
+
+                        }
                     }
                 }
             }
+            BottomActionBar(
+                onPrivacyClick = {
+
+                },
+                onSignOutClick = {
+
+                }
+            )
         }
-        BottomActionBar(
-            onPrivacyClick = {
-
-            },
-            onSignOutClick = {
-
-            }
-        )
     }
-
 }
