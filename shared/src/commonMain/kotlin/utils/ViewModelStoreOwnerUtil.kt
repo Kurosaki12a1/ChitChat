@@ -24,7 +24,6 @@ private class ViewModelStoreOwnerInstance : ViewModelStoreOwner, InstanceKeeper.
         get() = getInstance()
 
     override fun onDestroy() {
-        println("Có destroy không?")
         viewModelStore.clear()
     }
 }

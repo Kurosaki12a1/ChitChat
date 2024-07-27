@@ -1,15 +1,17 @@
-package component
+package presenter.chat_room.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,16 +28,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import chitchatmultiplatform.composeapp.generated.resources.Res
+import chitchatmultiplatform.composeapp.generated.resources.bookmark
+import chitchatmultiplatform.composeapp.generated.resources.copy
+import chitchatmultiplatform.composeapp.generated.resources.delete
+import chitchatmultiplatform.composeapp.generated.resources.edit
+import chitchatmultiplatform.composeapp.generated.resources.emote_beg
+import chitchatmultiplatform.composeapp.generated.resources.emote_cheer
+import chitchatmultiplatform.composeapp.generated.resources.emote_clap
+import chitchatmultiplatform.composeapp.generated.resources.emote_cry
+import chitchatmultiplatform.composeapp.generated.resources.emote_happy
+import chitchatmultiplatform.composeapp.generated.resources.emote_laugh_cry
+import chitchatmultiplatform.composeapp.generated.resources.emote_wow
+import chitchatmultiplatform.composeapp.generated.resources.forward
+import chitchatmultiplatform.composeapp.generated.resources.ic_bookmark
+import chitchatmultiplatform.composeapp.generated.resources.ic_copy
+import chitchatmultiplatform.composeapp.generated.resources.ic_delete
+import chitchatmultiplatform.composeapp.generated.resources.ic_edit
+import chitchatmultiplatform.composeapp.generated.resources.ic_forward
+import chitchatmultiplatform.composeapp.generated.resources.ic_forward_to_user
+import chitchatmultiplatform.composeapp.generated.resources.ic_reply
+import chitchatmultiplatform.composeapp.generated.resources.ic_send_message
 import chitchatmultiplatform.composeapp.generated.resources.ic_thumb_up
+import chitchatmultiplatform.composeapp.generated.resources.ic_translate
+import chitchatmultiplatform.composeapp.generated.resources.reply
+import chitchatmultiplatform.composeapp.generated.resources.send
+import chitchatmultiplatform.composeapp.generated.resources.to_me
+import chitchatmultiplatform.composeapp.generated.resources.translate
 import domain.models.MessageModel
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 
 enum class TrianglePosition {
@@ -54,6 +86,8 @@ enum class TrianglePosition {
  * @param shouldShowPopUp Flag to determine if the popup menu should be shown.
  * @param onClick Lambda function to be called on single click.
  * @param onLongClick Lambda function to be called on long click.
+ * @param onActionClick Lambda function to handle action clicks.
+ * @param onEmoteClick Lambda function to handle emote clicks.
  * @param onDismissMenu Lambda function to dismiss the popup menu.
  */
 @Composable
@@ -67,6 +101,8 @@ fun ChatBubble(
     shouldShowPopUp: Boolean = false,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    onActionClick: (ActionMessageItem) -> Unit,
+    onEmoteClick: (EmoteMessageItem) -> Unit,
     onDismissMenu: () -> Unit
 ) {
     val isMySelf = trianglePosition == TrianglePosition.BottomRight
@@ -78,9 +114,12 @@ fun ChatBubble(
                 properties = PopupProperties(focusable = true),
                 onDismissRequest = onDismissMenu
             ) {
-                LongPressMenu(
+                MessageMenu(
+                    modifier = Modifier.widthIn(min = 100.dp, max = maxWidth * 0.7f),
+                    isSelf = isMySelf,
                     onDismiss = onDismissMenu,
-                    modifier = Modifier.widthIn(min = 100.dp, max = maxWidth * 0.6f)
+                    onActionClick = onActionClick,
+                    onEmoteClick = onEmoteClick
                 )
             }
         }
@@ -256,34 +295,247 @@ fun ChatBubble(
     }
 }
 
+/**
+ * Composable function to display a message menu with actions and emotes.
+ *
+ * @param modifier Modifier to apply to this layout node.
+ * @param isSelf Boolean flag indicating if the message is from the user themselves.
+ * @param onDismiss Lambda function to be called when the menu is dismissed.
+ * @param onActionClick Lambda function to be called when an action item is clicked.
+ * @param onEmoteClick Lambda function to be called when an emote item is clicked.
+ */
 @Composable
-fun LongPressMenu(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+private fun MessageMenu(
+    modifier: Modifier = Modifier,
+    isSelf: Boolean,
+    onDismiss: () -> Unit,
+    onActionClick: (ActionMessageItem) -> Unit,
+    onEmoteClick: (EmoteMessageItem) -> Unit
+) {
     Column(
         modifier = modifier
             .background(Color.White, RoundedCornerShape(16.dp))
             .border(width = 1.dp, color = Color.Black.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
-            .padding(8.dp),
+            .padding(vertical = 16.dp, horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(text = "Reply", style = MaterialTheme.typography.caption)
-            Text(text = "Forward", style = MaterialTheme.typography.caption)
-            Text(text = "Delete", style = MaterialTheme.typography.caption)
-            Text(text = "Test", style = MaterialTheme.typography.caption)
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(text = "Reply", style = MaterialTheme.typography.caption)
-            Text(text = "Forward", style = MaterialTheme.typography.caption)
-            Text(text = "Delete", style = MaterialTheme.typography.caption)
-            Text(text = "Test", style = MaterialTheme.typography.caption)
+
+        getListAction(isSelf).chunked(4).forEach { list ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                list.forEach { item ->
+                    ItemActionMessage(
+                        action = item,
+                        onClick = {
+                            onActionClick(it)
+                            onDismiss()
+                        }
+                    )
+                }
+            }
         }
         Divider(Modifier.fillMaxWidth().height(1.dp).background(Color.Black))
+        // Display emote items in chunks of 4
+        listEmoteMessageName.chunked(4).forEach { list ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                list.forEach { item ->
+                    ItemEmoteMessage(
+                        emote = item,
+                        onClick = {
+                            onEmoteClick(it)
+                            onDismiss()
+                        }
+                    )
+                }
+            }
+        }
     }
+}
+
+
+/**
+ * Composable function to display an action item in a row.
+ *
+ * @param action The action message to display.
+ * @param onClick Lambda function to be called when the action item is clicked.
+ */
+@Composable
+private fun RowScope.ItemActionMessage(
+    action: ActionMessage,
+    onClick: (ActionMessageItem) -> Unit = {}
+) {
+    Column(
+        modifier = Modifier.weight(1f).clickable { onClick(action.action) },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(action.icon),
+            contentDescription = "Icon",
+            contentScale = ContentScale.Crop,
+            colorFilter = ColorFilter.tint(Color.Black)
+        )
+        Text(
+            text = stringResource(action.name),
+            style = MaterialTheme.typography.caption,
+            maxLines = 1
+        )
+    }
+}
+
+
+/**
+ * Composable function to display an emote item in a row.
+ *
+ * @param emote The emote message to display.
+ * @param onClick Lambda function to be called when the emote item is clicked.
+ */
+@Composable
+private fun RowScope.ItemEmoteMessage(
+    emote: EmoteMessage,
+    onClick: (EmoteMessageItem) -> Unit
+) {
+    Box(
+        modifier = Modifier.weight(1f).clickable { onClick(emote.emote) },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier.size(24.dp),
+            painter = painterResource(emote.icon),
+            contentScale = ContentScale.Fit,
+            contentDescription = null
+        )
+    }
+}
+
+private data class ActionMessage(
+    val name: StringResource,
+    val icon: DrawableResource,
+    val action: ActionMessageItem
+)
+
+private data class EmoteMessage(
+    val icon: DrawableResource,
+    val emote: EmoteMessageItem
+)
+
+private fun getListAction(isSelf: Boolean): List<ActionMessage> {
+    return if (isSelf) listActionMessageName
+    else listActionMessageName.dropLast(1)
+}
+
+private val listEmoteMessageName =
+    listOf(
+        EmoteMessage(
+            icon = Res.drawable.ic_thumb_up,
+            emote = EmoteMessageItem.Like
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_clap,
+            emote = EmoteMessageItem.Clap
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_cheer,
+            emote = EmoteMessageItem.Cheer
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_beg,
+            emote = EmoteMessageItem.Beg
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_happy,
+            emote = EmoteMessageItem.Happy
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_cry,
+            emote = EmoteMessageItem.Cry
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_laugh_cry,
+            emote = EmoteMessageItem.Funny
+        ),
+        EmoteMessage(
+            icon = Res.drawable.emote_wow,
+            emote = EmoteMessageItem.Wow
+        ),
+    )
+
+private val listActionMessageName =
+    listOf(
+        ActionMessage(
+            Res.string.reply,
+            Res.drawable.ic_reply,
+            ActionMessageItem.Reply
+        ),
+        ActionMessage(
+            Res.string.copy,
+            Res.drawable.ic_copy,
+            ActionMessageItem.Copy
+        ),
+        ActionMessage(
+            Res.string.delete,
+            Res.drawable.ic_delete,
+            ActionMessageItem.Delete
+        ),
+        ActionMessage(
+            Res.string.forward,
+            Res.drawable.ic_forward,
+            ActionMessageItem.Forward
+        ),
+        ActionMessage(
+            Res.string.to_me,
+            Res.drawable.ic_forward_to_user,
+            ActionMessageItem.ToMe
+        ),
+        ActionMessage(
+            Res.string.bookmark,
+            Res.drawable.ic_bookmark,
+            ActionMessageItem.Bookmark
+        ),
+        ActionMessage(
+            Res.string.send,
+            Res.drawable.ic_send_message,
+            ActionMessageItem.Send
+        ),
+        ActionMessage(
+            Res.string.translate,
+            Res.drawable.ic_translate,
+            ActionMessageItem.Translate
+        ),
+        ActionMessage(
+            Res.string.edit,
+            Res.drawable.ic_edit,
+            ActionMessageItem.Edit
+        )
+    )
+
+sealed class ActionMessageItem {
+    data object Reply : ActionMessageItem()
+    data object Copy : ActionMessageItem()
+    data object Delete : ActionMessageItem()
+    data object Forward : ActionMessageItem()
+    data object ToMe : ActionMessageItem()
+    data object Bookmark : ActionMessageItem()
+    data object Send : ActionMessageItem()
+    data object Translate : ActionMessageItem()
+    data object Edit : ActionMessageItem()
+}
+
+sealed class EmoteMessageItem(val code: String) {
+    data object Like : EmoteMessageItem(":emo:like")
+    data object Clap : EmoteMessageItem(":emo:clap")
+    data object Cheer : EmoteMessageItem(":emo:cheer")
+    data object Beg : EmoteMessageItem(":emo:beg")
+    data object Happy : EmoteMessageItem(":emo:happy")
+    data object Cry : EmoteMessageItem(":emo:cry")
+    data object Funny : EmoteMessageItem(":emo:funny")
+    data object Wow : EmoteMessageItem(":emo:wow")
 }

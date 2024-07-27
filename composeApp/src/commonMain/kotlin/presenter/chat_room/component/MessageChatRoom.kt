@@ -18,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import component.ChatBubble
-import component.TrianglePosition
 import domain.models.MessageModel
 import domain.models.UserModel
 import kotlinx.serialization.json.Json
@@ -27,12 +25,24 @@ import ui.theme.BubbleChatOpponentColor
 import ui.theme.ForegroundAccentSubtle
 import utils.Utils
 
+/**
+ * Composable function to display a chat room with messages.
+ *
+ * @param myUser The user model of the current user.
+ * @param oldChats List of old messages in the chat room.
+ * @param newChat List of new messages in the chat room.
+ * @param paddingValues Padding values for the chat room.
+ * @param onActionClick Lambda function to be called when an action item is clicked.
+ * @param onEmoteClick Lambda function to be called when an emote item is clicked.
+ */
 @Composable
 fun MessageChatRoom(
     myUser: UserModel,
     oldChats: List<MessageModel>,
     newChat: List<MessageModel>,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onActionClick: (ActionMessageItem) -> Unit,
+    onEmoteClick: (EmoteMessageItem) -> Unit
 ) {
     // if (oldChats.isEmpty() && newChat.isEmpty()) return
     val test = Json.decodeFromString<List<MessageModel>>(oldJson)
@@ -70,12 +80,10 @@ fun MessageChatRoom(
                         if (id == item.id) !timestampStates[id]!! else false
                     }
                 },
-                onLongClick = {
-                    showMenuForMessage = item
-                },
-                onDismissMenu = {
-                    showMenuForMessage = null
-                }
+                onLongClick = { showMenuForMessage = item },
+                onDismissMenu = { showMenuForMessage = null },
+                onActionClick = onActionClick,
+                onEmoteClick = onEmoteClick
             )
         }
     }

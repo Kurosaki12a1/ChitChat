@@ -80,4 +80,16 @@
 
     <string name="ok">Ok</string>
     <string name="place_holder_message">Enter a message</string>
+
+    <!-- Menu Mesasge -->
+    <string name="reply">Reply</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="forward">Forward</string>
+
+    <string name="to_me">To Me</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="send">Send</string>
+    <string name="translate">Translate</string>
+    <string name="edit">Edit</string>
 </resources>

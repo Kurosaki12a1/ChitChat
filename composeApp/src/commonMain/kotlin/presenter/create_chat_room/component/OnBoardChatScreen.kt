@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import chitchatmultiplatform.composeapp.generated.resources.Res
-import chitchatmultiplatform.composeapp.generated.resources.ic_edit
+import chitchatmultiplatform.composeapp.generated.resources.edit
 import chitchatmultiplatform.composeapp.generated.resources.ic_room_normal
 import chitchatmultiplatform.composeapp.generated.resources.ic_room_secret
 import coil3.compose.AsyncImage
@@ -73,7 +73,7 @@ fun OnBoardChatScreen(
                     Image(
                         modifier = Modifier.size(20.dp).align(Alignment.Center),
                         contentScale = ContentScale.Inside,
-                        painter = painterResource(Res.drawable.ic_edit),
+                        painter = painterResource(Res.drawable.edit),
                         contentDescription = "Edit"
                     )
                 }
